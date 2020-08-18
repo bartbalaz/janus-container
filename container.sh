@@ -22,10 +22,15 @@ create_dir $STAGING_DIR
 #   cp $(which $1) $ROOT_DIR$(which $1)
 #}
 
+
+# libnice installation
+
 cd $STAGING_DIR
 git clone https://gitlab.freedesktop.org/libnice/libnice
 cd libnice
 meson --prefix=$ROOT_DIR/usr build && ninja -C build &&  ninja -C build install 
+
+# libsrtp installation
 
 cd $STAGING_DIR
 wget https://github.com/cisco/libsrtp/archive/v2.2.0.tar.gz
@@ -33,6 +38,9 @@ tar xfv v2.2.0.tar.gz
 cd libsrtp-2.2.0
 ./configure --prefix=$ROOT_DIR/usr --enable-openssl
 make shared_library && make install
+
+
+# janus-gateway installation
 
 cd $STAGING_DIR
 git clone https://github.com/bartbalaz/janus-gateway.git
@@ -50,6 +58,9 @@ rm -rf $JANUS_DIR/share
 rm $JANUS_DIR/etc/janus/*
 # Copy the container configuraiton
 cp $ROOT_DIR/../janus_config/* $JANUS_DIR/etc/janus/
-# Create the directory where the certificates directory will be mounted
+
+
+# Create additional directories for mounting the platform certificates maintained by certbot
+
 create_dir $ROOT_DIR/etc/certs
 create_dir $ROOT_DIR/archive
