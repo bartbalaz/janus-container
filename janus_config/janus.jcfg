@@ -14,7 +14,7 @@ general: {
 	#log_to_stdout = false					# Whether the Janus output should be written
 											# to stdout or not (default=true)
 	#log_to_file = "/path/to/janus.log"		# Whether to use a log file or not
-	debug_level = 5							# Debug/logging level, valid values are 0-7
+	debug_level = 4							# Debug/logging level, valid values are 0-7
 	#debug_timestamps = true				# Whether to show a timestamp for each log line
 	#debug_colors = false					# Whether colors should be disabled in the log
 	#debug_locks = true						# Whether to enable debugging of locks (very verbose!)
@@ -65,7 +65,7 @@ general: {
 									# risk having orphaned sessions (sessions not
 									# controlled by any transport and never freed).
 									# To avoid timeouts, keep-alives can be used.
-	#candidates_timeout = 45		# How long (in seconds) we should keep hold of
+	candidates_timeout = 60		# How long (in seconds) we should keep hold of
 									# pending (trickle) candidates before discarding
 									# them (default=45s). Notice that setting this
 									# to 0 will NOT disable the timeout, but will
@@ -199,7 +199,7 @@ certificates: {
 media: {
 	#ipv6 = true
 	#min_nack_queue = 500
-	rtp_port_range = "20000-20100"
+	rtp_port_range = "20000-21000"
 	#dtls_mtu = 1200
 	#no_media_timer = 1
 	#slowlink_threshold = 4
@@ -234,11 +234,11 @@ media: {
 # be used for gathering candidates, and enable or disable the
 # internal libnice debugging, if needed.
 nat: {
-	stun_server = "stun.l.google.com"
+	stun_server = "bart-access-01.eastus.cloudapp.azure.com" #"stun.l.google.com"
 	stun_port = 19302
 	nice_debug = true
-	#full_trickle = true
-	#ice_lite = true
+	full_trickle = true
+	ice_lite = false
 	#ice_tcp = true
 
 	# By default Janus tries to resolve mDNS (.local) candidates: even

@@ -55,3 +55,15 @@ general: {
 	# In case you want to use strings instead (e.g., a UUID), set string_ids to true.
 	string_ids = true
 }
+
+room-1234: {
+    description = "Demo Room"
+    secret = "adminpwd"
+    publishers = 6
+    bitrate = 128000
+    fir_freq = 10
+    #audiocodec = "opus"
+    #videocodec = "vp8"
+    record = false
+    #rec_dir = "/path/to/recordings-folder"
+}

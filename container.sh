@@ -9,7 +9,7 @@ JANUS_DIR=$ROOT_DIR/janus
 JANUS_CONFIG_DIR=$SCRIPT_DIR/janus_config
 IMAGE_NAME=janus
 IMAGE_VERSION=01
-FULL_IMAGE_NAME=$IMAGENAME:$IMAGE_VERSION
+FULL_IMAGE_NAME=$IMAGE_NAME:$IMAGE_VERSION
 
 #copy_requirement() {
 #   if [ ! -d "$(dirname $ROOT_DIR$(which $1))" ]; then
@@ -59,9 +59,9 @@ create() {
 	cd $STAGING_DIR
 	git clone https://github.com/bartbalaz/janus-gateway.git
 	cd janus-gateway
-	git checkout Nuance.0.0.3
+	git checkout nuance_01
 	/bin/bash $(pwd)/autogen.sh
-	/bin/bash $(pwd)/configure --prefix=$JANUS_DIR --enable-post-processing
+	/bin/bash $(pwd)/configure --with-sysroot=$ROOT_DIR --prefix=$JANUS_DIR --enable-post-processing
 	make
 	make install
 	make configs
@@ -71,7 +71,7 @@ create() {
 	# Empty the default configuration folder
 	rm $JANUS_DIR/etc/janus/*
 	# Copy the container configuraiton
-	cp $ROOT_DIR/../$JANUS_CONFIG_DIR/* $JANUS_DIR/etc/janus/
+	cp $JANUS_CONFIG_DIR/* $JANUS_DIR/etc/janus/
 
 
 	echo "Creating directory for mounting the certbot certificates"
@@ -82,15 +82,17 @@ create() {
 }
 
 build() {
+	cd $SCRIPT_DIR
+
 	echo "Building docker image into local repository"
 	echo "-------------------------------------------"
 	
-	docker rmi -f $FULL_IMAGE_NAME
-
 	docker build -t $FULL_IMAGE_NAME .
 }
 
 clean() {
+        cd $SCRIPT_DIR
+
 	echo "Cleaning"
 	echo "--------"
 	
@@ -99,10 +101,12 @@ clean() {
 }
 
 launch() {
+        cd $SCRIPT_DIR
+
 	echo "Launching in interactive mode"
 	echo "-----------------------------"
 
-	docker run -it  -p 8089:8089 -p 8088:8088 -p 7889:7889 -v /etc/letsencrypt/live/bart-janus-02.eastus.cloudapp.azure.com:/etc/certs -v /etc/letsencrypt/archive:/archive janus
+	docker run -it  -p 8089:8089 -p 8088:8088 -p 7889:7889 -v /etc/letsencrypt/live/bart-janus-02.eastus.cloudapp.azure.com:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME
 
 }
 
