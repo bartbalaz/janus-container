@@ -95,6 +95,8 @@ create() {
 	/bin/bash $(pwd)/autogen.sh
 	export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$ROOT_DIR/usr/lib/pkgconfig:$ROOT_DIR/usr/lib/x86_64-linux-gnu/pkgconfig
 	export CFLAGS=$CFLAGS -I$ROOT_DIR/usr/include
+	export CPPFLAGS=$CFLAGS -I$ROOT_DIR/usr/include
+
 	/bin/bash $(pwd)/configure --with-sysroot=$ROOT_DIR --prefix=$JANUS_DST_DIR --enable-post-processing
 	#--with-sysroot=$ROOT_DIR
 	make
