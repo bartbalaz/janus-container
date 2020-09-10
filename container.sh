@@ -45,6 +45,12 @@ create_dir() {
    fi
 }
 
+purge_dir() {
+   if [ -d "$1" ]; then
+      rm -rf $1
+   fi
+}
+
 create() {
 
 	echo "Creating root and staging directories"
@@ -95,19 +101,24 @@ create() {
 	make configs
 	
 	# Remove all the unecessary files and folders (not usefull in a container context)
-	rm -rf $JANUS_DST_INCLUDE_DIR
-	rm -rf $JANUS_DST_SHARE_DIR
+	echo "Removing include and share directories"
+	echo "--------------------------------------------------------"
+	purge_dir $JANUS_DST_INCLUDE_DIR
+	purge_dir $JANUS_DST_SHARE_DIR
 	
-	# Remove default files from the configuration folder
-	rm $JANUS_DST_CONFIG_DIR/*
+	# Remove default files from the configuration folders
+	echo "Removing default configuration"
+	echo "--------------------------------------------------------"
+	purge_dir $JANUS_DST_CONFIG_DIR
 	
 	# Copy the janus custom configuraiton
+	echo "Copying custop configuration"
+	echo "--------------------------------------------------------"
 	cp $JANUS_SRC_CONFIG_DIR/* $JANUS_DST_CONFIG_DIR
 	
 	# Copy html examples
 	echo "Copying the HTML examples"
 	echo "--------------------------------------------------------"
-
 	create_dir $JANUS_DST_HTML_DIR
 	cp -R $JANUS_SRC_HTML_DIR/* $JANUS_DST_HTML_DIR
 
