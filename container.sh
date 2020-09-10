@@ -24,6 +24,7 @@ TOP_DIR=$(pwd)
 
 ROOT_DIR=$TOP_DIR/root
 STAGING_DIR=$TOP_DIR/staging
+SCRIPT_DIR=$TOP_DIR/scripts
 
 JANUS_SRC_CONFIG_DIR=$TOP_DIR/janus_config
 JANUS_SRC_HTML_DIR=$STAGING_DIR/janus/html
@@ -86,6 +87,7 @@ create() {
 	cd $JANUS_CLONE_DIR
 	[ ! -z "$JANUS_VERSION" ] && git checkout $JANUS_VERSION
 	/bin/bash $(pwd)/autogen.sh
+	export PKG_CONFIG_PATH=$ROOT_DIR/usr/lib/pkgconfig:$ROOT_DIR/usr/lib/x86_64-linux-gnu/pkgconfig
 	/bin/bash $(pwd)/configure --with-sysroot=$ROOT_DIR --prefix=$JANUS_DST_DIR --enable-post-processing
 	make
 	make install
@@ -102,8 +104,11 @@ create() {
 	cp $JANUS_SRC_CONFIG_DIR/* $JANUS_DST_CONFIG_DIR
 	
 	# Copy html examples
+	echo "Copying the HTML examples"
+	echo "--------------------------------------------------------"
+
 	create_dir $JANUS_DST_HTML_DIR
-	cp -R $JANUS_SRC_HTML_DIR $JANUS_DST_HTML_DIR
+	cp -R $JANUS_SRC_HTML_DIR/* $JANUS_DST_HTML_DIR
 
 	echo "Creating directory for mounting the certbot certificates"
 	echo "--------------------------------------------------------"
@@ -112,6 +117,10 @@ create() {
 	create_dir $ROOT_DIR/archive
 	
 	#Copy the startup script
+	echo "Copying the startup script into the root directory"
+	echo "--------------------------------------------------------"
+	
+	cp $SCRIPT_DIR/start.sh $ROOT_DIR
 	
 }
 

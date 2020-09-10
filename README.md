@@ -121,7 +121,9 @@ steps for some additional convenience settings.
 1. Install the tools necessary for building janus-gateway
 	```bash
 	sudo apt update
-	sudo apt install -y libssl-dev build-essential graphviz default-jdk flex bison cmake libtool automake liblua5.3-dev pkg-config gengetopt 
+	sudo apt install -y python3-pip libglib2.0-dev libssl-dev build-essential graphviz default-jdk flex bison cmake libtool automake liblua5.3-dev pkg-config gengetopt 
+	sudo pip3 install meson
+	sudo pip3 install ninja
 	```
 	
 ## Build procedure
