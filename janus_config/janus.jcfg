@@ -43,11 +43,11 @@ general: {
 									# a valid token in all requests. Useful if
 									# you want to authenticate requests from web
 									# users.
-	#token_auth_secret = "janustokensecret"	# Use HMAC-SHA1 signed tokens (with token_auth). Note that
+	#token_auth_secret = "janus"	# Use HMAC-SHA1 signed tokens (with token_auth). Note that
 									# without this, the Admin API MUST
 									# be enabled, as tokens are added and removed
 									# through messages sent there.
-	admin_secret = "janusadminsecret"	# String that all Janus requests must contain
+	admin_secret = "janusoverlord"	# String that all Janus requests must contain
 									# to be accepted/authorized by the admin/monitor.
 									# only needed if you enabled the admin API
 									# in any of the available transports.
@@ -65,7 +65,7 @@ general: {
 									# risk having orphaned sessions (sessions not
 									# controlled by any transport and never freed).
 									# To avoid timeouts, keep-alives can be used.
-	candidates_timeout = 60		# How long (in seconds) we should keep hold of
+	#candidates_timeout = 45		# How long (in seconds) we should keep hold of
 									# pending (trickle) candidates before discarding
 									# them (default=45s). Notice that setting this
 									# to 0 will NOT disable the timeout, but will
@@ -199,7 +199,7 @@ certificates: {
 media: {
 	#ipv6 = true
 	#min_nack_queue = 500
-	rtp_port_range = "20000-21000"
+	#rtp_port_range = "20000-40000"
 	#dtls_mtu = 1200
 	#no_media_timer = 1
 	#slowlink_threshold = 4
@@ -234,9 +234,9 @@ media: {
 # be used for gathering candidates, and enable or disable the
 # internal libnice debugging, if needed.
 nat: {
-	stun_server = "bart-access-01.eastus.cloudapp.azure.com" #"stun.l.google.com"
+	stun_server = "stun.l.google.com"
 	stun_port = 19302
-	nice_debug = true
+	nice_debug = false
 	full_trickle = true
 	ice_lite = false
 	#ice_tcp = true
@@ -317,7 +317,7 @@ nat: {
 	# Just beware that the ICE ignore list is not used if an enforce list
 	# has been configured. By default, Janus ignores all interfaces whose
 	# name starts with 'vmnet', to skip VMware interfaces:
-	#ice_ignore_list = "vmnet"
+	ice_ignore_list = "vmnet"
 
 	# In case you want to allow Janus to start even if the configured STUN or TURN
 	# server is unreachable, you can set 'ignore_unreachable_ice_server' to true.
@@ -336,9 +336,8 @@ nat: {
 # names to identify the plugins to disable. By default all available
 # plugins are enabled and loaded at startup.
 plugins: {
-	disable = "libjanus_voicemail.so, libjanus_nosip.so, libjanus_sip.so, libjanus_streaming.so, libjanus_voicemail.so"
+	#disable = "libjanus_voicemail.so,libjanus_recordplay.so"
 }
-
 
 # You can choose which of the available transports should be enabled or
 # not. Use the 'disable' directive to prevent Janus from loading one
@@ -346,7 +345,7 @@ plugins: {
 # to identify the transports to disable. By default all available
 # transports are enabled and loaded at startup.
 transports: {
-	disable = "libjanus_rabbitmq.so"
+	#disable = "libjanus_rabbitmq.so"
 }
 
 # As a core feature, Janus can log either on the standard output, or to
@@ -376,7 +375,7 @@ loggers: {
 # between statistics for each handle. Setting it to 0 disables them (but
 # not other media-related events).
 events: {
-	broadcast = true
+	#broadcast = true
 	#disable = "libjanus_sampleevh.so"
 	#stats_period = 5
 }

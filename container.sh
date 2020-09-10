@@ -1,30 +1,48 @@
 #! /bin/bash
 
-# Parameters
+# Configuration - Set these variables to the appropriate values
 
-SCRIPT_DIR=$(pwd)
-ROOT_DIR=$SCRIPT_DIR/root
-STAGING_DIR=$SCRIPT_DIR/staging
-JANUS_DIR=$ROOT_DIR/janus
-JANUS_CONFIG_DIR=$SCRIPT_DIR/janus_config
+# Repository to fetch Janus sources from
+JANUS_REPO=
+
+# Version of the Janus sources to checkout
+JANUS_VERSION=
+
+# Target image name
 IMAGE_NAME=janus
+
+# Target image tag
 IMAGE_VERSION=01
+
+# Name of the host including the fqdn (e.g. <host>.<domain>), please note that it may be difficult 
+# to automate this parameter (e.g. by using 'hostname' command) because of the variety of
+# environments where the returned values may not be appropriate
+HOST_NAME=
+
+# Global variables - Should not need to be modified
+TOP_DIR=$(pwd)
+
+ROOT_DIR=$TOP_DIR/root
+STAGING_DIR=$TOP_DIR/staging
+
+JANUS_SRC_CONFIG_DIR=$TOP_DIR/janus_config
+JANUS_SRC_HTML_DIR=$STAGING_DIR/janus/html
+
+JANUS_DST_DIR=$ROOT_DIR/janus
+JANUS_DST_HTML_DIR=$JANUS_DST_DIR/html
+JANUS_DST_HTML_MOUNT_DIR=$ROOT_DIR/html
+JANUS_DST_INCLUDE_DIR=$JANUS_DST_DIR/include
+JANUS_DST_SHARE_DIR=$JANUS_DST_DIR/share
+JANUS_DST_CONFIG_DIR=$JANUS_DST_DIR/etc/janus
+
+JANUS_CLONE_DIR=$STAGING_DIR/janus
 FULL_IMAGE_NAME=$IMAGE_NAME:$IMAGE_VERSION
-
-#copy_requirement() {
-#   if [ ! -d "$(dirname $ROOT_DIR$(which $1))" ]; then
-#      mkdir -p $(dirname $ROOT_DIR$(which $1))
-#   fi
-#   cp $(which $1) $ROOT_DIR$(which $1)
-#}
-
 
 create_dir() {
    if [ ! -d "$1" ]; then
       mkdir -p $1
    fi
 }
-
 
 create() {
 
@@ -53,26 +71,39 @@ create() {
 	make shared_library && make install
 
 
-	echo "Installing janus-gateway Nuance.0.0.3 version"
+	echo "Installing janus-gateway"
 	echo "---------------------------------------------"
 
 	cd $STAGING_DIR
-	git clone https://github.com/bartbalaz/janus-gateway.git
+	if [ -z "$JANUS_REPO"]
+	then 
+		echo "Cloning from default repo to $JANUS_CLONE_DIR"
+		git clone https://github.com/meetecho/janus-gateway.git $JANUS_CLONE_DIR
+	else
+		echo "Cloning from $JANUS_REPO to $JANUS_CLONE_DIR"
+		git clone $JANUS_REPO $JANUS_CLONE_DIR
+	fi
 	cd janus-gateway
-	git checkout nuance_01
+	[ ! -z "$JANUS_VERSION" ] && git checkout $JANUS_VERSION
 	/bin/bash $(pwd)/autogen.sh
-	/bin/bash $(pwd)/configure --with-sysroot=$ROOT_DIR --prefix=$JANUS_DIR --enable-post-processing
+	/bin/bash $(pwd)/configure --with-sysroot=$ROOT_DIR --prefix=$JANUS_DST_DIR --enable-post-processing
 	make
 	make install
 	make configs
+	
 	# Remove all the unecessary files and folders (not usefull in a container context)
-	rm -rf $JANUS_DIR/include
-	rm -rf $JANUS_DIR/share
-	# Empty the default configuration folder
-	rm $JANUS_DIR/etc/janus/*
-	# Copy the container configuraiton
-	cp $JANUS_CONFIG_DIR/* $JANUS_DIR/etc/janus/
-
+	rm -rf $JANUS_DST_INCLUDE_DIR
+	rm -rf $JANUS_DST_SHARE_DIR
+	
+	# Remove default files from the configuration folder
+	rm $JANUS_DST_CONFIG_DIR/*
+	
+	# Copy the janus custom configuraiton
+	cp $JANUS_SRC_CONFIG_DIR/* $JANUS_DST_CONFIG_DIR
+	
+	# Copy html examples
+	create_dir $JANUS_DST_HTML_DIR
+	cp -R $JANUS_SRC_HTML_DIR $JANUS_DST_HTML_DIR
 
 	echo "Creating directory for mounting the certbot certificates"
 	echo "--------------------------------------------------------"
@@ -82,7 +113,7 @@ create() {
 }
 
 build() {
-	cd $SCRIPT_DIR
+	cd $TOP_DIR
 
 	echo "Building docker image into local repository"
 	echo "-------------------------------------------"
@@ -91,7 +122,7 @@ build() {
 }
 
 clean() {
-        cd $SCRIPT_DIR
+        cd $TOP_DIR
 
 	echo "Cleaning"
 	echo "--------"
@@ -101,15 +132,24 @@ clean() {
 }
 
 launch() {
-        cd $SCRIPT_DIR
+    cd $TOP_DIR
+
+	echo "Launching in non-interactive mode"
+	echo "---------------------------------"
+
+	docker run -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME
+
+}
+
+launchi() {
+    cd $TOP_DIR
 
 	echo "Launching in interactive mode"
 	echo "-----------------------------"
 
-	docker run -it  -p 8089:8089 -p 8088:8088 -p 7889:7889 -v /etc/letsencrypt/live/bart-janus-02.eastus.cloudapp.azure.com:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME
+	docker run -it  -p 8089:8089 -p 7889:7889 -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME
 
 }
-
 
 for arg in "$@" 
 do
@@ -125,6 +165,10 @@ do
 			;;
 		launch)
 			launch
+			;;
+		launchi)
+			launchi
+
 	esac
 done
 
