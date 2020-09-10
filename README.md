@@ -2,7 +2,7 @@
 
 ## Introduction
 This is an experimental project attempting to put Janus gatweay into a Docker container using the default *bridge* network driver. 
-Pleasae note that this project is not intended to be used as a *product* (although in the future it may evolve in that direction) but instead as 
+Please note that this project is not intended to be used as a *product* (although in the future it may evolve in that direction) but instead as 
 an experimentation and conclusion sharing platform.
 
 ## Installation procedure
@@ -99,6 +99,11 @@ steps for some additional convenience settings.
 		```bash
 		certbot renew --dry-run --allow-subset-of-names
 		```
+1. Clone the project repo
+	```bash
+	git clone https://github.com/bartbalaz/janus-container.git
+	cd janus-container
+	```
 1. Create a http server configuration
 	1. Copy the configuration file 
 		```bash
@@ -116,14 +121,9 @@ steps for some additional convenience settings.
 1. Install the tools necessary for building janus-gateway
 	```bash
 	sudo apt update
-	sudo install -y build-essential graphviz default-jdk flex bison cmake libtool automake liblua5.3-dev  pkg-config gengetopt  
+	sudo apt install -y libssl-dev build-essential graphviz default-jdk flex bison cmake libtool automake liblua5.3-dev pkg-config gengetopt 
 	```
-
-
-
-- Nginx
-- Certbot (let's encrypt)
-
+	
 ## Build procedure
 
 

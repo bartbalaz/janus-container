@@ -83,7 +83,7 @@ create() {
 		echo "Cloning from $JANUS_REPO to $JANUS_CLONE_DIR"
 		git clone $JANUS_REPO $JANUS_CLONE_DIR
 	fi
-	cd janus-gateway
+	cd $JANUS_CLONE_DIR
 	[ ! -z "$JANUS_VERSION" ] && git checkout $JANUS_VERSION
 	/bin/bash $(pwd)/autogen.sh
 	/bin/bash $(pwd)/configure --with-sysroot=$ROOT_DIR --prefix=$JANUS_DST_DIR --enable-post-processing
