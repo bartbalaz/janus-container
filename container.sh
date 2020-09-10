@@ -110,6 +110,9 @@ create() {
 
 	create_dir $ROOT_DIR/etc/certs
 	create_dir $ROOT_DIR/archive
+	
+	#Copy the startup script
+	
 }
 
 build() {

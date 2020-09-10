@@ -28,7 +28,6 @@ steps for some additional convenience settings.
 	```bash
 	sudo apt install nginx
 	sudo apt update
-	sudo mkdir /var/www/html/container
 	```
 1. Install the TLS certificates and the automatic certificate update service
 	1. Add the Certbot PPA to your list of repositories
@@ -100,6 +99,20 @@ steps for some additional convenience settings.
 		```bash
 		certbot renew --dry-run --allow-subset-of-names
 		```
+1. Create a http server configuration
+	1. Copy the configuration file 
+		```bash
+		sudo mkdir /var/www/html/container
+		sudo cp ./scripts/nginx.conf /etc/nginx/sites-available/<host>.<domain>.conf
+		sudo ln -s /etc/nginx/sites-available/<host>.<domain>.conf /etc/nginx/sites-enabled/
+		```
+	1. Edit the configuration file */etc/nginx/sites-available/<host>.<domain>.conf* and replace the *<host>.<domain>* place holder
+	with your appropriate value.
+	1. Restart the Nginx server
+		```bash
+		sudo systemctl restart nginx
+		```
+	
 1. Install the tools necessary for building janus-gateway
 	```bash
 	sudo apt update
