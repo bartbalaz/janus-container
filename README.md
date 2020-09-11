@@ -3,7 +3,7 @@
 ## Introduction
 This is an experimental project attempting to put Janus gatweay into a Docker container using the default *bridge* network driver. 
 Please note that this project is not intended to be used as a *product* (although in the future it may evolve in that direction) but instead as 
-an experimentation and conclusion sharing platform.
+an experimentation and conclusion sharing platform. In the below instructions we assume s
 
 ## Installation procedure
 This section provides the default installation procedure. This is a single host installation, the host will allow to build and run the 
@@ -135,9 +135,25 @@ steps for some additional convenience settings.
 	export IMAGE_VERSION = # Target image version (e.g. 01) 
 	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>) 
 	```
-2. Review the janus gateway configuration files stored in *<checkout directory>/janus_config* directory.
-3. 
-
+1. Review the Janus gateway configuration files stored in *<checkout directory>/janus_config* directory.
+1. Create the prerequisites for the image
+	```bash
+	cd <checkout directory>
+	./container.sh create
+	```
+1. Build the image 
+	```bash
+	cd <checkout directory>
+	./container.sh build
+	```
+1. Launch the image 
+	```bash
+	cd <checkout directory>
+	./container.sh launch
+	```
+	Note if you would like to launch the image in interactive mode (e.g. for debugging) replace the *launch* command with *launchi*
+1. Try
+	
 
 ## Experimentation and observations
 
