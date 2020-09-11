@@ -1,6 +1,6 @@
 FROM ubuntu:18.04
 
-# API secure ports only
+# API secure ports only 
 EXPOSE 8089/tcp 7889/tcp
 
 # First we need to add all the tools and components
@@ -8,4 +8,4 @@ RUN apt update && DEBIAN_FRONTEND="noninteractive" apt install -y libmicrohttpd-
 
 ADD root/ /
 
-ENTRYPOINT ["/start.sh"]
+# ENTRYPOINT ["/start.sh"]
