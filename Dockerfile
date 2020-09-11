@@ -8,4 +8,4 @@ RUN apt update && DEBIAN_FRONTEND="noninteractive" apt install -y libmicrohttpd-
 
 ADD root/ /
 
-# ENTRYPOINT ["/start.sh"]
+ENTRYPOINT ["/start.sh"]

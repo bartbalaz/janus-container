@@ -3,21 +3,21 @@
 # Configuration - Set these variables to the appropriate values
 
 # Repository to fetch Janus sources from
-JANUS_REPO=
+#JANUS_REPO=
 
 # Version of the Janus sources to checkout
-JANUS_VERSION=
+#JANUS_VERSION=
 
 # Target image name
-IMAGE_NAME=janus
+#IMAGE_NAME=janus
 
 # Target image tag
-IMAGE_VERSION=01
+#IMAGE_VERSION=01
 
 # Name of the host including the fqdn (e.g. <host>.<domain>), please note that it may be difficult 
 # to automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate
-HOST_NAME=
+#HOST_NAME=
 
 # Global variables - Should not need to be modified
 TOP_DIR=$(pwd)
