@@ -19,6 +19,9 @@
 # environments where the returned values may not be appropriate
 #export HOST_NAME=
 
+# Test the environment variables
+
+
 # Global variables - Should not need to be modified
 TOP_DIR=$(pwd)
 
@@ -49,6 +52,10 @@ purge_dir() {
    if [ -d "$1" ]; then
       rm -rf $1
    fi
+}
+
+test_variable() {
+	if [ -z "$1"] &&
 }
 
 create() {
@@ -95,8 +102,9 @@ create() {
 	/bin/bash $(pwd)/autogen.sh
 	
 	export PKG_CONFIG_PATH=$ROOT_DIR/usr/lib/pkgconfig:$ROOT_DIR/usr/lib/x86_64-linux-gnu/pkgconfig 
-	/bin/bash $(pwd)/configure --with-sysroot=$ROOT_DIR --prefix=$JANUS_DST_DIR --enable-post-processing CFLAGS=-I$ROOT_DIR/usr/include 
-	#PKG_CONFIG_PATH=$ROOT_DIR/usr/lib/pkgconfig:$ROOT_DIR/usr/lib/x86_64-linux-gnu/pkgconfig
+	/bin/bash $(pwd)/configure --prefix=$JANUS_DST_DIR CFLAGS=-I$ROOT_DIR/usr/include 
+	
+	#--with-sysroot=$ROOT_DIR
 	 
 	make
 	make install
