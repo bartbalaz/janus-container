@@ -1,4 +1,4 @@
-# Janus container [work in progress - !!DOES NOT WORK YET!!]
+# Janus container [work in progress]
 
 ## Introduction
 This is an experimental project attempting to put Janus gatweay into a Docker container using the default *bridge* network driver. 
@@ -126,6 +126,7 @@ steps for some additional convenience settings.
 	sudo pip3 install meson
 	sudo pip3 install ninja
 	```
+
 ## Build procedure
 1. Define the build parameters
 	```bash
@@ -152,8 +153,14 @@ steps for some additional convenience settings.
 	./container.sh launch
 	```
 	Note if you would like to launch the image in interactive mode (e.g. for debugging) replace the *launch* command with *launchi*
-1. Try
-	
+1. Try the image by browsing to *https://<host>.<domain>*
+
+## Installation notes:
+* The docker image needs to mount the folder containing the Letsencrypt certificates, namely */etc/letsencrypt/live/<host>.<domain>* (container */etc/certs* 
+folder) folder that contains the links to the currently valid certifictes and */etc/letsencrypt/archive* (contaienr */archive* folder) where all 
+the certifictes are stored. 
+* The image mounts also */var/www/html/container* folder where upon startup it copies the sample html files. If multiple images are launched 
+simultaneously with the *launch(i)* command, each image will override the content of that folder (last one to be launched wins).
 
 ## Experimentation and observations
 
