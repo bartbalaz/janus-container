@@ -66,7 +66,7 @@ steps for some additional convenience settings.
 		- - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 		(Y)es/(N)o: <b>N</b>
 		No names were found in your configuration files. Please enter in your domain
-		name(s) (comma and/or space separated) (Enter 'c' to cancel): <b>\<host\>.\<domain\><b/>
+		name(s) (comma and/or space separated) (Enter 'c' to cancel): <b>\<host\>.\<domain\></b>
 		
 		Obtaining a new certificate
 		Performing the following challenges:
@@ -113,7 +113,7 @@ steps for some additional convenience settings.
 		sudo ln -s /etc/nginx/sites-available/<host>.<domain>.conf /etc/nginx/sites-enabled/
 		```
 		Note that the */var/www/html/container* directory will be used to store
-	1. Edit the configuration file */etc/nginx/sites-available/<host>.<domain>.conf* and replace the *<host>.<domain>* place holder
+	1. Edit the configuration file */etc/nginx/sites-available/\<host\>.\<domain\>.conf* and replace the *\<host\>.\<domain\>* place holder
 	with your host and domain name.
 	1. Restart the Nginx server
 		```bash
