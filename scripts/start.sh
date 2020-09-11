@@ -5,7 +5,7 @@ echo "Removing the content of /html directory"
 rm -rf /html/*
 
 # Copy the janus http content 
-echo "Copying the content of the container /html directory"
+echo "Copying janus samples into /html directory"
 cp -R /janus/html/* /html
 
 # Start the service 
