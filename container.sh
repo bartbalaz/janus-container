@@ -100,7 +100,7 @@ create() {
 	 
 	make
 	make install
-	make configs
+	make configs 
 	
 	# Remove all the unecessary files and folders (not usefull in a container context)
 	echo "Removing include and share directories"
@@ -116,6 +116,7 @@ create() {
 	# Copy the janus custom configuraiton
 	echo "Copying custop configuration"
 	echo "--------------------------------------------------------"
+	mkdir $JANUS_DST_CONFIG_DIR
 	cp $JANUS_SRC_CONFIG_DIR/* $JANUS_DST_CONFIG_DIR
 	
 	echo "Copying the Janus HTML examples"
