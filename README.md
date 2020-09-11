@@ -101,32 +101,42 @@ steps for some additional convenience settings.
 		```
 1. Clone the project repo
 	```bash
-	git clone https://github.com/bartbalaz/janus-container.git
+	git clone https://github.com/bartbalaz/janus-container.git <checkout directory>
 	cd janus-container
 	```
 1. Create a http server configuration
 	1. Copy the configuration file 
 		```bash
 		sudo mkdir /var/www/html/container
+		cd <checkout directory>
 		sudo cp ./scripts/nginx.conf /etc/nginx/sites-available/<host>.<domain>.conf
 		sudo ln -s /etc/nginx/sites-available/<host>.<domain>.conf /etc/nginx/sites-enabled/
 		```
+		Note that the */var/www/html/container* directory will be used to store
 	1. Edit the configuration file */etc/nginx/sites-available/<host>.<domain>.conf* and replace the *<host>.<domain>* place holder
-	with your appropriate value.
+	with your host and domain name.
 	1. Restart the Nginx server
 		```bash
 		sudo systemctl restart nginx
 		```
-	
 1. Install the tools necessary for building janus-gateway
 	```bash
 	sudo apt update
-	sudo apt install -y python3-pip libavutil-dev libavcodec-dev libavformat-dev libogg-dev libcurl4-openssl-dev libconfig-dev libjansson-dev libglib2.0-dev libssl-dev build-essential graphviz default-jdk flex bison cmake libtool automake liblua5.3-dev pkg-config gengetopt 
+	sudo apt install -y python3-pip libmicrohttpd-dev libavutil-dev libavcodec-dev libavformat-dev libogg-dev libcurl4-openssl-dev libconfig-dev libjansson-dev libglib2.0-dev libssl-dev build-essential graphviz default-jdk flex bison cmake libtool automake liblua5.3-dev pkg-config gengetopt 
 	sudo pip3 install meson
 	sudo pip3 install ninja
 	```
 ## Build procedure
-
+1. Define the build parameters
+	```bash
+	export JANUS_REPO = # Repository to fetch Janus gatweay sources from (e.g. https://github.com/bartbalaz/janus-gateway.git)
+	export JANUS_VERSION = # Version of the Janus gateway sources to checkout (e.g. v0.10.0)
+	export IMAGE_NAME = # Target image name (e.g. janus)
+	export IMAGE_VERSION = # Target image version (e.g. 01) 
+	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>) 
+	```
+2. Review the janus gateway configuration files stored in *<checkout directory>/janus_config* directory.
+3. 
 
 
 ## Experimentation and observations

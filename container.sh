@@ -1,23 +1,15 @@
 #!/bin/bash
 
-# Configuration - Set these variables to the appropriate values outside of this script
+# Configuration - Set these parameters to the appropriate values, we suggest to create a configuration file with 
+# a set of export statements that is "source'd" before the execution of this script
 
-# Repository to fetch Janus sources from
-#export JANUS_REPO=
-
-# Version of the Janus sources to checkout
-#export JANUS_VERSION=
-
-# Target image name
-#export IMAGE_NAME=janus
-
-# Target image tag
-#export IMAGE_VERSION=01
-
-# Name of the host including the fqdn (e.g. <host>.<domain>), please note that it may be difficult 
-# to automate this parameter (e.g. by using 'hostname' command) because of the variety of
-# environments where the returned values may not be appropriate
-#export HOST_NAME=
+# JANUS_REPO - Repository to fetch Janus gatweay sources from (e.g. https://github.com/bartbalaz/janus-gateway.git)
+# JANUS_VERSION - Version of the Janus gateway sources to checkout (e.g. v0.10.0)
+# IMAGE_NAME - Target image name (e.g. janus)
+# IMAGE_VERSION - Target image version (e.g. 01) 
+# HOST_NAME - Name of the host including the fqdn (e.g. <host>.<domain>), please note that it may be difficult 
+# to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
+# environments where the returned values may not be appropriate 
 
 # Global variables - Should not need to be modified
 TOP_DIR=$(pwd)
@@ -39,28 +31,30 @@ JANUS_DST_CONFIG_DIR=$JANUS_DST_DIR/etc/janus
 JANUS_CLONE_DIR=$STAGING_DIR/janus
 FULL_IMAGE_NAME=$IMAGE_NAME:$IMAGE_VERSION
 
+# create_dir PATH
 create_dir() {
-   if [ ! -d "$1" ]; then
-      mkdir -p $1
-   fi
+	if [ ! -d "$1" ]; then
+		mkdir -p $1
+	fi
 }
 
+# purge_dir PATH
 purge_dir() {
-   if [ -d "$1" ]; then
-      rm -rf $1
-   fi
+	if [ -d "$1" ]; then
+		rm -rf $1
+	fi
 }
 
 # test_parameter PARAMETER_NAME $PARAMETER_NAME [mandatory|optional]
 test_parameter() {
-  if [ -z "$2" ] && [ "$3" == "mandatory" ]; then
-    echo "Mandatory parameter $1 emtpy"
-    exit 1
-  elif [ -z "$2" ]; then
-    echo "Non-mandatory parameter $1 empty"
-  else
-    echo Parameter "$1 = $2"
-  fi
+	if [ -z "$2" ] && [ "$3" == "mandatory" ]; then
+		echo "Mandatory parameter $1 emtpy"
+		exit 1
+	elif [ -z "$2" ]; then
+		echo "Non-mandatory parameter $1 empty"
+	else
+		echo Parameter "$1 = $2"
+	fi
 }
 
 create() {
@@ -198,15 +192,35 @@ launchi() {
 	echo "Launching in interactive mode"
 	echo "-----------------------------"
 
-	docker run -it  -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME
+	docker run -it  -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME\
+}
 
+help() {
+	echo "$1 [create|build|clean|launch|launchi|help]"
+	echo
+	echo "This script permits to create, store in local registry and launch a janus-gateway image"
+	echo "The following commands are available:"
+	echo
+	echo "create	Creates the prerequisites for the image i.e. checks out and builds the base components, creates a staging"
+	echo "directory as well as a root directory that will be added to the image"
+	echo "build		Bulds the Docker image using the Dockerfile and the file tree and stores it in the local Docker repository"
+	echo "clean		Removes all the created prerequisites"
+	echo "launch	Launches the image"
+	echo "launchi	Launches the image in interactive mode"
+	echo "help		Displays this image"
+	echo
+	echo "Multiple commands may be specified, please note that the commands are execued in the order they are specified"
+	echo 
+	echo "The script requires the following environment variables:"
+	echo
+	echo "JANUS_REPO - Repository to fetch Janus gatweay sources from (e.g. https://github.com/bartbalaz/janus-gateway.git)"
+	echo "JANUS_VERSION - Version of the Janus gateway sources to checkout (e.g. v0.10.0)"
+	echo "IMAGE_NAME - Target image name (e.g. janus)"
+	echo "IMAGE_VERSION - Target image version (e.g. 01)"
+	echo "HOST_NAME - Name of the host including the fqdn (e.g. <host>.<domain>)" 
 }
 
 # Main script
-
-# Test the parameters
-
-
 for arg in "$@" 
 do
 	case $arg in 
@@ -224,7 +238,10 @@ do
 			;;
 		launchi)
 			launchi
-
+			;;
+		help)
+			help $0
+			;;
 	esac
 done
 
