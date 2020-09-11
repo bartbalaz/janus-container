@@ -55,7 +55,6 @@ purge_dir() {
 test_parameter() {
   if [ -z "$2"] && [ "$3" == "mandatory" ] then
     echo Mandatory parameter "$1" emtpy
-    exit 1
   elif [ -z "$2"] then
     echo Non-mandatory parameter "$1" empty
   else
