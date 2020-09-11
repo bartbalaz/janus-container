@@ -61,7 +61,7 @@ test_parameter() {
 			echo Non-mandatory parameter $1 empty
 		else
 			echo Parameter $1 = $2
-		fir
+		fi
 	fi
 }
 
