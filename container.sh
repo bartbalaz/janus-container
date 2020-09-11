@@ -94,7 +94,7 @@ create() {
 	[ ! -z "$JANUS_VERSION" ] && git checkout $JANUS_VERSION
 	/bin/bash $(pwd)/autogen.sh
 	 
-	/bin/bash $(pwd)/configure --with-sysroot=$ROOT_DIR --prefix=$JANUS_DST_DIR --enable-post-processing CFLAGS=-I$ROOT_DIR/usr/include PKG_CONFIG_PATH=$ROOT_DIR/usr/lib/pkgconfig:$ROOT_DIR/usr/lib/x86_64-linux-gnu/pkgconfig
+	/bin/bash $(pwd)/configure --with-sysroot=$ROOT_DIR --prefix=$JANUS_DST_DIR --enable-post-processing CFLAGS=-I$ROOT_DIR/usr/include PKG_CONFIG_PATH=$ROOT_DIR/usr/lib
 	 
 	make
 	make install

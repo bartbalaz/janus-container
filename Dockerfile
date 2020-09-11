@@ -1,8 +1,6 @@
-# Start with a Ubuntu 20.04 image
+FROM ubuntu:18.04
 
-FROM ubuntu:20.04
-
-# API port
+# API secure ports only
 EXPOSE 8089/tcp 7889/tcp
 
 # First we need to add all the tools and components
