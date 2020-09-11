@@ -118,22 +118,18 @@ create() {
 	echo "--------------------------------------------------------"
 	cp $JANUS_SRC_CONFIG_DIR/* $JANUS_DST_CONFIG_DIR
 	
-	# Copy html examples
-	echo "Copying the HTML examples"
+	echo "Copying the Janus HTML examples"
 	echo "--------------------------------------------------------"
 	create_dir $JANUS_DST_HTML_DIR
 	cp -R $JANUS_SRC_HTML_DIR/* $JANUS_DST_HTML_DIR
 
 	echo "Creating directory for mounting the certbot certificates"
 	echo "--------------------------------------------------------"
-
 	create_dir $ROOT_DIR/etc/certs
 	create_dir $ROOT_DIR/archive
 	
-	#Copy the startup script
 	echo "Copying the startup script into the root directory"
 	echo "--------------------------------------------------------"
-	
 	cp $SCRIPT_DIR/start.sh $ROOT_DIR
 	
 }
@@ -173,7 +169,7 @@ launchi() {
 	echo "Launching in interactive mode"
 	echo "-----------------------------"
 
-	docker run -it  -p 8089:8089 -p 7889:7889 -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME
+	docker run -it  -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME
 
 }
 
