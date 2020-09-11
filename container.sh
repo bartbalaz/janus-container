@@ -55,6 +55,7 @@ purge_dir() {
 test_parameter() {
   if [ -z "$2" ] && [ "$3" == "mandatory" ]; then
     echo "Mandatory parameter $1 emtpy"
+    exit 1
   elif [ -z "$2" ]; then
     echo "Non-mandatory parameter $1 empty"
   else
@@ -63,6 +64,8 @@ test_parameter() {
 }
 
 create() {
+    test_parameter JANUS_REPO $JANUS_REPO optional
+    test_parameter JANUS_REPO $JANUS_VERSION optional
 
 	echo "Creating root and staging directories"
 	echo "-------------------------------------"
@@ -150,6 +153,9 @@ create() {
 }
 
 build() {
+    test_parameter IMAGE_NAME $IMAGE_NAME mandatory
+    test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
+
 	cd $TOP_DIR
 
 	echo "Building docker image into local repository"
@@ -159,7 +165,7 @@ build() {
 }
 
 clean() {
-        cd $TOP_DIR
+    cd $TOP_DIR
 
 	echo "Cleaning"
 	echo "--------"
@@ -169,6 +175,10 @@ clean() {
 }
 
 launch() {
+    test_parameter IMAGE_NAME $IMAGE_NAME mandatory
+    test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
+    test_parameter HOST_NAME $HOST_NAME mandatory
+
     cd $TOP_DIR
 
 	echo "Launching in non-interactive mode"
@@ -179,6 +189,10 @@ launch() {
 }
 
 launchi() {
+    test_parameter IMAGE_NAME $IMAGE_NAME mandatory
+    test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
+    test_parameter HOST_NAME $HOST_NAME mandatory
+
     cd $TOP_DIR
 
 	echo "Launching in interactive mode"
@@ -191,11 +205,6 @@ launchi() {
 # Main script
 
 # Test the parameters
-test_parameter JANUS_REPO $JANUS_REPO optional
-test_parameter JANUS_REPO $JANUS_VERSION optional
-test_parameter IMAGE_NAME $IMAGE_NAME mandatory
-test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
-test_parameter HOST_NAME $HOST_NAME mandatory
 
 
 for arg in "$@" 
