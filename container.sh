@@ -93,7 +93,7 @@ create() {
 	echo "---------------------------------------------"
 
 	cd $STAGING_DIR
-	if [ -z "$JANUS_REPO"]
+	if [ -z "$JANUS_REPO" ]
 	then 
 		echo "Cloning from default repo to $JANUS_CLONE_DIR"
 		git clone https://github.com/meetecho/janus-gateway.git $JANUS_CLONE_DIR
