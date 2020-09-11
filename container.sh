@@ -121,10 +121,9 @@ create() {
 	echo "Copying the Janus HTML examples"
 	echo "--------------------------------------------------------"
 	create_dir $JANUS_DST_HTML_DIR
-	craete_dir $JANUS_DST_HTML_MOUNT_DIR
+	create_dir $JANUS_DST_HTML_MOUNT_DIR
 	cp -R $JANUS_SRC_HTML_DIR/* $JANUS_DST_HTML_DIR
 	
-
 	echo "Creating directory for mounting the certbot certificates"
 	echo "--------------------------------------------------------"
 	create_dir $ROOT_DIR/etc/certs
