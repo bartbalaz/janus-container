@@ -19,7 +19,13 @@
 # environments where the returned values may not be appropriate
 #export HOST_NAME=
 
-# Test the environment variables
+
+# Test the parameters
+test_parameter JANUS_REPO $JANUS_REPO optional
+test_parameter JANUS_REPO $JANUS_VERSION optional
+test_parameter IMAGE_NAME $IMAGE_NAME mandatory
+test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
+test_parameter HOST_NAME $HOST_NAME mandatory
 
 
 # Global variables - Should not need to be modified
@@ -54,8 +60,18 @@ purge_dir() {
    fi
 }
 
-test_variable() {
-	if [ -z "$1"] &&
+# test_parameter PARAMETER_NAME $PARAMETER_NAME [mandatory|optional]
+test_parameter() {
+	if [ -z "$2"] && [ "$3" == "mandatory" ]; then
+		echo Mandatory parameter $1 emtpy
+		exit 1
+	else
+		if [ -z "$2"]; then
+			echo Non-mandatory parameter $1 empty
+		else
+			echo Parameter $1 = $2
+		fir
+	fi
 }
 
 create() {
