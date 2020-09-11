@@ -19,15 +19,6 @@
 # environments where the returned values may not be appropriate
 #export HOST_NAME=
 
-
-# Test the parameters
-test_parameter JANUS_REPO $JANUS_REPO optional
-test_parameter JANUS_REPO $JANUS_VERSION optional
-test_parameter IMAGE_NAME $IMAGE_NAME mandatory
-test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
-test_parameter HOST_NAME $HOST_NAME mandatory
-
-
 # Global variables - Should not need to be modified
 TOP_DIR=$(pwd)
 
@@ -199,6 +190,16 @@ launchi() {
 	docker run -it  -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME
 
 }
+
+# Main script
+
+# Test the parameters
+test_parameter JANUS_REPO $JANUS_REPO optional
+test_parameter JANUS_REPO $JANUS_VERSION optional
+test_parameter IMAGE_NAME $IMAGE_NAME mandatory
+test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
+test_parameter HOST_NAME $HOST_NAME mandatory
+
 
 for arg in "$@" 
 do
