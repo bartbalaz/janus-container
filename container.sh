@@ -131,6 +131,7 @@ create() {
 	echo "Copying the startup script into the root directory"
 	echo "--------------------------------------------------------"
 	cp $SCRIPT_DIR/start.sh $ROOT_DIR
+	chmod a+x $ROOT_DIR/start.sh 
 	
 }
 
