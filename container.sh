@@ -59,7 +59,7 @@ test_parameter() {
   elif [ -z "$2"] then
     echo Non-mandatory parameter "$1" empty
   else
-	echo Parameter "$1" = "$2"
+    echo Parameter "$1" = "$2"
   fi
 }
 
