@@ -239,7 +239,7 @@ do
 		launchi)
 			launchi
 			;;
-		help)
+		helpi)
 			print_help $0
 			;;
 	esac
