@@ -31,7 +31,7 @@ JANUS_DST_CONFIG_DIR=$JANUS_DST_DIR/etc/janus
 JANUS_CLONE_DIR=$STAGING_DIR/janus
 FULL_IMAGE_NAME=$IMAGE_NAME:$IMAGE_VERSION
 
-# create_dir PATH
+ create_dir PATH
 create_dir() {
 	if [ ! -d "$1" ]; then
 		mkdir -p $1
@@ -169,30 +169,30 @@ clean() {
 }
 
 launch() {
-    test_parameter IMAGE_NAME $IMAGE_NAME mandatory
-    test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
-    test_parameter HOST_NAME $HOST_NAME mandatory
+	test_parameter IMAGE_NAME $IMAGE_NAME mandatory
+	test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
+	test_parameter HOST_NAME $HOST_NAME mandatory
 
-    cd $TOP_DIR
+	cd $TOP_DIR
 
 	echo "Launching in non-interactive mode"
 	echo "---------------------------------"
 
 	docker run -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME
-
 }
 
-launchi() {
-    test_parameter IMAGE_NAME $IMAGE_NAME mandatory
-    test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
-    test_parameter HOST_NAME $HOST_NAME mandatory
 
-    cd $TOP_DIR
+launchi() {
+	test_parameter IMAGE_NAME $IMAGE_NAME mandatory
+	test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
+	test_parameter HOST_NAME $HOST_NAME mandatory
+
+	cd $TOP_DIR
 
 	echo "Launching in interactive mode"
 	echo "-----------------------------"
 
-	docker run -it  -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME\
+	docker run -it  -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME
 }
 
 print_help() {
@@ -219,7 +219,7 @@ print_help() {
 	echo "IMAGE_VERSION - Target image version (e.g. 01)"
 	echo "HOST_NAME - Name of the host including the fqdn (e.g. <host>.<domain>)" 
 }
-
+#
 # Main script
 for arg in "$@" 
 do
