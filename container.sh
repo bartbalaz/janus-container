@@ -58,8 +58,8 @@ test_parameter() {
 }
 
 create() {
-    test_parameter JANUS_REPO $JANUS_REPO optional
-    test_parameter JANUS_REPO $JANUS_VERSION optional
+	test_parameter JANUS_REPO $JANUS_REPO optional
+	test_parameter JANUS_REPO $JANUS_VERSION optional
 
 	echo "Creating root and staging directories"
 	echo "-------------------------------------"
@@ -239,7 +239,7 @@ do
 		launchi)
 			launchi
 			;;
-		helpi)
+		help)
 			print_help $0
 			;;
 	esac
