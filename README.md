@@ -1,9 +1,8 @@
 # Janus container [work in progress]
 
 ## Introduction
-This is an experimental project attempting to put Janus gatweay into a Docker container using the default *bridge* network driver. 
-Please note that this project is not intended to be used as a *product* (although in the future it may evolve in that direction) but instead as 
-an experimentation and conclusion sharing platform. In the below instructions we assume s
+This is an experimental project attempting to put Janus gatweay into a Docker container using the default *bridge* network driver. The current
+strategy is to create a build and execution host. 
 
 ## Installation procedure
 This section provides the default installation procedure. This is a single host installation, the host will allow to build and run the 
@@ -156,14 +155,17 @@ steps for some additional convenience settings.
 1. Try the image by browsing to *https://<host>.<domain>*
 
 ## Installation notes:
-* The docker image needs to mount the folder containing the Letsencrypt certificates, namely */etc/letsencrypt/live/<host>.<domain>* (container */etc/certs* 
-folder) folder that contains the links to the currently valid certifictes and */etc/letsencrypt/archive* (contaienr */archive* folder) where all 
-the certifictes are stored. 
-* The image mounts also */var/www/html/container* folder where upon startup it copies the sample html files. If multiple images are launched 
+* The container mounts the folder containing the Letsencrypt certificates, namely folder */etc/letsencrypt/live/<host>.<domain>* (to container 
+folder */etc/certs*) that contains the links to the currently valid certifictes and folder */etc/letsencrypt/archive* (to container folder */archive*)
+ where all the certifictes are stored. The host certificates will be automatically updated by Certbot. These certificates are used for securing 
+ the APIs (TLS) as well as RT(C)P media (DTLS)
+* The container mounts also */var/www/html/container* folder where upon startup it copies the sample html files. If multiple images are launched 
 simultaneously with the *launch(i)* command, each image will override the content of that folder (last one to be launched wins).
 
 ## Experimentation and observations
-
+Our initial analysis has lead us the same concusion as [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) presentation 
+by Meetecho. After further investigation we have found that the problem comes from the MASQUERADE netfilter target that is used by Linux Docker
+implementation for NAT outgoing traffic from the container. For some reason when MASQUERADE receives a 
 
 
 ## Conclusion
