@@ -195,7 +195,7 @@ launchi() {
 	docker run -it  -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME\
 }
 
-help() {
+print_help() {
 	echo "$1 [create|build|clean|launch|launchi|help]"
 	echo
 	echo "This script permits to create, store in local registry and launch a janus-gateway image"
@@ -240,7 +240,7 @@ do
 			launchi
 			;;
 		help)
-			help $0
+			print_help $0
 			;;
 	esac
 done
