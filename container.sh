@@ -31,7 +31,7 @@ JANUS_DST_CONFIG_DIR=$JANUS_DST_DIR/etc/janus
 JANUS_CLONE_DIR=$STAGING_DIR/janus
 FULL_IMAGE_NAME=$IMAGE_NAME:$IMAGE_VERSION
 
- create_dir PATH
+# create_dir PATH
 create_dir() {
 	if [ ! -d "$1" ]; then
 		mkdir -p $1
