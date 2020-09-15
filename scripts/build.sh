@@ -19,9 +19,9 @@ echo
 
 # Global variables - Should not need to be modified
 # When the top directory is "/", keep the TOP_DIR variable empty
-TOP_DIR=
+TOP_DIR=/image
 
-ROOT_DIR=$TOP_DIR/image_root
+ROOT_DIR=$TOP_DIR/root
 STAGING_DIR=$TOP_DIR/staging
 SCRIPT_DIR=$TOP_DIR/scripts
 
@@ -174,5 +174,5 @@ chmod a+x $START_SCRIPT_DST
 echo
 echo " Building the Janus docker image "
 echo "---------------------------------"
-cd /root
-docker build -t $FULL_IMAGE_NAME -f ../Dockerfile.exec .
+cd $TOP_DIR
+docker build -t $FULL_IMAGE_NAME -f Dockerfile.exec .

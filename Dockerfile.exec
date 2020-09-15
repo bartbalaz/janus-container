@@ -9,6 +9,6 @@ RUN apt update && DEBIAN_FRONTEND="noninteractive" apt install -y libconfig-dev 
 # Other libraries that may be necessary for the execution depending on the enabled features
 # libssl-dev libsofia-sip-ua-dev libglib2.0-dev libopus-dev libogg-dev liblua5.3-dev libconfig-dev gengetopt libavutil-dev libavcodec-dev libavformat-dev
 
-ADD /image_root/ /
+ADD ./image_root/ /
 
 ENTRYPOINT ["/start.sh"]
