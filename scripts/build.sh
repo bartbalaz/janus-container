@@ -67,7 +67,7 @@ test_parameter() {
 	elif [ -z "$2" ]; then
 		echo "Non-mandatory parameter $1 empty"
 	else
-		echo Parameter "$1 = $2"
+		echo "Parameter $1 = $2 OK"
 	fi
 }
 
@@ -174,4 +174,5 @@ chmod a+x $START_SCRIPT_DST
 echo
 echo " Building the Janus docker image "
 echo "---------------------------------"
+cd /
 docker build -t $FULL_IMAGE_NAME -f Dockerfile.exec .
