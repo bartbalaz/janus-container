@@ -2,8 +2,8 @@
 # Trigger the image build by issuing:
 # docker build -t <buld image name> -f Dockerfile.build .
 # To run the image:
-# docker run -v /var/run/docker.sock:/var/run/docker.sock <buld image name> 
-# docker run -it -v /var/run/docker.sock:/var/run/docker.sock janus_build /bin/bash
+# docker run -rm -v /var/run/docker.sock:/var/run/docker.sock <buld image name> 
+# docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock janus_build /bin/bash
 
 
 FROM ubuntu:18.04

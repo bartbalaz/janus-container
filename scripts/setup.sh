@@ -17,7 +17,7 @@ DEBIAN_FRONTEND="noninteractive" apt install -y apt-transport-https ca-certifica
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 apt update
-DEBIAN_FRONTEND="noninteractive" apt install docker-ce docker-ce-cli containerd.io
+DEBIAN_FRONTEND="noninteractive" apt install -y docker-ce docker-ce-cli containerd.io
 
 echo "Step 3 - Installing the build requirements"
 echo "------------------------------------------"
