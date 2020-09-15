@@ -8,9 +8,12 @@
 FROM ubuntu:18.04
 
 # Add the scripts
-ADD scripts/setup.sh scripts/build.sh scripts/start.sh Dockerfile.exec janus_config /image/
+ADD scripts/setup.sh scripts/build.sh scripts/start.sh Dockerfile.exec /image/
+
+# Add janus configuration
+ADD janus_config /image/janus_config
 
 # First we need to add all the tools and components
 RUN image/setup.sh
 
-# ENTRYPOINT build.sh
+# ENTRYPOINT /image/build.sh
