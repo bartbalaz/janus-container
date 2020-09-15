@@ -18,7 +18,8 @@ echo
 # environments where the returned values may not be appropriate 
 
 # Global variables - Should not need to be modified
-TOP_DIR=/
+# When the top directory is "/" 
+TOP_DIR=
 
 ROOT_DIR=$TOP_DIR/image_root
 STAGING_DIR=$TOP_DIR/staging
@@ -33,7 +34,7 @@ JANUS_DST_HTML_MOUNT_DIR=$ROOT_DIR/html
 JANUS_DST_INCLUDE_DIR=$JANUS_DST_DIR/include
 JANUS_DST_SHARE_DIR=$JANUS_DST_DIR/share
 JANUS_DST_CONFIG_DIR=$JANUS_DST_DIR/etc/janus
-JANUS_DST_RECORDING_DIR=$JANUS_DST_DIR/bin/janus/janus-recordings
+JANUS_DST_RECORDING_DIR=$JANUS_DST_DIR/bin/janus-recordings
 
 CERTIFICATE_LINKS_DIR=$ROOT_DIR/etc/certs
 CERTIFICATE_ARCHIVE_DIR=$ROOT_DIR/archive
