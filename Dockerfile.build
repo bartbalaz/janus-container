@@ -8,5 +8,5 @@ FROM ubuntu:18.04
 ADD scripts/build.sh /
 
 # First we need to add all the tools and components
-RUN scripts/setup.sh
+RUN setup.sh
 
