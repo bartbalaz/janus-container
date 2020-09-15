@@ -56,8 +56,8 @@ echo "---------------------"
 docker build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
 
 echo
-echo " Executing the buld image "
-echo "--------------------------"
+echo " Executing the build image "
+echo "---------------------------"
 docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock \
 -e "JANUS_REPO=$JANUS_REPO" \
 -e "JANUS_VERSION=$JANUS_VERSION" \
