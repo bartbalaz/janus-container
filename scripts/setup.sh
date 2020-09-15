@@ -11,12 +11,12 @@ apt install build-essential
 
 
 # Step 2 - Install docker
-apt-get update
-apt-get install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+apt update
+apt install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
 sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-apt-get update
-apt-get install docker-ce docker-ce-cli containerd.io
+apt update
+apt install docker-ce docker-ce-cli containerd.io
 
 # Step 3 - Install buld requirements
 apt update
