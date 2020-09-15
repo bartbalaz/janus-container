@@ -16,4 +16,4 @@ ADD janus_config /image/janus_config
 # First we need to add all the tools and components
 RUN image/setup.sh
 
-# ENTRYPOINT /image/build.sh
+ENTRYPOINT /image/build.sh
