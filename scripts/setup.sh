@@ -1,9 +1,9 @@
 #!/bin/bash
 
 echo
-echo "************"
-echo " Running $0 "
-echo "************" 
+echo "***************************"
+echo "    Running $0 "
+echo "***************************" 
 echo
 
 echo

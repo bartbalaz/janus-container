@@ -14,7 +14,7 @@ ADD scripts/setup.sh /setup.sh
 ADD scripts/build.sh /bulid.sh
 
 # Add the janus configuration 
-ADD janus_config /
+ADD janus_config /janus_config
 
 # First we need to add all the tools and components
 RUN /setup.sh
