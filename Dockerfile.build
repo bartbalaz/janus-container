@@ -1,12 +1,17 @@
 # Docker file for creating a Janus build image.
 # Trigger the image build by issuing:
 # docker build -t <buld image name> -f Dockerfile.build .
+# To run the image:
+# docker run -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock <buld image name>
 
 FROM ubuntu:18.04
 
-# Add the build script
-ADD scripts/build.sh /
+# Add the setup script
+ADD scripts/setup.sh /setup.sh
+
+# Add the buld script
+ADD scripts/build.sh /bulid.sh
 
 # First we need to add all the tools and components
-RUN setup.sh
+RUN /setup.sh
 

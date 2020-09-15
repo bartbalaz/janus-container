@@ -4,11 +4,9 @@
 # This script isntalls Docker binaries but uses the host docker engine via the docker socket
 # by running: docker run -p 8080:8080 -v /var/run/docker.sock:/var/run/docker.sock
 
-
 # Step 1 -  Install the basic pre-requisites
 apt install git
 apt install build-essential
-
 
 # Step 2 - Install docker
 apt update
