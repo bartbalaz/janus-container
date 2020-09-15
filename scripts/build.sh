@@ -23,7 +23,6 @@ TOP_DIR=/image
 
 ROOT_DIR=$TOP_DIR/root
 STAGING_DIR=$TOP_DIR/staging
-SCRIPT_DIR=$TOP_DIR/scripts
 
 JANUS_SRC_CONFIG_DIR=$TOP_DIR/janus_config
 JANUS_SRC_HTML_DIR=$STAGING_DIR/janus/html
