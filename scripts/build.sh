@@ -1,9 +1,9 @@
 #!/bin/bash
 
 echo
-echo "************"
-echo " Running $0 "
-echo "************" 
+echo "***************************"
+echo "    Running $0 "
+echo "***************************" 
 echo
 
 # Configuration - Set these parameters to the appropriate values, we suggest to create a configuration file with 
@@ -18,7 +18,7 @@ echo
 # environments where the returned values may not be appropriate 
 
 # Global variables - Should not need to be modified
-# When the top directory is "/" 
+# When the top directory is "/", keep the TOP_DIR variable empty
 TOP_DIR=
 
 ROOT_DIR=$TOP_DIR/image_root
