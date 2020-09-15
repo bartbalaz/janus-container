@@ -11,7 +11,7 @@ FROM ubuntu:18.04
 ADD scripts/setup.sh /setup.sh
 
 # Add the buld script
-ADD scripts/build.sh /bulid.sh
+ADD scripts/build.sh /build.sh
 
 # Add the janus configuration 
 ADD janus_config /janus_config

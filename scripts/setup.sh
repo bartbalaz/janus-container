@@ -12,7 +12,7 @@ echo "-------------------------------------"
 echo
 apt update
 apt install git
-DEBIAN_FRONTEND="noninteractive" apt install -y apt-utils build-essential tree
+DEBIAN_FRONTEND="noninteractive" apt install -y apt-utils build-essential tree wget vim
 
 echo
 echo "Step 2 - Installing docker"
