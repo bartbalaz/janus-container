@@ -27,6 +27,13 @@ JANUS_DST_HTML_MOUNT_DIR=$ROOT_DIR/html
 JANUS_DST_INCLUDE_DIR=$JANUS_DST_DIR/include
 JANUS_DST_SHARE_DIR=$JANUS_DST_DIR/share
 JANUS_DST_CONFIG_DIR=$JANUS_DST_DIR/etc/janus
+JANUS_DST_RECORDING_DIR=$JANUS_DST_DIR/bin/janus/janus-recordings
+
+CERTIFICATE_LINKS_DIR=$ROOT_DIR/etc/certs
+CERTIFICATE_ARCHIVE_DIR=$ROOT_DIR/archive
+
+START_SCRIPT_SRC=$SCRIPT_DIR/start.sh
+START_SCRIPT_DST=$ROOT_DIR/start.sh 
 
 JANUS_CLONE_DIR=$STAGING_DIR/janus
 FULL_IMAGE_NAME=$IMAGE_NAME:$IMAGE_VERSION
@@ -85,10 +92,8 @@ create() {
 	./configure --prefix=$ROOT_DIR/usr --enable-openssl
 	make shared_library && make install
 
-
 	echo "Installing janus-gateway"
 	echo "---------------------------------------------"
-
 	cd $STAGING_DIR
 	if [ -z "$JANUS_REPO" ]
 	then 
@@ -104,25 +109,20 @@ create() {
 	
 	export PKG_CONFIG_PATH=$ROOT_DIR/usr/lib/pkgconfig:$ROOT_DIR/usr/lib/x86_64-linux-gnu/pkgconfig 
 	/bin/bash $(pwd)/configure --prefix=$JANUS_DST_DIR CFLAGS=-I$ROOT_DIR/usr/include 
-	
-	#--with-sysroot=$ROOT_DIR
 	 
 	make
 	make install
 	make configs 
 	
-	# Remove all the unecessary files and folders (not usefull in a container context)
 	echo "Removing include and share directories"
 	echo "--------------------------------------------------------"
 	purge_dir $JANUS_DST_INCLUDE_DIR
 	purge_dir $JANUS_DST_SHARE_DIR
 	
-	# Remove default files from the configuration folders
 	echo "Removing default configuration"
 	echo "--------------------------------------------------------"
 	purge_dir $JANUS_DST_CONFIG_DIR
 	
-	# Copy the janus custom configuraiton
 	echo "Copying custop configuration"
 	echo "--------------------------------------------------------"
 	mkdir $JANUS_DST_CONFIG_DIR
@@ -136,26 +136,29 @@ create() {
 	
 	echo "Creating directory for mounting the certbot certificates"
 	echo "--------------------------------------------------------"
-	create_dir $ROOT_DIR/etc/certs
-	create_dir $ROOT_DIR/archive
+	create_dir $CERTIFICATE_LINKS_DIR
+	create_dir $CERTIFICATE_ARCHIVE_DIR
+
+	echo "Creating directory for saving the recordings"
+	echo "--------------------------------------------------------"
+	createdir $JANUS_DST_RECORDING_DIR
 	
 	echo "Copying the startup script into the root directory"
 	echo "--------------------------------------------------------"
-	cp $SCRIPT_DIR/start.sh $ROOT_DIR
-	chmod a+x $ROOT_DIR/start.sh 
-	
+	cp $START_SCRIPT_SRC $START_SCRIPT_DST
+	chmod a+x $START_SCRIPT_DST
 }
 
 build() {
-    test_parameter IMAGE_NAME $IMAGE_NAME mandatory
-    test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
+	test_parameter IMAGE_NAME $IMAGE_NAME mandatory
+	test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
 
 	cd $TOP_DIR
 
 	echo "Building docker image into local repository"
 	echo "-------------------------------------------"
 	
-	docker build -t $FULL_IMAGE_NAME .
+	docker build -t $FULL_IMAGE_NAME -f Dockerfile.exec .
 }
 
 clean() {
@@ -178,7 +181,7 @@ launch() {
 	echo "Launching in non-interactive mode"
 	echo "---------------------------------"
 
-	docker run -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME
+	docker run -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME -v /var/janus/recordings:/janus/bin/janus-recordings
 }
 
 
@@ -192,7 +195,7 @@ launchi() {
 	echo "Launching in interactive mode"
 	echo "-----------------------------"
 
-	docker run -it  -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME
+	docker run -it  -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive $FULL_IMAGE_NAME -v /var/janus/recordings:/janus/bin/janus-recordings
 }
 
 print_help() {

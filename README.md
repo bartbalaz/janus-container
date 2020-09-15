@@ -118,6 +118,10 @@ steps for some additional convenience settings.
 		```bash
 		sudo systemctl restart nginx
 		```
+1. Create a recording folder
+	```bash
+	sudo mkdir -p /var/janus/recordings
+	```
 1. Install the tools necessary for building janus-gateway
 	```bash
 	sudo apt update
