@@ -1,14 +1,20 @@
 #!/bin/bash
 
-echo "Running $0"
+echo
+echo "************"
+echo " Running $0 "
+echo "************" 
+echo
 
+echo
 echo "Step 1 - Installing the prerequisites"
 echo "-------------------------------------"
 echo
 apt update
 apt install git
-DEBIAN_FRONTEND="noninteractive" apt install -y apt-utils build-essential 
+DEBIAN_FRONTEND="noninteractive" apt install -y apt-utils build-essential tree
 
+echo
 echo "Step 2 - Installing docker"
 echo "--------------------------"
 echo
@@ -19,6 +25,7 @@ add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(
 apt update
 DEBIAN_FRONTEND="noninteractive" apt install -y docker-ce docker-ce-cli containerd.io
 
+echo
 echo "Step 3 - Installing the build requirements"
 echo "------------------------------------------"
 echo

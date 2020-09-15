@@ -13,7 +13,10 @@ ADD scripts/setup.sh /setup.sh
 # Add the buld script
 ADD scripts/build.sh /bulid.sh
 
+# Add the janus configuration 
+ADD janus_config /
+
 # First we need to add all the tools and components
 RUN /setup.sh
 
-ENTRYPOINT build.sh
+# ENTRYPOINT build.sh

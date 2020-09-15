@@ -70,6 +70,9 @@ test_parameter() {
 	fi
 }
 
+
+# Main script starts here
+
 test_parameter JANUS_REPO $JANUS_REPO optional
 test_parameter JANUS_REPO $JANUS_VERSION optional
 
