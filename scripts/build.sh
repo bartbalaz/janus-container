@@ -74,26 +74,32 @@ test_parameter() {
 
 # Main script starts here
 
+echo
+echo " Verifying parameters "
+echo "----------------------"
 test_parameter JANUS_REPO $JANUS_REPO optional
 test_parameter JANUS_REPO $JANUS_VERSION optional
+test_parameter IMAGE_NAME $IMAGE_NAME mandatory
+test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
 
-echo "Creating root and staging directories"
-echo "-------------------------------------"
 
+echo
+echo " Creating root and staging directories "
+echo "---------------------------------------"
 create_dir $ROOT_DIR
 create_dir $STAGING_DIR
 
-echo "Installing libnice (latest avaialble version)"
-echo "---------------------------------------------"
-
+echo
+echo " Installing libnice (latest avaialble version) "
+echo "-----------------------------------------------"
 cd $STAGING_DIR
 git clone https://gitlab.freedesktop.org/libnice/libnice
 cd libnice
 meson --prefix=$ROOT_DIR/usr build && ninja -C build &&  ninja -C build install 
 
-echo "Installing libsrtp-2.2.0"
-echo "------------------------"
-
+echo
+echo " Installing libsrtp-2.2.0 "
+echo "--------------------------"
 cd $STAGING_DIR
 wget https://github.com/cisco/libsrtp/archive/v2.2.0.tar.gz
 tar xfv v2.2.0.tar.gz
@@ -101,8 +107,9 @@ cd libsrtp-2.2.0
 ./configure --prefix=$ROOT_DIR/usr --enable-openssl
 make shared_library && make install
 
-echo "Installing janus-gateway"
-echo "---------------------------------------------"
+echo
+echo " Building janus-gateway "
+echo "--------------------------"
 cd $STAGING_DIR
 if [ -z "$JANUS_REPO" ]
 then 
@@ -123,36 +130,48 @@ make
 make install
 make configs 
 
-echo "Removing include and share directories"
-echo "--------------------------------------------------------"
+echo
+echo " Removing include and share directories "
+echo "----------------------------------------"
 purge_dir $JANUS_DST_INCLUDE_DIR
 purge_dir $JANUS_DST_SHARE_DIR
 
-echo "Removing default configuration"
-echo "--------------------------------------------------------"
+echo
+echo " Removing default configuration "
+echo "--------------------------------"
 purge_dir $JANUS_DST_CONFIG_DIR
 
-echo "Copying custop configuration"
-echo "--------------------------------------------------------"
+echo
+echo " Copying custop configuration "
+echo "------------------------------"
 mkdir $JANUS_DST_CONFIG_DIR
 cp $JANUS_SRC_CONFIG_DIR/* $JANUS_DST_CONFIG_DIR
 
-echo "Copying the Janus HTML examples"
-echo "--------------------------------------------------------"
+echo
+echo " Copying the Janus HTML examples "
+echo "---------------------------------"
 create_dir $JANUS_DST_HTML_DIR
 create_dir $JANUS_DST_HTML_MOUNT_DIR
 cp -R $JANUS_SRC_HTML_DIR/* $JANUS_DST_HTML_DIR
 
-echo "Creating directory for mounting the certbot certificates"
-echo "--------------------------------------------------------"
+echo
+echo " Creating directory for mounting the certbot certificates "
+echo "----------------------------------------------------------"
 create_dir $CERTIFICATE_LINKS_DIR
 create_dir $CERTIFICATE_ARCHIVE_DIR
 
-echo "Creating directory for saving the recordings"
-echo "--------------------------------------------------------"
+echo
+echo " Creating directory for saving the recordings "
+echo "----------------------------------------------"
 create_dir $JANUS_DST_RECORDING_DIR
 
-echo "Copying the startup script into the root directory"
-echo "--------------------------------------------------------"
+echo
+echo " Copying the startup script into the root directory "
+echo "----------------------------------------------------"
 cp $START_SCRIPT_SRC $START_SCRIPT_DST
 chmod a+x $START_SCRIPT_DST
+
+echo
+echo " Building the Janus docker image "
+echo "---------------------------------"
+docker build -t $FULL_IMAGE_NAME -f Dockerfile.exec .

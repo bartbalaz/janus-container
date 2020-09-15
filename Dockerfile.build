@@ -8,7 +8,7 @@
 FROM ubuntu:18.04
 
 # Add the setup script
-ADD scripts/setup.sh scripts/build.sh scripts/start.sh /
+ADD scripts/setup.sh scripts/build.sh scripts/start.sh Dockerfile.exec /
 
 # Add the janus configuration 
 ADD janus_config /janus_config
