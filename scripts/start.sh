@@ -10,4 +10,5 @@ cp -R /janus/html/* /html
 
 # Start the service 
 echo "Starting the service"
-/janus/bin/janus -F /janus/etc/janus
+cd /janus/bin
+./janus -F /janus/etc/janus
