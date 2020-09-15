@@ -174,5 +174,5 @@ chmod a+x $START_SCRIPT_DST
 echo
 echo " Building the Janus docker image "
 echo "---------------------------------"
-cd /
-docker build -t $FULL_IMAGE_NAME -f Dockerfile.exec .
+cd /root
+docker build -t $FULL_IMAGE_NAME -f ../Dockerfile.exec .
