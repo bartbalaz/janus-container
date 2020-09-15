@@ -1,5 +1,11 @@
 #!/bin/bash
 
+echo
+echo "************"
+echo " Running $0 "
+echo "************" 
+echo
+
 # Configuration - Set these parameters to the appropriate values, we suggest to create a configuration file with 
 # a set of export statements that is "source'd" before the execution of this script
 
@@ -14,7 +20,7 @@
 # Global variables - Should not need to be modified
 TOP_DIR=/
 
-ROOT_DIR=$TOP_DIR/root
+ROOT_DIR=$TOP_DIR/image_root
 STAGING_DIR=$TOP_DIR/staging
 SCRIPT_DIR=$TOP_DIR/scripts
 
@@ -63,7 +69,6 @@ test_parameter() {
 		echo Parameter "$1 = $2"
 	fi
 }
-
 
 test_parameter JANUS_REPO $JANUS_REPO optional
 test_parameter JANUS_REPO $JANUS_VERSION optional
