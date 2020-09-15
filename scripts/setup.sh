@@ -13,7 +13,6 @@ echo "Step 1 - Installing the prerequisites and convenience packages"
 echo "--------------------------------------------------------------"
 echo
 apt update
-apt install git
 DEBIAN_FRONTEND="noninteractive" apt install -y apt-utils build-essential tree wget vim
 
 echo
