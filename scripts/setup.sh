@@ -7,8 +7,8 @@ echo "***************************"
 echo
 
 echo
-echo "Step 1 - Installing the prerequisites"
-echo "-------------------------------------"
+echo "Step 1 - Installing the prerequisites and convenience packages"
+echo "--------------------------------------------------------------"
 echo
 apt update
 apt install git

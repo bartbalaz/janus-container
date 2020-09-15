@@ -38,7 +38,7 @@ JANUS_DST_RECORDING_DIR=$JANUS_DST_DIR/bin/janus/janus-recordings
 CERTIFICATE_LINKS_DIR=$ROOT_DIR/etc/certs
 CERTIFICATE_ARCHIVE_DIR=$ROOT_DIR/archive
 
-START_SCRIPT_SRC=$SCRIPT_DIR/start.sh
+START_SCRIPT_SRC=/start.sh
 START_SCRIPT_DST=$ROOT_DIR/start.sh 
 
 JANUS_CLONE_DIR=$STAGING_DIR/janus
@@ -149,7 +149,7 @@ create_dir $CERTIFICATE_ARCHIVE_DIR
 
 echo "Creating directory for saving the recordings"
 echo "--------------------------------------------------------"
-createdir $JANUS_DST_RECORDING_DIR
+create_dir $JANUS_DST_RECORDING_DIR
 
 echo "Copying the startup script into the root directory"
 echo "--------------------------------------------------------"
