@@ -20,7 +20,8 @@ echo
 # environments where the returned values may not be appropriate 
 
 # Global variables - Should not need to be modified
-# When the top directory is "/", keep the TOP_DIR variable empty
+# This is the top directory inside the container where the staging subdirectory will be created for performing the build activities as
+# well as the root directory that will be added to the resulting Janus gateway image.
 TOP_DIR=/image
 
 ROOT_DIR=$TOP_DIR/root
@@ -143,9 +144,9 @@ echo "--------------------------------"
 purge_dir $JANUS_DST_CONFIG_DIR
 
 echo
-echo " Copying custop configuration "
+echo " Copying custom configuration "
 echo "------------------------------"
-mkdir $JANUS_DST_CONFIG_DIR
+create_dir $JANUS_DST_CONFIG_DIR
 cp $JANUS_SRC_CONFIG_DIR/* $JANUS_DST_CONFIG_DIR
 
 echo
