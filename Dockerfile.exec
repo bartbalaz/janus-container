@@ -11,4 +11,4 @@ RUN apt update && DEBIAN_FRONTEND="noninteractive" apt install -y libconfig-dev 
 
 ADD ./root/ /
 
-#ENTRYPOINT ["/start.sh"]
+ENTRYPOINT ["/start.sh"]
