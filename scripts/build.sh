@@ -11,8 +11,8 @@ echo
 
 # JANUS_REPO - Repository to fetch Janus gatweay sources from (e.g. https://github.com/bartbalaz/janus-gateway.git)
 # JANUS_VERSION - Version of the Janus gateway sources to checkout (e.g. v0.10.0)
-# IMAGE_NAME - Target image name (e.g. janus)
-# IMAGE_VERSION - Target image version (e.g. 01) 
+# TARGET_IMAGE_NAME - Target image name (e.g. janus)
+# TARGET_IMAGE_VERSION - Target image version (e.g. 01) 
 # HOST_NAME - Name of the host including the fqdn (e.g. <host>.<domain>), please note that it may be difficult 
 # to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate 
@@ -42,7 +42,7 @@ START_SCRIPT_SRC==$TOP_DIR/start.sh
 START_SCRIPT_DST=$ROOT_DIR/start.sh 
 
 JANUS_CLONE_DIR=$STAGING_DIR/janus
-FULL_IMAGE_NAME=$IMAGE_NAME:$IMAGE_VERSION
+FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_VERSION
 
 # create_dir PATH
 create_dir() {
@@ -78,8 +78,8 @@ echo " Verifying parameters "
 echo "----------------------"
 test_parameter JANUS_REPO $JANUS_REPO optional
 test_parameter JANUS_REPO $JANUS_VERSION optional
-test_parameter IMAGE_NAME $IMAGE_NAME mandatory
-test_parameter IMAGE_VERSION $IMAGE_VERSION mandatory
+test_parameter TARGET_IMAGE_NAME $TARGET_IMAGE_NAME mandatory
+test_parameter TARGET_IMAGE_VERSION $TARGET_IMAGE_VERSION mandatory
 
 
 echo
@@ -174,4 +174,4 @@ echo
 echo " Building the Janus docker image "
 echo "---------------------------------"
 cd $TOP_DIR
-docker build -t $FULL_IMAGE_NAME -f Dockerfile.exec .
+docker build -t $FULL_TARGET_IMAGE_NAME -f Dockerfile.exec .
