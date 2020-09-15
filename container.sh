@@ -67,10 +67,10 @@ docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock \
 $FULL_BUILD_IMAGE_NAME
 
 echo
-echo "To execute the Janus target image non-interactively issue the following command: "
+echo "To execute the Janus gateway target image non-interactively issue the following command: "
 echo "docker run --rm -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive/$HOST_NAME:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $FULL_TARGET_IMAGE_NAME"
 echo
-echo "To execute the Janus target image interactively issue the following command: "
+echo "To execute the Janus gateway target image interactively issue the following command: "
 echo "docker run --rm -it -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive/$HOST_NAME:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $FULL_TARGET_IMAGE_NAME"
 
 
