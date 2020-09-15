@@ -51,7 +51,7 @@ test_parameter BUILD_IMAGE_VERSION $BUILD_IMAGE_VERSION mandatory
 echo
 echo " Bulding build image "
 echo "---------------------"
-docker build -t FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
+docker build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
 
 echo
 echo " Executing the buld image "
