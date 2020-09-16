@@ -3,12 +3,14 @@
 ## Introduction
 This is an experimental project attempting to put Janus gatweay into a Docker container using the default *bridge* network driver. The strategy is to 
 create a build OCI image that will run the Docker tools as well as the Janus build environment. The build image will compile and create the target Janus gateway 
-image stored on the host image repository. This process allows to create a substantially smaller target Janus gateway immage (~300MB vs 1.3GB). 
-This process requires the setup of a Docker host that purpose is to store the buld and target images as well as to allow the execution of the target image. 
+image stored on the host image repository. This process allows to create a substantially smaller target Janus gateway image  than if a single
+image combining the build and execution (~300MB vs 1.3GB). 
+This process requires the setup of a Docker host that purpose is to store the buld and target images as well as to allow the execution of the target image for 
+the purpose of experimentation. 
 
 ## Host setup
 The figure below depicts the host configuration.
-![Host setup](doc/setup.jpg)
+![Host setup](doc/host_setup.jpg)
 
 The host contains the following componets:
 * Docker engine for executing the build and target images.
@@ -16,7 +18,8 @@ The host contains the following componets:
 * Cetbot certificate renewal service
 
 The Janus target image mounts the following host folders:
-* /var/www/
+* /var/www/html/container: Upon startup the target image copies the folder containing the Janus HTML samples. This folder is accessible through HTTP.
+* 
 
 
 
