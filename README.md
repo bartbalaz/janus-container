@@ -149,7 +149,7 @@ steps for some additional convenience settings.
 		sudo cp ./scripts/nginx.conf /etc/nginx/sites-available/<host>.<domain>.conf
 		sudo ln -s /etc/nginx/sites-available/<host>.<domain>.conf /etc/nginx/sites-enabled/
 		```
-		Note that the */var/www/html/container* directory will be used to store
+		Note that the */var/www/html/container* directory will be used to store the Janus HTML samples.
 	1. Edit the configuration file */etc/nginx/sites-available/\<host\>.\<domain\>.conf* and replace the *\<host\>.\<domain\>* place holder
 	with your host and domain name.
 	1. Restart the Nginx server
@@ -179,10 +179,13 @@ steps for some additional convenience settings.
 	```
 1. Launch the image by invoking either of the commands that are displayed at the end of a successful build.
 1. Try the image by browsing to *https://\<host\>.\<domain\>* Please note that:
-	* The video room plugin configuration is set to require string video room names which is not the Janus default configuraiton.
-	* The default configuration only uses the HTTPS transport through secure ports 8089 - janus-api and 7889 - janus-admin.
+	* The video room plugin configuration is set to require string video room names which is not the Janus gateway default configuraiton.
+	* The default configuration allows only HTTPS transport through secure ports 8089 - janus-api and 7889 - janus-admin.
 
 ## Experimentation and observations
+
+
+
 Our initial analysis has lead us the same concusion as [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) presentation 
 by Meetecho. After further investigation we have found that the problem comes from the MASQUERADE netfilter target that is used by Linux Docker
 implementation for NAT outgoing traffic from the container. For some reason when MASQUERADE receives a 
