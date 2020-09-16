@@ -7,6 +7,7 @@ image, target image for short, stored on the host image repository. This allows 
 was built (~300MB vs ~1.3GB). 
 This process requires the setup of a Docker host that purpose is to store the buld and target images as well as to allow the execution of the target image for 
 the purpose of experimentation. 
+
 Please note:
 * This project is **work in progress**
 * Only the video room with HTTP transport has been tried. Possibly other transports will require adjustments in the content of the target image (e.g. included Ubuntu packages)
@@ -162,14 +163,13 @@ steps for some additional convenience settings.
 ## Build procedure
 1. Define the build parameters
 	```bash
-	export JANUS_REPO = # Repository to fetch Janus gatweay sources from (e.g. https://github.com/bartbalaz/janus-gateway.git). 
-	If none is specified the default Meetech Janus gateway repository will be used
+	export JANUS_REPO = # Repository to fetch Janus gatweay sources from (e.g. https://github.com/bartbalaz/janus-gateway.git). If none is specified the default Meetech Janus gateway repository will be used
 	export JANUS_VERSION = # Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
 	export TARGET_IMAGE_NAME = # Target image name (e.g. janus), must be specified.
 	export TARGET_IMAGE_VERSION = # The version to tag the target image with (e.g. 01), must be specified.
 	export BUILD_IMAGE_NAME = # Name of the build image (e.g. janus_build), must be specified.
 	export BUILD_IMAGE_VERSION = # The version to tag the build image with (e.g. 01), must be specified.
-	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>) , must be specified.
+	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>), must be specified.
 	```
 1. Review the Janus gateway configuration files stored in *<checkout directory>/janus_config* directory these files will be integrated into the target image.
 1. Launch the build process
@@ -178,7 +178,7 @@ steps for some additional convenience settings.
 	./container.sh
 	```
 1. Launch the image by invoking either of the commands that are displayed at the end of a successful build.
-1. Try the image by browsing to *https://<host>.<domain>*
+1. Try the image by browsing to *https://\<host\>.\<domain\>*
 
 ## Experimentation and observations
 Our initial analysis has lead us the same concusion as [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) presentation 
