@@ -1,15 +1,20 @@
-# Janus container [work in progress]
+# Janus container
 
 ## Introduction
 This is an experimental project attempting to put Janus gatweay into a Docker container using the default *bridge* network driver. The strategy is to 
-create a build Docker image that will run the Docker tools as well as the Janus build environment. The build image will compile and create the target Janus gateway 
-image stored on the host image repository. This allows to create a substantially smaller target image  than if a single image combining the build and execution 
+create a build Docker image, build image for short, that will run the Docker tools as well as the Janus build environment. The build image will compile and create the target Janus gateway 
+image, target image for short, stored on the host image repository. This allows to create a substantially smaller target image than if a single image combining the build and execution 
 was built (~300MB vs ~1.3GB). 
 This process requires the setup of a Docker host that purpose is to store the buld and target images as well as to allow the execution of the target image for 
 the purpose of experimentation. 
+Please note:
+* This project is **work in progress**
+* Only the video room with HTTP transport has been tried. Possibly other transports will require adjustments in the content of the target image (e.g. included Ubuntu packages)
+* The author welcomes any comments and sugestions!
 
 ## Host setup
 The figure below depicts the host configuration.
+
 ![Host setup](doc/host_setup.jpg)
 
 The host contains the following componets:
@@ -26,9 +31,16 @@ Please note that the /var/www/html folder contains the Nginx default index.html 
 
 ## Process
 The figure below depicts the target image creation process.
+
 ![Process](doc/process.jpg)
 
-
+The process consists in the following steps:
+1. The project is cloned from the Github repository.
+1. The build image creation is triggered by setting some required environment variables and invoking the *container.sh* script. The build relies on *Dockerfile.build* and *setup.sh* scripts 
+to install the necessary components in the build image. 
+1. Once the build image is created the *container.sh* script triggers the target image build process that relies on *Dockerfile.exec* and *build.sh* scripts, copied into the build image in the previous step, 
+to perform the required build steps. 
+1. The created image contains a *start.sh* script that is configured as the entry point. This scripts copies the Janus HTML samples and invokes the Janus gateway application.
 
 ## Installation procedure
 This section provides the default installation procedure. The default configuration allows to access the server only through HTTPs using the host's 
@@ -160,26 +172,13 @@ steps for some additional convenience settings.
 	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>) , must be specified.
 	```
 1. Review the Janus gateway configuration files stored in *<checkout directory>/janus_config* directory these files will be integrated into the target image.
-1. Create the prerequisites for the image
+1. Launch the build process
 	```bash
 	cd <checkout directory>
 	./container.sh
 	```
-1. Launch the image 
-	```bash
-	cd <checkout directory>
-	./container.sh launch
-	```
-	Note if you would like to launch the image in interactive mode (e.g. for debugging) replace the *launch* command with *launchi*
+1. Launch the image by invoking either of the commands that are displayed at the end of a successful build.
 1. Try the image by browsing to *https://<host>.<domain>*
-
-## Installation notes:
-* The container mounts the folder containing the Letsencrypt certificates, namely folder */etc/letsencrypt/live/<host>.<domain>* (to container 
-folder */etc/certs*) that contains the links to the currently valid certifictes and folder */etc/letsencrypt/archive* (to container folder */archive*)
- where all the certifictes are stored. The host certificates will be automatically updated by Certbot. These certificates are used for securing 
- the APIs (TLS) as well as RT(C)P media (DTLS)
-* The container mounts also */var/www/html/container* folder where upon startup it copies the sample html files. If multiple images are launched 
-simultaneously with the *launch(i)* command, each image will override the content of that folder (last one to be launched wins).
 
 ## Experimentation and observations
 Our initial analysis has lead us the same concusion as [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) presentation 
