@@ -9,10 +9,14 @@ This process requires the setup of a Docker host that purpose is to store the bu
 ## Host setup
 The figure below depicts the host configuration.
 ![Host setup](doc/setup.jpg)
+
 The host contains the following componets:
 * Docker engine for executing the build and target images.
 * Nginx HTTP server for allowing Certbot automatic Letsencrypt certificates update and for serving the Janus HTML samples
-* Cetbot 
+* Cetbot certificate renewal service
+
+The Janus target image mounts the following host folders:
+* /var/www/
 
 
 
