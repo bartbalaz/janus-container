@@ -178,7 +178,9 @@ steps for some additional convenience settings.
 	./container.sh
 	```
 1. Launch the image by invoking either of the commands that are displayed at the end of a successful build.
-1. Try the image by browsing to *https://\<host\>.\<domain\>*
+1. Try the image by browsing to *https://\<host\>.\<domain\>* Please note that:
+	* The video room plugin configuration is set to require string video room names which is not the Janus default configuraiton.
+	* The default configuration only uses the HTTPS transport through secure ports 8089 - janus-api and 7889 - janus-admin.
 
 ## Experimentation and observations
 Our initial analysis has lead us the same concusion as [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) presentation 
