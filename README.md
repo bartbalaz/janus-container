@@ -2,9 +2,9 @@
 
 ## Introduction
 This is an experimental project attempting to put Janus gatweay into a Docker container using the default *bridge* network driver. The strategy is to 
-create a build OCI image that will run the Docker tools as well as the Janus build environment. The build image will compile and create the target Janus gateway 
-image stored on the host image repository. This process allows to create a substantially smaller target Janus gateway image  than if a single
-image combining the build and execution (~300MB vs 1.3GB). 
+create a build Docker image that will run the Docker tools as well as the Janus build environment. The build image will compile and create the target Janus gateway 
+image stored on the host image repository. This allows to create a substantially smaller target image  than if a single image combining the build and execution 
+was built (~300MB vs ~1.3GB). 
 This process requires the setup of a Docker host that purpose is to store the buld and target images as well as to allow the execution of the target image for 
 the purpose of experimentation. 
 
@@ -17,22 +17,23 @@ The host contains the following componets:
 * Nginx HTTP server for allowing Certbot automatic Letsencrypt certificates update and for serving the Janus HTML samples
 * Cetbot certificate renewal service
 
-The Janus target image mounts the following host folders:
-* /var/www/html/container: Upon startup the target image copies the folder containing the Janus HTML samples. This folder is accessible through HTTP.
-* 
-
-
+The Janus target image mounts the following volumes:
+* /var/www/html/container: Upon startup the target image copies the content of the folder containing the Janus HTML samples. This folder is accessible through HTTPS. 
+Please note that the /var/www/html folder contains the Nginx default index.html page, it is accessible through HTTP. Its purpose is to allow Letsencrypt host validation.
+* /var/janus/recordings: This folder is used by the target image to store the video room recordings (when enabled).
+* /etc/letsencrypt/live/ and /etc/letsecrypt/archive: These folders contain the links and actual Letsencrypt certificates requried for TLS and DTLS shared by both Nginx and Janus gateway
+* /var/run/docker.sock enables the build image to use the host Docker service
 
 ## Process
-The 
+The figure below depicts the target image creation process.
+![Process](doc/process.jpg)
 
 
 
 ## Installation procedure
-This section provides the default installation procedure. This is a single host installation, the host will allow to build and run the 
-docker image. The default configuration allows to access the server only through HTTPs using the host's obtanied Letsencrypt certificates. 
-Please note that this project is using Ubuntu 18.04-LTS Linux distribution. Although it has been tried 
-only on that specific distribution, a priori, there are no reasons for it not to work on any other fairly recent distribution.
+This section provides the default installation procedure. The default configuration allows to access the server only through HTTPs using the host's 
+obtanied Letsencrypt certificates. Please note that this project is using Ubuntu 18.04-LTS Linux distribution. Although it has been tried 
+only on that specific distribution, a priori, there are no reasons for it not to work on any other recent distributions.
 
 ### Build/docker experimental host installation
 First let's install a Janus host for building and running the docker image. 
@@ -116,8 +117,8 @@ steps for some additional convenience settings.
 		/etc/letsencrypt/live/<host>.<domain>/fullchain.pem
 		/etc/letsencrypt/live/<host>.<domain>/privkey.pem
 		```
-	**These files are links from the */etc/letsencrypt/live/archive* directory. Make sure the non *root* user has 
-	read access to these files.**
+	**These files are links from the */etc/letsencrypt/live/archive* directory.  !!VERY IMPORTANT!! Make sure the non *root* user has 
+	read access to the links and the certificates.**
 	1. You may test the Certbot certificate renewal by issuing the following command:
 		```bash
 		certbot renew --dry-run --allow-subset-of-names
@@ -125,7 +126,7 @@ steps for some additional convenience settings.
 1. Clone the project repo
 	```bash
 	git clone https://github.com/bartbalaz/janus-container.git <checkout directory>
-	cd janus-container
+	cd <checkout directory>
 	```
 1. Create a http server configuration
 	1. Copy the configuration file 
@@ -146,33 +147,23 @@ steps for some additional convenience settings.
 	```bash
 	sudo mkdir -p /var/janus/recordings
 	```
-1. Install the tools necessary for building janus-gateway
-	```bash
-	sudo apt update
-	sudo apt install -y python3-pip libmicrohttpd-dev libavutil-dev libavcodec-dev libavformat-dev libogg-dev libcurl4-openssl-dev libconfig-dev libjansson-dev libglib2.0-dev libssl-dev build-essential graphviz default-jdk flex bison cmake libtool automake liblua5.3-dev pkg-config gengetopt 
-	sudo pip3 install meson
-	sudo pip3 install ninja
-	```
-
 ## Build procedure
 1. Define the build parameters
 	```bash
-	export JANUS_REPO = # Repository to fetch Janus gatweay sources from (e.g. https://github.com/bartbalaz/janus-gateway.git)
-	export JANUS_VERSION = # Version of the Janus gateway sources to checkout (e.g. v0.10.0)
-	export IMAGE_NAME = # Target image name (e.g. janus)
-	export IMAGE_VERSION = # Target image version (e.g. 01) 
-	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>) 
+	export JANUS_REPO = # Repository to fetch Janus gatweay sources from (e.g. https://github.com/bartbalaz/janus-gateway.git). 
+	If none is specified the default Meetech Janus gateway repository will be used
+	export JANUS_VERSION = # Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
+	export TARGET_IMAGE_NAME = # Target image name (e.g. janus), must be specified.
+	export TARGET_IMAGE_VERSION = # The version to tag the target image with (e.g. 01), must be specified.
+	export BUILD_IMAGE_NAME = # Name of the build image (e.g. janus_build), must be specified.
+	export BUILD_IMAGE_VERSION = # The version to tag the build image with (e.g. 01), must be specified.
+	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>) , must be specified.
 	```
-1. Review the Janus gateway configuration files stored in *<checkout directory>/janus_config* directory.
+1. Review the Janus gateway configuration files stored in *<checkout directory>/janus_config* directory these files will be integrated into the target image.
 1. Create the prerequisites for the image
 	```bash
 	cd <checkout directory>
-	./container.sh create
-	```
-1. Build the image 
-	```bash
-	cd <checkout directory>
-	./container.sh build
+	./container.sh
 	```
 1. Launch the image 
 	```bash
