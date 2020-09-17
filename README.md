@@ -195,7 +195,7 @@ in not exposing the media ports.
 
 The figure below shows a simplified successfull sequence where the ICE suceeds and bidirectional media stream is flowing between the client and the server. Notice the offer message is send by the client.
 
-![Sucessful sequence](doc/sequence_success.jpg)
+![Sucessful sequence](doc/sequence_successful.jpg)
 
 The next figure shows a failing case. This time the initial offer is sent 
 
