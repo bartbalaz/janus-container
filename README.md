@@ -193,11 +193,19 @@ in not exposing the media ports.
 
 ![Network configuration](doc/network_setup.jpg)
 
-The figure below shows a simplified successfull sequence where the ICE suceeds and bidirectional media stream is flowing between the client and the server. Notice the offer message is send by the client.
+The figure below shows a simplified successfull sequence where the ICE suceeds and bidirectional media stream is flowing between the client and the gateway.
+1. The initial offer is issued by the client.
+1. Based on the inital offer and/or tricked candidates the server sends STUN probes that cannot reach the client.
+1. Eventually the gateway sends an aswer message that allows the client to start sending STUN probles that are reaching the server
+1. Thanks to the server earlier STUN probes the client STUN probles reach the server (the firewall port is open)
+1. Thanks to the client STUN (the firewall port is open) the server STUN probes are reaching the client.
 
 ![Sucessful sequence](doc/sequence_successful.jpg)
 
-The next figure shows a failing case. This time the initial offer is sent 
+The next figure shows the unsucessful sequence. 
+1. This time the inital 
+
+![Failing sequence](doc/sequence_unsucessful.jpg)
 
 
 Our initial analysis has lead us to the same concusion as [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) presentation 
