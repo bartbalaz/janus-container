@@ -5,7 +5,7 @@ This is an experimental project attempting to put Janus gatweay into a Docker co
 create a build Docker image, build image for short, that will run the Docker tools as well as the Janus build environment. The build image will compile and create the target Janus gateway 
 image, target image for short, stored on the host image repository. This allows to create a substantially smaller target image than if a single image combining the build and execution 
 was built (~300MB vs ~1.6GB). 
-This process requires the setup of a Docker host that purpose is to store the buld and target images as well as to allow the execution of the target image for 
+This process requires the setup of a Docker host that purpose is to store the build and target images as well as to allow the execution of the target image for 
 the purpose of experimentation. 
 
 Please note:
