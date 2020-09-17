@@ -29,7 +29,7 @@ Please note that the /var/www/html folder contains the Nginx default index.html 
 * */var/janus/recordings* (to container */janus/bin/janus-recordings*): This folder is used by the target image to store the video room recordings (when enabled).
 * */etc/letsencrypt/live/* (to container */etc/certs*) and */etc/letsecrypt/archive* (to container */archive*): These folders contain the links and actual Letsencrypt certificates requried for TLS and DTLS shared by both Nginx and Janus gateway
 The Janus build image mounts the following host volume:
-* */var/run/docker.sock* (to container */var/run/docker.sock*) enables the build image to use the host Docker service
+* */var/run/docker.sock* (to container */var/run/docker.sock*) enables the build image to use the Docker service from the host
 
 ## Process
 The figure below depicts the target image creation process.
@@ -41,29 +41,28 @@ The process consists in the following steps:
 to the requirements of the target image.
 1. The build image creation is triggered by setting some required environment variables and invoking the *container.sh* script. The build relies on *Dockerfile.build* and *setup.sh* scripts 
 to install the necessary components in the build image. 
-1. Once the build image is created the *container.sh* script triggers the target image build process that relies on *Dockerfile.exec* and *build.sh* scripts, copied into the build image in the previous step, 
-to perform the required build steps. 
+1. Once the build image is created the *container.sh* script triggers the target image build process that relies on *Dockerfile.exec* and *build.sh* scripts, copied into the build image in the previous step. 
 1. The created image contains a *start.sh* script that is configured as the entry point. This scripts copies the Janus HTML samples and invokes the Janus gateway application.
 
 ## Installation procedure
 This section provides the default installation procedure. The default configuration allows to access the server only through HTTPs using the host's 
 obtanied Letsencrypt certificates. Please note that this project is using Ubuntu 18.04-LTS Linux distribution. Although it has been tried 
-only on that specific distribution, a priori, there are no reasons for it not to work on any other recent distributions.
+only on that specific version, a priori, there are no reasons for it not to work on any other recent version of the Ubuntu distribution.
 
 ### Build/docker experimental host installation
 First let's install a Janus host for building and running the docker image. 
 1. Install Ubuntu 18.04 physical or virtual host with the default packages and using the default parameters. Make sure that you have 
-access to a sudo capable user. We assume that the host is directly connected to the internet through a 1-to-1 NAT. 
+access to a *sudo* capable user. We assume that the host is directly connected to the internet through a 1-to-1 NAT. 
 	1. Make sure that the 1-to-1 NAT redirects the following ports: 80 (http), 443 (https), 8089 (janus-api), 7889 (janus-admin) to the Janus host.
-	1. Reserve a name for your host in your domain (e.g. <host>.<domain>) and update the */etc/hosts* file accordingly
+	1. Reserve a name for your host in your domain (e.g. \<host\>.\<domain\>) and update the */etc/hosts* file accordingly, for example:
 		```bash
 		127.0.0.1 localhost <host>.<domain>
 		[...]
 		```
-1. Install docker following [these](https://docs.docker.com/engine/install/ubuntu/) instructions then follow [these](https://docs.docker.com/engine/install/linux-postinstall/)
+1. Install Docker following [these](https://docs.docker.com/engine/install/ubuntu/) instructions then follow [these](https://docs.docker.com/engine/install/linux-postinstall/)
 steps for some additional convenience settings.
 1. Install Nginx HTTP server. We need NGINX to automate the [Letsencrypt](https://letsencrypt.org/) certificate updates using the 
-[Certbot](https://certbot.eff.org/) and for serving the janus html examples (from the /var/www/html/container directory) 
+[Certbot](https://certbot.eff.org/) and for serving the janus HTML examples (from the /var/www/html/container host directory) 
 	```bash
 	sudo apt install nginx
 	sudo apt update
@@ -164,9 +163,9 @@ steps for some additional convenience settings.
 	sudo mkdir -p /var/janus/recordings
 	```
 ## Build procedure
-1. Define the build parameters
+1. Set the build parameters
 	```bash
-	export JANUS_REPO = # Repository to fetch Janus gatweay sources from (e.g. https://github.com/bartbalaz/janus-gateway.git). If none is specified the default Meetech Janus gateway repository will be used
+	export JANUS_REPO = # Repository to fetch Janus gatway sources from (e.g. https://github.com/bartbalaz/janus-gateway.git). If none is specified the default Meetech Janus gateway repository will be used
 	export JANUS_VERSION = # Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
 	export TARGET_IMAGE_NAME = # Target image name (e.g. janus), must be specified.
 	export TARGET_IMAGE_VERSION = # The version to tag the target image with (e.g. 01), must be specified.
@@ -182,9 +181,9 @@ steps for some additional convenience settings.
 	cd <checkout directory>
 	./container.sh
 	```
-1. Launch the image by invoking either of the commands that are displayed at the end of a successful build.
+1. Launch the image by invoking either of the commands that are displayed at the end of a **successful** build.
 1. Try the image by browsing to *https://\<host\>.\<domain\>* Please note that:
-	* The video room plugin configuration is set to require string video room names which is not the Janus gateway default configuraiton.
+	* By default the video room plugin configuration (configuration file: "janus.plugin.videoroom.jcfg") is set to require string video room names which is not the Janus gateway default configuraiton.
 	* The default configuration allows only HTTPS transport through secure ports 8089 - janus-api and 7889 - janus-admin.
 
 ## Experimentation and observations
@@ -253,7 +252,7 @@ require the gateway to send an initial "opening" request.
 ![1-to-1 NAT firewall configuration](doc/sequence_1_to1_nat.jpg)
 
 ## Conclusion
-It is possible to use the default Docker bridged network model but some conditions have to be met by the infrastructure specifically the firwall leading to the Janus gatway server. 
+It is possible to use the default Docker bridged network driver but some conditions have to be met by the infrastructure specifically the firwall leading to the Janus gatway server. 
 It has to be able to block the client requests without triggering a port change as it happens with the MASQUERADE netfilter target. 
 
 
