@@ -220,8 +220,8 @@ by Alessandro Amirante from Meetecho. Now, going a bit more into details the nex
 1. The gateway issues a STUN request to a STUN server.
 1. The STUN server replies the server reflexive port is 20422
 1. The gateway issues STUN probes from 20422 to the client local (i.e. "unreachable" because the client is behind a firewall and uses private addresses) addresses.
-1. The STUN probe targeting the client server reflexive (i.e. "reachable") address gets its source port switched to **1599** (instead of 20422 as reported by the STUN server), 
-because of the earlier received message from the targeted address and port.
+1. The STUN probe destined to the client server reflexive (i.e. "reachable") address gets its source port switched to **1599** (instead of 20422 as reported by the STUN server earlier), 
+because of the earlier received STUN probe from the client targetting the server address and 20422 port.
 
 ![Annotated packet capture](/doc/packet_capture_annotated.jpg)
 
@@ -240,10 +240,18 @@ client (janus.js file) when processing the received trickle candidates from the 
 
 ![Tricked and delayed approach](doc/sequence_trickle_delay.jpg)
 
-The second solution consists in reconfiguring the 1-to-1 NAT firewall to disallow exposing any ports other than 80 (http), 443 (https), 8089 (janus-api) and 7889 (janus-admin). All the other ports
+The second solution consists in reconfiguring the 1-to-1 NAT firewall to disallow exposing any ports besides 80 (http), 443 (https), 8089 (janus-api) and 7889 (janus-admin). All the other ports
 require the gateway to send an initial "opening" request.
-
+1. The gateway sends the offer.
+1. Based on the offer and/or tricked candidates the client sends STUN probes the the gatway. All these probes get filtered out by the 1-to-1 NAT.
+1. The client sends an answer to the gatway.
+1. Based on the answer and/or trickled candidates the gatweay sends STUN probes to the client.
+1. The client resends the STUN probes that this time reach the server.
 
 ![1-to-1 NAT firewall configuration](doc/sequence_1_to1_nat.jpg)
+
+## Conclusion
+It is possible to use the default Docker bridged network model but some conditions have to be met by the infrastructure specifically the firwall leading to the Janus gatway server. 
+It has to be able to block the client requests without triggering a port change as it happens with the MASQUERADE netfilter target. 
 
 
