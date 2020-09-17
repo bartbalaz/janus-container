@@ -213,22 +213,20 @@ firewall is configured to forward any media traffic to the gatway. An ICMP messa
 ![Failing sequence](doc/sequence_unsucessful.jpg)
 
 Therefore our initial analysis has lead us to the same concusion as [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) presentation 
-by Alessandro Amirante from Meetecho. Now going a bit more into details the next figure below shows an exceprt of the packet capture at the virtual machine network interface. 
+by Alessandro Amirante from Meetecho. Now, going a bit more into details the next figure below shows an exceprt of the packet capture at the virtual machine network interface. 
 1. Probe sent by the client before the gateway had a chance to open the port. As presented in step 2 on the previous figure above.
 1. The ICMP error message is generated.
 1. The gateway issues a STUN request to a STUN server.
 1. The STUN server replies the server reflexive port is 20422
 1. The gateway issues STUN probes from 20422 to the client local (i.e. "unreachable" because the client is behind a firewall and uses private addresses) addresses.
-1. The STUN probe targeting the client server reflexive (i.e. "reachable") address gets its source port switched to **1599** (isntead of 20422 as reported by the STUN server), 
+1. The STUN probe targeting the client server reflexive (i.e. "reachable") address gets its source port switched to **1599** (instead of 20422 as reported by the STUN server), 
 because of the earlier received message from the targeted address and port.
-Therefore because of the race condition created by the STUN probes issued by the client prior to the gatway opening the ports and because of the behavior of the MASQUARADE netfilter target the 
-gateway issued STUN probes get their port wrongly reassigned. These probes most probably cannot reach the client because of the firewall on the client side that may be port restrictive. 
 
 ![Annotated packet capture](/doc/packet_capture_annotated.jpg)
 
+Therefore because of the race condition created by the STUN probes issued by the client prior to the gatway opening the ports and because of the behavior of the MASQUARADE netfilter target the 
+gateway issued STUN probes get their port wrongly reassigned. These probes most probably cannot reach the client because of the firewall on the client side that may be port restrictive. 
 
-After further investigation we have found that the problem comes from the MASQUERADE netfilter target that is used by Linux Docker
-implementation for NAT outgoing traffic from the container. For some reason when MASQUERADE receives a 
 
 
 ## Conclusion
