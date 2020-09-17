@@ -79,9 +79,10 @@ steps for some additional convenience settings.
 		sudo apt install certbot python-certbot-nginx
 		```
 	1. Get the certificates
+		```bash
+		sudo certbot certonly --nginx
+		```
 		>>>
-		<b>sudo certbot certonly --nginx</b>
-		
 		Saving debug log to /var/log/letsencrypt/letsencrypt.log
 		Plugins selected: Authenticator nginx, Installer nginx
 		Enter email address (used for urgent renewal and security notices) (Enter 'c' to
@@ -229,7 +230,7 @@ gateway issued STUN probes get their port wrongly reassigned. These probes most 
 
 ## Solutions
 In an attempt to delay the STUN client probes we have configred the gateway to trickle the candidates, which was unsuficient. Therefore we have also added an addional 1s delay in the 
-client (janus.js file) when processing the received trickle candidates from the gateway. While this is not an acceptable solution the problem appeared to be solve.
+client (janus.js file) when processing the received trickle candidates from the gateway. While this is not an acceptable solution the problem appeares to be solved.
 1. The gateway sends the offer.
 1. The gateway starts trickling the candidates. But the processing of the received tricked candidates is delayed by 1s at the client.
 1. The client issues an answer.
@@ -239,5 +240,10 @@ client (janus.js file) when processing the received trickle candidates from the 
 
 ![Tricked and delayed approach](doc/sequence_trickle_delay.jpg)
 
+The second solution consists in reconfiguring the 1-to-1 NAT firewall to disallow exposing any ports other than 80 (http), 443 (https), 8089 (janus-api) and 7889 (janus-admin). All the other ports
+require the gateway to send an initial "opening" request.
+
+
+![1-to-1 NAT firewall configuration](doc/sequence_1_to1_nat.jpg)
 
 
