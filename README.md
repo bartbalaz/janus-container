@@ -188,12 +188,16 @@ steps for some additional convenience settings.
 The figure below shows the network configuraiton when running Janus gateway server in a Docker contaier configured with the default bridge network. The Docker host is a data center virtual machine 
 accessible through a 1-to-1 NAT firewall. The Janus client is located in a private network that offers a simple/typical firewall. The default Docker bridge configuration provides a private subnet 
 for the containers. The conainers may access the public network thanks to the netfilter MASQUERADE target NAT functionlity applied to any packets leaving the private subnet z. The container is 
-configured to expose the Janus server control (e.g. 8089 for janus API and 7889 for janus admin) and media ports (e.g. 10000-12000). As you will see below one solution consists in not exposing
-the media 
+configured to expose the Janus server control (e.g. 8089 for Janus API and 7889 for Janus admin) and initially media ports (e.g. 10000-12000). As you will see below one of our solutions consists 
+in not exposing the media ports. 
 
 ![Network configuration](doc/network_setup.jpg)
- 8089 (janus-api), 7889 (janus-admin)
 
+The figure below shows a simplified successfull sequence where the ICE suceeds and bidirectional media stream is flowing between the client and the server. Notice the offer message is send by the client.
+
+![Sucessful sequence](doc/sequence_success.jpg)
+
+The next figure shows a failing case. This time the initial offer is sent 
 
 
 Our initial analysis has lead us to the same concusion as [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) presentation 
