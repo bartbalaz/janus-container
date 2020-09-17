@@ -4,7 +4,7 @@
 This is an experimental project attempting to put Janus gatweay into a Docker container using the default *bridge* network driver. The strategy is to 
 create a build Docker image, build image for short, that will run the Docker tools as well as the Janus build environment. The build image will compile and create the target Janus gateway 
 image, target image for short, stored on the host image repository. This allows to create a substantially smaller target image than if a single image combining the build and execution 
-was built (~300MB vs ~1.3GB). 
+was built (~300MB vs ~1.6GB). 
 This process requires the setup of a Docker host that purpose is to store the buld and target images as well as to allow the execution of the target image for 
 the purpose of experimentation. 
 
@@ -186,9 +186,9 @@ steps for some additional convenience settings.
 
 ## Experimentation and observations
 The figure below shows the network configuraiton when running Janus gateway server in a Docker contaier configured with the default bridge network. The Docker host is a data center virtual machine 
-accessible through a 1 to 1 NAT firewall. The Janus client is located in some private network offering a simple firewall. The default Docker bridge configuration provides a private subnet 
-for the containers. The conainers may access the public network throught the 
-talk about the exposed ports
+accessible through a 1-to-1 NAT firewall. The Janus client is located in a private network that offers a simple/typical firewall. The default Docker bridge configuration provides a private subnet 
+for the containers. The conainers may access the public network thanks to the netfilter MASQUERADE target NAT functionlity applied to any packets leaving the private subnet z. The container is 
+configured to expose the Janus server control () and media ports (). 
 
 ![Network configuration](doc/network_setup.jpg)
 
