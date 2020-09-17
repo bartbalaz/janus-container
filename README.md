@@ -188,28 +188,43 @@ steps for some additional convenience settings.
 The figure below shows the network configuraiton when running Janus gateway server in a Docker contaier configured with the default bridge network. The Docker host is a data center virtual machine 
 accessible through a 1-to-1 NAT firewall. The Janus client is located in a private network that offers a simple/typical firewall. The default Docker bridge configuration provides a private subnet 
 for the containers. The conainers may access the public network thanks to the netfilter MASQUERADE target NAT functionlity applied to any packets leaving the private subnet z. The container is 
-configured to expose the Janus server control (e.g. 8089 for Janus API and 7889 for Janus admin) and initially media ports (e.g. 10000-12000). As you will see below one of our solutions consists 
+configured to expose the Janus gateway control (e.g. 8089 for Janus API and 7889 for Janus admin) and initially media ports (e.g. 10000-12000). As you will see below one of our solutions consists 
 in not exposing the media ports. 
 
 ![Network configuration](doc/network_setup.jpg)
 
 The figure below shows a simplified successfull sequence where the ICE suceeds and bidirectional media stream is flowing between the client and the gateway.
-1. The initial offer is issued by the client.
-1. Based on the inital offer and/or tricked candidates the server sends STUN probes that cannot reach the client.
-1. Eventually the gateway sends an aswer message that allows the client to start sending STUN probles that are reaching the server
-1. Thanks to the server earlier STUN probes the client STUN probles reach the server (the firewall port is open)
-1. Thanks to the client STUN (the firewall port is open) the server STUN probes are reaching the client.
+1. The offer is issued by the client.
+1. Based on the offer and/or tricked candidates the gateway sends STUN probes that cannot reach the client.
+1. Eventually the gateway sends an aswer message that allows the client to start sending STUN probles.
+1. Thanks to the gateway earlier STUN probes the client STUN probles reach the server (the firewall port is open).
+1. Thanks to the client STUN probes (the firewall port is open) the gateway STUN probes are reaching the client.
 
 ![Sucessful sequence](doc/sequence_successful.jpg)
 
 The next figure shows the unsucessful sequence. 
-1. This time the inital 
+1. This time the offer is sent by the gateway.
+1. Based on the offer and/or tricked candidates the client sends STUN probes that cannot reach the gateway. These probes are rejected by the MASQUERADE netfilter target because the 1-to-1 NAT
+firewall is configured to forward any media traffic to the gatway. An ICMP message is generated for each probe.
+1. The client generates an answer.
+1. Based on the answer the gateway generates the STUN probes that for some reason never make it to the client. 
+1. The client STUN probes never make it to the gateway neither.
 
 ![Failing sequence](doc/sequence_unsucessful.jpg)
 
+Therefore our initial analysis has lead us to the same concusion as [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) presentation 
+by Alessandro Amirante from Meetecho. Now going a bit more into details the next figure below shows an exceprt of the packet capture at the virtual machine network interface. 
+1. Probe sent by the client before the gateway had a chance to open the port. As presented in step 2 on the previous figure above.
+1. The ICMP error message is generated.
+1. The gateway issues a STUN request to a STUN server.
+1. The STUN server replies the server reflexive port is 20422
+1. The gateway issues STUN probes from 20422 to the client local (i.e. "unreachable" because the client is behind a firewall and uses private addresses) addresses.
+1. The STUN probe targeting the client server reflexive (i.e. "reachable") address gets its source port switched to **1599** (isntead of 20422 as reported by the STUN server), 
+because of the earlier received message from the targeted address and port.
+Therefore because of the race condition created by the STUN probes issued by the client prior to the gatway opening the ports and because of the behavior of the MASQUARADE netfilter target the 
+gateway issued STUN probes get their port wrongly reassigned. These probes most probably cannot reach the client because of the firewall on the client side that may be port restrictive. 
 
-Our initial analysis has lead us to the same concusion as [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) presentation 
-by Alessandro Amirante from Meetecho. 
+![Annotated packet capture](/doc/packet_capture_annotated.jpg)
 
 
 After further investigation we have found that the problem comes from the MASQUERADE netfilter target that is used by Linux Docker
