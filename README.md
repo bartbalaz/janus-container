@@ -11,7 +11,7 @@ the purpose of experimentation.
 Please note:
 * This project is **work in progress**
 * Only the video room with HTTP transport has been tried. Possibly other transports will require adjustments in the content of the target image (e.g. included Ubuntu packages)
-* The author welcomes any comments and sugestions!
+* The author welcomes (hopes for) comments and sugestions!
 
 ## Host setup
 The figure below depicts the host configuration.
@@ -227,11 +227,17 @@ because of the earlier received message from the targeted address and port.
 Therefore because of the race condition created by the STUN probes issued by the client prior to the gatway opening the ports and because of the behavior of the MASQUARADE netfilter target the 
 gateway issued STUN probes get their port wrongly reassigned. These probes most probably cannot reach the client because of the firewall on the client side that may be port restrictive. 
 
+## Solutions
+In an attempt to delay the STUN client probes we have configred the gateway to trickle the candidates, which was unsuficient. Therefore we have also added an addional 1s delay in the 
+client (janus.js file) when processing the received trickle candidates from the gateway. While this is not an acceptable solution the problem appeared to be solve.
+1. The gateway sends the offer.
+1. The gateway starts trickling the candidates. But the processing of the received tricked candidates is delayed by 1s at the client.
+1. The client issues an answer.
+1. The gatway sends a STUN probe that don't reach the client because the firewall port is still closed because of the delay.
+1. The client sends a STUN probe that opens the firewall port and reaches the gatway.
+1. Finally the server re-sends a STUN proble that reaches this time the client.
 
-
-## Conclusion
-
-
+![Tricked and delayed approach](doc/sequence_trickle_delay.jpg)
 
 
 
