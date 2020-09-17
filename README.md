@@ -25,10 +25,11 @@ The host contains the following componets:
 
 The Janus target image mounts the following host volumes:
 * */var/www/html/container* (to container */html*): Upon startup the target image copies the content of the folder containing the Janus HTML samples. This folder is accessible through HTTPS. 
-Please note that the /var/www/html folder contains the Nginx default index.html page, it is accessible through HTTP. Its purpose is to allow Letsencrypt host validation.
+Please note that the /var/www/html folder contains the Nginx default index.html page which is accessible through HTTP. Its purpose is to allow Letsencrypt host validation.
 * */var/janus/recordings* (to container */janus/bin/janus-recordings*): This folder is used by the target image to store the video room recordings (when enabled).
 * */etc/letsencrypt/live/* (to container */etc/certs*) and */etc/letsecrypt/archive* (to container */archive*): These folders contain the links and actual Letsencrypt certificates requried for TLS and DTLS shared by both Nginx and Janus gateway
-* /var/run/docker.sock enables the build image to use the host Docker service
+The Janus build image mounts the following host volume:
+* */var/run/docker.sock* (to container */var/run/docker.sock*) enables the build image to use the host Docker service
 
 ## Process
 The figure below depicts the target image creation process.
@@ -36,7 +37,8 @@ The figure below depicts the target image creation process.
 ![Process](doc/process.jpg)
 
 The process consists in the following steps:
-1. The project is cloned from the Github repository.
+1. The project is cloned from the Github repository. The default Janus gatway server configuration in */janus_config* cloned subfolder is reviewed and modified according 
+to the requirements of the target image.
 1. The build image creation is triggered by setting some required environment variables and invoking the *container.sh* script. The build relies on *Dockerfile.build* and *setup.sh* scripts 
 to install the necessary components in the build image. 
 1. Once the build image is created the *container.sh* script triggers the target image build process that relies on *Dockerfile.exec* and *build.sh* scripts, copied into the build image in the previous step, 
