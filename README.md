@@ -170,6 +170,8 @@ steps for some additional convenience settings.
 	export BUILD_IMAGE_NAME = # Name of the build image (e.g. janus_build), must be specified.
 	export BUILD_IMAGE_VERSION = # The version to tag the build image with (e.g. 01), must be specified.
 	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>), must be specified.
+	export SKIP_BUILD_IMAGE = # When set to "true" the build image will not be built
+	export SKIP_TARGET_IMAGE = # When set to "true" the target image will not be build
 	```
 1. Review the Janus gateway configuration files stored in *<checkout directory>/janus_config* directory these files will be integrated into the target image.
 1. Launch the build process
@@ -183,11 +185,21 @@ steps for some additional convenience settings.
 	* The default configuration allows only HTTPS transport through secure ports 8089 - janus-api and 7889 - janus-admin.
 
 ## Experimentation and observations
+The figure below shows the network configuraiton when running Janus gateway server in a Docker contaier configured with the default bridge network. The Docker host is a data center virtual machine 
+accessible through a 1 to 1 NAT firewall. The Janus client is located in some private network offering a simple firewall. The default Docker bridge configuration provides a private subnet 
+for the containers. The conainers may access the public network throught the 
+talk about the exposed ports
+
+![Network configuration](doc/network_setup.jpg)
 
 
 
-Our initial analysis has lead us the same concusion as [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) presentation 
-by Meetecho. After further investigation we have found that the problem comes from the MASQUERADE netfilter target that is used by Linux Docker
+
+Our initial analysis has lead us to the same concusion as [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) presentation 
+by Alessandro Amirante from Meetecho. 
+
+
+After further investigation we have found that the problem comes from the MASQUERADE netfilter target that is used by Linux Docker
 implementation for NAT outgoing traffic from the container. For some reason when MASQUERADE receives a 
 
 

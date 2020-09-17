@@ -18,6 +18,8 @@ echo
 # BUILD_IMAGE_NAME - Name of the build image allowing to build the Janus gateway image
 # BUILD_IMAGE_VERSION - Version of the build image allowing to build the Janus gateway image
 # HOST_NAME - Name of the host including the fqdn (e.g. <host>.<domain>), please note that it may be difficult 
+# SKIP_BUILD_IMAGE - When set to 'true', the build image will not be created, the available build image will be used to create the tarteg image
+# SKIP_TARGET_IMAGE - When set to 'true', the target image will not be created.
 # to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate 
 
@@ -39,32 +41,46 @@ test_parameter() {
 	fi
 }
 
-echo
-echo " Testing parameters "
-echo "--------------------"
+# The buld image creation process requires only the image name and tag
+if [ "$SKIP_BUILD_IMAGE" == 'true' ]; then
+	echo
+	echo " Skipping build image creation "
+	echo "-------------------------------"
+else
+	echo
+	echo " Creating the build image "
+	echo "--------------------------"
+	test_parameter BUILD_IMAGE_NAME $BUILD_IMAGE_NAME mandatory
+	test_parameter BUILD_IMAGE_VERSION $BUILD_IMAGE_VERSION mandatory
 
-test_parameter JANUS_REPO $JANUS_REPO optional
-test_parameter JANUS_REPO $JANUS_VERSION optional
-test_parameter TARGET_IMAGE_NAME $TARGET_IMAGE_NAME mandatory
-test_parameter TARGET_IMAGE_VERSION $TARGET_IMAGE_VERSION mandatory
-test_parameter BUILD_IMAGE_NAME $BUILD_IMAGE_NAME mandatory
-test_parameter BUILD_IMAGE_VERSION $BUILD_IMAGE_VERSION mandatory
+	docker build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
+fi
 
-echo
-echo " Bulding build image "
-echo "---------------------"
-docker build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
+# The target image creation requires the build image name and tag, the target image name and tag 
+# and optionally the version of Janus gatweay sources
+if [ "$SKIP_TARGET_IMAGE" == "true" ]; then
+	echo
+	echo " Skipping target image creation "
+	echo "--------------------------------"
+else
+	echo
+	echo " Executing the build image "
+	echo "---------------------------"
+	test_parameter JANUS_REPO $JANUS_REPO optional
+	test_parameter JANUS_REPO $JANUS_VERSION optional
+	test_parameter TARGET_IMAGE_NAME $TARGET_IMAGE_NAME mandatory
+	test_parameter TARGET_IMAGE_VERSION $TARGET_IMAGE_VERSION mandatory
+	test_parameter BUILD_IMAGE_NAME $BUILD_IMAGE_NAME mandatory
+	test_parameter BUILD_IMAGE_VERSION $BUILD_IMAGE_VERSION mandatory
 
-echo
-echo " Executing the build image "
-echo "---------------------------"
-docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock \
--e "JANUS_REPO=$JANUS_REPO" \
--e "JANUS_VERSION=$JANUS_VERSION" \
--e "TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME" \
--e "TARGET_IMAGE_VERSION=$TARGET_IMAGE_VERSION" \
--e "HOST_NAME=$HOST_NAME" \
-$FULL_BUILD_IMAGE_NAME
+	docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock \
+	-e "JANUS_REPO=$JANUS_REPO" \
+	-e "JANUS_VERSION=$JANUS_VERSION" \
+	-e "TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME" \
+	-e "TARGET_IMAGE_VERSION=$TARGET_IMAGE_VERSION" \
+	-e "HOST_NAME=$HOST_NAME" \
+	$FULL_BUILD_IMAGE_NAME
+fi
 
 echo
 echo "To execute the Janus gateway target image non-interactively issue the following command: "
