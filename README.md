@@ -10,7 +10,7 @@ the purpose of experimentation.
 
 Please note:
 * This project is **work in progress**
-* Only the video room with HTTP transport has been tried. Possibly other transports will require adjustments in the content of the target image (e.g. included Ubuntu packages)
+* Only the video room plugin (and echo test plugin) with HTTP transport have been tried. Possibly other plugins and transports will require adjustments in the content of the target image (e.g. included Ubuntu packages)
 * The author welcomes (hopes for) comments and sugestions!
 
 ## Host setup
@@ -20,14 +20,14 @@ The figure below depicts the host configuration.
 
 The host contains the following componets:
 * Docker engine for executing the build and target images.
-* Nginx HTTP server for allowing Certbot automatic Letsencrypt certificates update and for serving the Janus HTML samples
-* Cetbot certificate renewal service
+* Nginx HTTP server for allowing Certbot automatic Letsencrypt certificates update and for serving the Janus HTML samples.
+* Cetbot certificate renewal service.
 
-The Janus target image mounts the following volumes:
-* /var/www/html/container: Upon startup the target image copies the content of the folder containing the Janus HTML samples. This folder is accessible through HTTPS. 
+The Janus target image mounts the following host volumes:
+* */var/www/html/container* (to container */html*): Upon startup the target image copies the content of the folder containing the Janus HTML samples. This folder is accessible through HTTPS. 
 Please note that the /var/www/html folder contains the Nginx default index.html page, it is accessible through HTTP. Its purpose is to allow Letsencrypt host validation.
-* /var/janus/recordings: This folder is used by the target image to store the video room recordings (when enabled).
-* /etc/letsencrypt/live/ and /etc/letsecrypt/archive: These folders contain the links and actual Letsencrypt certificates requried for TLS and DTLS shared by both Nginx and Janus gateway
+* */var/janus/recordings* (to container */janus/bin/janus-recordings*): This folder is used by the target image to store the video room recordings (when enabled).
+* */etc/letsencrypt/live/* (to container */etc/certs*) and */etc/letsecrypt/archive* (to container */archive*): These folders contain the links and actual Letsencrypt certificates requried for TLS and DTLS shared by both Nginx and Janus gateway
 * /var/run/docker.sock enables the build image to use the host Docker service
 
 ## Process
