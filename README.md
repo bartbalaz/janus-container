@@ -137,8 +137,9 @@ steps for some additional convenience settings.
 		/etc/letsencrypt/live/<host>.<domain>/fullchain.pem
 		/etc/letsencrypt/live/<host>.<domain>/privkey.pem
 		```
-	**These files are links from the */etc/letsencrypt/archive* directory.  !!VERY IMPORTANT!! Make sure the non *root* user has 
-	read access to the links and the certificates.**
+	**These files are links from the */etc/letsencrypt/archive* directory.**
+	
+	**!!VERY IMPORTANT!! Make sure the non *root* user has read access to the links and the certificates.**
 	1. You may test the Certbot certificate renewal by issuing the following command:
 		```bash
 		certbot renew --dry-run --allow-subset-of-names
