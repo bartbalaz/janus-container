@@ -178,7 +178,7 @@ steps for some additional convenience settings.
 1. Review the Janus gateway configuration files stored in *<checkout directory>/janus_config* directory these files will be integrated into the target image.
 1. Launch the build process, this process performs two steps: creates the build image (unless the *SKIP_BUILD_IMAGE* is set to *"true"*), 
 then creates the target image (unless *SKIP_TARGET_IMAGE* is set to *"true"*). Both images will appear in the local image Docker registry (issue *"docker images"* to verify). To perform either 
-step use the above mentioned *"SKIP_"* parameters.
+step set the above mentioned *"SKIP_"* parameters to the appropriate values.
 	```bash
 	cd <checkout directory>
 	./container.sh
