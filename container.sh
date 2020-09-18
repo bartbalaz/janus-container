@@ -80,10 +80,10 @@ else
 
 	if [ "$USE_HOST_CONFIG_DIR" == 'true' ]; then
 		echo "Using Janus gateway configuration from host folder $JANUS_SRC_CONFIG_DIR"
-		CONFIG_DIR_MOUNT = "-v $JANUS_SRC_CONFIG_DIR:/image/janus_config"
+		CONFIG_DIR_MOUNT = -v $JANUS_SRC_CONFIG_DIR:/image/janus_config
 	else
 		echo "Using Janus gateway configuration from build image (copied during the build image creation)"
-		CONFIG_DIR_MOUNT = ""
+		CONFIG_DIR_MOUNT =
 	fi
 	
 	docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock $CONFIG_DIR_MOUNT \
