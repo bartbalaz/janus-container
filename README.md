@@ -142,7 +142,7 @@ steps for some additional convenience settings.
 	**!!VERY IMPORTANT!! Make sure the non *root* user has read access to the links and the certificates.**
 	1. You may test the Certbot certificate renewal by issuing the following command:
 		```bash
-		certbot renew --dry-run --allow-subset-of-names
+		sudo certbot renew --dry-run --allow-subset-of-names
 		```
 1. Clone the project repo
 	```bash
