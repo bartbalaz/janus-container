@@ -62,10 +62,11 @@ if [ "$SKIP_TARGET_IMAGE" == "true" ]; then
 	echo
 	echo " Skipping target image creation "
 	echo "--------------------------------"
+	
 else
 	echo
-	echo " Executing the build image "
-	echo "---------------------------"
+	echo " Executing the build image to create the target image "
+	echo "------------------------------------------------------"
 	test_parameter JANUS_REPO $JANUS_REPO optional
 	test_parameter JANUS_REPO $JANUS_VERSION optional
 	test_parameter TARGET_IMAGE_NAME $TARGET_IMAGE_NAME mandatory
