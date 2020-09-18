@@ -139,7 +139,11 @@ steps for some additional convenience settings.
 		```
 	**These files are links from the */etc/letsencrypt/archive* directory.**
 	
-	**!!VERY IMPORTANT!! Make sure the non *root* user has read access to the links and the certificates.**
+	**!!VERY IMPORTANT!! Make sure the NON *root* user has read access to the links and the certificates.**
+	```bash
+	chmod -R a+r+x /etc/letsencrypt/live
+	chmod -R a+r+x /etc/letsencrypt/archive
+	```
 	1. You may test the Certbot certificate renewal by issuing the following command:
 		```bash
 		sudo certbot renew --dry-run --allow-subset-of-names
