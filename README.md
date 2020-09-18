@@ -146,14 +146,14 @@ steps for some additional convenience settings.
 		```
 1. Clone the project repo
 	```bash
-	git clone https://github.com/bartbalaz/janus-container.git <checkout directory>
-	cd <checkout directory>
+	git clone https://github.com/bartbalaz/janus-container.git <clone directory>
+	cd <clone directory>
 	```
 1. Create a http server configuration
 	1. Copy the configuration file 
 		```bash
 		sudo mkdir /var/www/html/container
-		cd <checkout directory>
+		cd <clone directory>
 		sudo cp ./scripts/nginx.conf /etc/nginx/sites-available/<host>.<domain>.conf
 		sudo ln -s /etc/nginx/sites-available/<host>.<domain>.conf /etc/nginx/sites-enabled/
 		```
@@ -181,12 +181,12 @@ steps for some additional convenience settings.
 	export SKIP_BUILD_IMAGE = # When set to "true" the build image will not be built
 	export SKIP_TARGET_IMAGE = # When set to "true" the target image will not be build
 	```
-1. Review the Janus gateway configuration files stored in *<checkout directory>/janus_config* directory these files will be integrated into the target image.
+1. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the target image.
 1. Launch the build process, this process performs two steps: creates the build image (unless the *SKIP_BUILD_IMAGE* is set to *"true"*), 
 then creates the target image (unless *SKIP_TARGET_IMAGE* is set to *"true"*). Both images will appear in the local image Docker registry (issue *"docker images"* to verify). To perform either 
 step set the above mentioned *"SKIP_"* parameters to the appropriate values.
 	```bash
-	cd <checkout directory>
+	cd <clone directory>
 	./container.sh
 	```
 1. Launch the target image by invoking either of the commands that are displayed at the end of a **successful** target image build (if *SKIP_TARGET_IMAGE* was set to *"false"* or not exported).
