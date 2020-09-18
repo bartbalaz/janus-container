@@ -80,14 +80,14 @@ else
 	-e "TARGET_IMAGE_VERSION=$TARGET_IMAGE_VERSION" \
 	-e "HOST_NAME=$HOST_NAME" \
 	$FULL_BUILD_IMAGE_NAME
+	
+	echo
+	echo "To execute the Janus gateway target image non-interactively issue the following command: "
+	echo "docker run --rm -d -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $FULL_TARGET_IMAGE_NAME"
+	echo
+	echo "To execute the Janus gateway target image interactively issue the following command: "
+	echo "docker run --rm -it -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $FULL_TARGET_IMAGE_NAME"
 fi
-
-echo
-echo "To execute the Janus gateway target image non-interactively issue the following command: "
-echo "docker run --rm -d -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $FULL_TARGET_IMAGE_NAME"
-echo
-echo "To execute the Janus gateway target image interactively issue the following command: "
-echo "docker run --rm -it -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $FULL_TARGET_IMAGE_NAME"
 
 
 
