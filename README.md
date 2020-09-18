@@ -1,17 +1,18 @@
 # Janus container
 
 ## Introduction
-This is an experimental project attempting to put Janus gatweay into a Docker container using the default *bridge* network driver. The strategy is to 
-create a build Docker image, build image for short, that will run the Docker tools as well as the Janus build environment. The build image will compile and create the target Janus gateway 
-image, target image for short, stored on the host image repository. This allows to create a substantially smaller target image than if a single image combining the build and execution 
-was built (~300MB vs ~1.6GB). 
-This process requires the setup of a Docker host that purpose is to store the build and target images as well as to allow the execution of the target image for 
-the purpose of experimentation. 
+This project creates the Janus gateway Docker image and provides the procedure to set up the container using the default *bridge* network driver. There are multiple advantages to support this
+configuration such as it avoids having to reserve dedicated IP address per container, configuring/parameterizing the container to use different sets of ports and makes automatic scaling much easier. 
+The strategy followed in this project is to create a build Docker image (build image for short) first. That image will run the Docker tools as well as the Janus build environment. The build image will 
+compile and create the target Janus gateway image (target image for short) stored on the host image repository. This allows to create a substantially smaller target image than if a single image
+ combining the build and execution was built (~300MB vs ~1.6GB). This process requires the setup of a Docker host that purpose is to store the build and target images as well as to allow the 
+ execution of the target image for the purpose of testing and experimentation. 
 
 Please note:
-* This project is **work in progress**
-* Only the video room plugin (and echo test plugin) with HTTP transport have been tried. Possibly other plugins and transports will require adjustments in the content of the target image (e.g. included Ubuntu packages)
-* The author welcomes (hopes for) comments and sugestions!
+* Out-of-the-box this project provides the simplest single host docker configuration. 
+* Only the video room plugin (and echo test plugin) with HTTP transport have been tried. Possibly, other plugins and transports may require adjustments in the content of the 
+target image (e.g. included Ubuntu packages).
+* The author welcomes comments and sugestions!
 
 ## Host setup
 The figure below depicts the host configuration.
