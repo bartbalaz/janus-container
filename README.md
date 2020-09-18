@@ -11,7 +11,7 @@ compiles and creates the target Janus gateway image (target image for short) sto
  Docker host that purpose is to store the build and target images as well as to allow the execution of the target image for the purpose of testing and experimentation.
 
 Please note:
-* Please visit [Meetecho Janus project](https://janus.conf.meetecho.com/docs/)for a detailed description of the Janus gateway.
+* Please visit [Meetecho Janus project](https://janus.conf.meetecho.com/docs/) for a detailed description of the Janus gateway.
 * Out-of-the-box this project provides the simplest single host Docker configuration which may be tailored to any other more complex configuration.
 * Only the video room plugin (and echo test plugin) with HTTP transport have been tried. Possibly, other plugins and transports may require adjustments in the content of the 
 target image (e.g. included Ubuntu packages).
