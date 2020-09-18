@@ -17,17 +17,20 @@ echo
 # TARGET_IMAGE_VERSION - Target Janus gateway image version (e.g. 01) 
 # BUILD_IMAGE_NAME - Name of the build image allowing to build the Janus gateway image
 # BUILD_IMAGE_VERSION - Version of the build image allowing to build the Janus gateway image
-# HOST_NAME - Name of the host including the fqdn (e.g. <host>.<domain>), please note that it may be difficult 
 # SKIP_BUILD_IMAGE - When set to 'true', the build image will not be created, the available build image will be used to create the tarteg image
 # SKIP_TARGET_IMAGE - When set to 'true', the target image will not be created.
+# USE_HOST_CONFIG_DIR - When set to 'true' the build image will mount the host Janus configuration directory instead of using the one that was copied
+# during the build image creation
+# HOST_NAME - Name of the host including the fqdn (e.g. <host>.<domain>), please note that it may be difficult 
 # to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate 
 
 # Global variables - Should not need to be modified
+TOP_DIR=$(pwd)
+JANUS_SRC_CONFIG_DIR=$TOP_DIR/janus_config
 
 FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_VERSION
 FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_VERSION
-
 
 # test_parameter PARAMETER_NAME $PARAMETER_NAME [mandatory|optional]
 test_parameter() {
@@ -73,8 +76,17 @@ else
 	test_parameter TARGET_IMAGE_VERSION $TARGET_IMAGE_VERSION mandatory
 	test_parameter BUILD_IMAGE_NAME $BUILD_IMAGE_NAME mandatory
 	test_parameter BUILD_IMAGE_VERSION $BUILD_IMAGE_VERSION mandatory
+	test_parameter USE_HOST_CONFIG_DIR $USE_HOST_CONFIG_DIR optional
 
-	docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock \
+	if [ "$USE_HOST_CONFIG_DIR" == 'true' ]; then
+		echo "Using Janus gateway configuration from host folder $JANUS_SRC_CONFIG_DIR"
+		CONFIG_DIR_MOUNT = "-v $JANUS_SRC_CONFIG_DIR:/image/janus_config"
+	else
+		echo "Using Janus gateway configuration from build image (copied during the build image creation)"
+		CONFIG_DIR_MOUNT = ""
+	fi
+	
+	docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock $CONFIG_DIR_MOUNT \
 	-e "JANUS_REPO=$JANUS_REPO" \
 	-e "JANUS_VERSION=$JANUS_VERSION" \
 	-e "TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME" \
