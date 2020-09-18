@@ -79,11 +79,13 @@ else
 	test_parameter USE_HOST_CONFIG_DIR $USE_HOST_CONFIG_DIR optional
 
 	if [ "$USE_HOST_CONFIG_DIR" == 'true' ]; then
+		echo
 		echo "Using Janus gateway configuration from host folder $JANUS_SRC_CONFIG_DIR"
-		CONFIG_DIR_MOUNT = -v $JANUS_SRC_CONFIG_DIR:/image/janus_config
+		CONFIG_DIR_MOUNT="-v $JANUS_SRC_CONFIG_DIR:/image/janus_config"
 	else
+		echo
 		echo "Using Janus gateway configuration from build image (copied during the build image creation)"
-		CONFIG_DIR_MOUNT =
+		CONFIG_DIR_MOUNT=""
 	fi
 	
 	docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock $CONFIG_DIR_MOUNT \
@@ -100,6 +102,9 @@ else
 	echo
 	echo "To execute the Janus gateway target image interactively issue the following command: "
 	echo "docker run --rm -it -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $FULL_TARGET_IMAGE_NAME"
+	echo
+	echo "Notes: "
+	echo "- To provide custom Janus gateway configuraiton from a <host folder> to the target image, add the following parameter before the image name: -v <config host folder absolute path>:/janus/etc/janus"
 fi
 
 
