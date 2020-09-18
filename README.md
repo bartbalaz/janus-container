@@ -12,7 +12,7 @@ compiles and creates the target Janus gateway image (target image for short) sto
 
 Please note:
 * Please visit [Meetecho Janus project](https://janus.conf.meetecho.com/docs/)for a detailed description of the Janus gateway.
-* Out-of-the-box this project provides the simplest single host Docker configuration.
+* Out-of-the-box this project provides the simplest single host Docker configuration which may be tailored to any other more complex configuration.
 * Only the video room plugin (and echo test plugin) with HTTP transport have been tried. Possibly, other plugins and transports may require adjustments in the content of the 
 target image (e.g. included Ubuntu packages).
 * At the bottom of this page in the Experimentation and observations section, we have added a dicussion about some limitations that need to be considered when deploying the target image.
