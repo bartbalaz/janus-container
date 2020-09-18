@@ -3,12 +3,15 @@
 ## Introduction
 This project creates the Janus gateway Docker image and provides the procedure to set up the container using the default *bridge* network driver. There are multiple advantages to support this
 configuration such as it avoids having to reserve dedicated IP address per container, configuring/parameterizing the image to use different sets of ports and makes automatic scaling much easier. 
-The strategy followed in this project is to create a build Docker image (build image for short) first. That image will run the Docker tools as well as the Janus build environment. The build image will 
-compile and create the target Janus gateway image (target image for short) stored on the host image repository. This allows to create a substantially smaller target image than if a single image
- combining the build and execution was built (~300MB vs ~1.6GB). This process requires the setup of a Docker host that purpose is to store the build and target images as well as to allow the 
- execution of the target image for the purpose of testing and experimentation.
+The default *bridge* configuration has the most constraints so basically if an image supports it that image will support all other configurations.
+
+The strategy followed in this project is to create a build Docker image (build image for short) first. The build image runs the Docker tools as well as the Janus build environment. It  
+compiles and creates the target Janus gateway image (target image for short) stored on the host image repository. This allows to create a substantially smaller target image than if a single image
+ combining the build and execution was built (~300MB vs ~1.6GB). A build image may also be used in a CI/CD pipline for test and deployment automation. This process requires the setup of a 
+ Docker host that purpose is to store the build and target images as well as to allow the execution of the target image for the purpose of testing and experimentation.
 
 Please note:
+* Please visit [Meetecho Janus project](https://janus.conf.meetecho.com/docs/)for a detailed description of the Janus gateway.
 * Out-of-the-box this project provides the simplest single host Docker configuration.
 * Only the video room plugin (and echo test plugin) with HTTP transport have been tried. Possibly, other plugins and transports may require adjustments in the content of the 
 target image (e.g. included Ubuntu packages).
