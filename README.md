@@ -3,7 +3,7 @@
 ## Introduction
 This project creates the Janus gateway Docker image and provides the procedure to set up the container using the default *bridge* network driver. There are multiple advantages to support this
 configuration such as it avoids having to reserve dedicated IP address per container, configuring/parameterizing the image to use different sets of ports and makes automatic scaling much easier. 
-The default *bridge* configuration has the most constraints so basically if an image supports it that image will support all other configurations.
+The default *bridge* configuration has the most constraints so basically if an image supports it that image will support most of other configurations.
 
 The strategy followed in this project is to create a build Docker image (build image for short) first. The build image runs the Docker tools as well as the Janus build environment. It
 compiles and creates the target Janus gateway image (target image for short) stored on the host image repository. This allows to create a substantially smaller target image than if a single image
@@ -188,7 +188,7 @@ steps for some additional convenience settings.
 	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>), must be specified.
 	export SKIP_BUILD_IMAGE = # When set to "true" the build image will not be built
 	export SKIP_TARGET_IMAGE = # When set to "true" the target image will not be build
-	export USE_HOST_CONFIG_DIR = #When set to 'true' the build image will mount the host Janus gatway configuration directory (e.g. <clone directory>/janus-config) instead of using the one that was copied during the build image creation
+	export USE_HOST_CONFIG_DIR = # When set to 'true' the build image will mount the host Janus gateway configuration directory (e.g. <clone directory>/janus-config) instead of using the one that was copied during the build image creation
 	```
 1. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the target image.
 1. Launch the build process, this process performs two steps: creates the build image (unless the *SKIP_BUILD_IMAGE* is set to *"true"*), 
