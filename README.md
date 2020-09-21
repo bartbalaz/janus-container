@@ -33,6 +33,7 @@ The Janus target image mounts the following host volumes:
 Please note that the /var/www/html folder contains the Nginx default index.html page which is accessible through HTTP. Its purpose is to allow Letsencrypt host validation.
 * */var/janus/recordings* (to container */janus/bin/janus-recordings*): This folder is used by the target image to store the video room recordings (when enabled).
 * */etc/letsencrypt/live/* (to container */etc/certs*) and */etc/letsecrypt/archive* (to container */archive*): These folders contain the links and actual Letsencrypt certificates requried for TLS and DTLS shared by both Nginx and Janus gateway
+* *\<Janus config host folder\>* (to container */janus/etc/janus*: Optionally the target image may mount a configuration folder from the host, this configuration will override the built-in configuration.
 The Janus build image mounts the following host volume:
 * */var/run/docker.sock* (to container */var/run/docker.sock*) enables the build image to use the Docker service from the host.
 * *\<clone directory\>/janus_config*, when the USE_HOST_CONFIG_DIR build parameter is set to 'true' the host janus configuration directory will be mounted and used in the 

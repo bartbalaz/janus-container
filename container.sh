@@ -104,7 +104,7 @@ else
 	echo "docker run --rm -it -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $FULL_TARGET_IMAGE_NAME"
 	echo
 	echo "Notes: "
-	echo "- To provide custom Janus gateway configuraiton from a <host folder> to the target image, add the following parameter before the image name: -v <config host folder absolute path>:/janus/etc/janus"
+	echo "- To provide custom Janus gateway configuraiton from a <Janus config host folder> to the target image, add the following parameter before the image name: -v <Janus config host folder absolute path>:/janus/etc/janus"
 fi
 
 
