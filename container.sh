@@ -71,7 +71,7 @@ else
 	echo " Executing the build image to create the target image "
 	echo "------------------------------------------------------"
 	test_parameter JANUS_REPO $JANUS_REPO optional
-	test_parameter JANUS_REPO $JANUS_VERSION optional
+	test_parameter JANUS_VERSION $JANUS_VERSION optional
 	test_parameter TARGET_IMAGE_NAME $TARGET_IMAGE_NAME mandatory
 	test_parameter TARGET_IMAGE_VERSION $TARGET_IMAGE_VERSION mandatory
 	test_parameter BUILD_IMAGE_NAME $BUILD_IMAGE_NAME mandatory
