@@ -216,7 +216,7 @@ step set the above mentioned *"SKIP_"* parameters to the appropriate values.
 	```bash
 	docker stop <first few chars of the container id as displayed by "ps" command>
 	```
-1. Start a container in interactive mode, that will be removed when stopped, overriding the defined entrypoint, exposes a port, mounts a volume and sets a environment variable
+1. Start a container in interactive mode, that will be removed when stopped, overriding the defined entrypoint, exposes a port, mounts a volume and sets an environment variable
 	```bash
 	docker run --rm -it -p <host port>:<container port> -v <host volume/directory>:<container directory> -e "VARIABLE_NAME=VARIABLE_VALUE" --entrypoint <new entrypoint command (e.g. "/bin/bash"> <image name>:<image tag>
 	```
