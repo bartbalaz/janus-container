@@ -203,6 +203,28 @@ step set the above mentioned *"SKIP_"* parameters to the appropriate values.
 	* By default the video room plugin configuration (configuration file: "janus.plugin.videoroom.jcfg") is set to require string video room names which is not the Janus gateway default configuraiton.
 	* The default configuration allows only HTTPS transport through secure ports 8089 - janus-api and 7889 - janus-admin.
 
+## Quick Docker tips
+1. List all the images available locally
+	```bash
+	docker images
+	```
+1. List all the containers that are stopped but have not been removed
+	```bash
+	docker ps -a
+	```
+1. Stop a container
+	```bash
+	docker stop <first few chars of the container id as displayed by "ps" command>
+	```
+1. Start a container in interactive mode, overriding the defined entrypoint, that will be removed when stopped, that exposes a port, mounts a volume and sets a environment variable
+	```bash
+	docker run --rm -it -p <host port>:<container port> -v <host volume/directory>:<container directory> --entrypoint <new entrypoint command (e.g. "/bin/bash"> <image name>:<image tag>
+	```
+1. Execute an interactive command in a running container
+	```bash
+	docker exec -it <first few chars of the container id as displayed by "ps" command> <command to execute (e.g. "/bin/bash")>
+	```
+
 ## Experimentation and observations
 The figure below shows the network configuraiton when running Janus gateway server in a Docker container configured with the default bridge network. The Docker host is a data center virtual machine 
 accessible through a 1-to-1 NAT firewall. The Janus client is located in a private network that offers a simple/typical firewall. The default Docker bridge configuration provides a private subnet 
