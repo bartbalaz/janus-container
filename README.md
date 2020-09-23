@@ -199,7 +199,7 @@ step set the above mentioned *"SKIP_"* parameters to the appropriate values.
 	./container.sh
 	```
 1. Launch the target image by invoking either of the commands that are displayed at the end of a **successful** target image build (if *SKIP_TARGET_IMAGE* was set to *"false"* or not exported).
-1. Try the image by browsing to *https://\<host\>.\<domain\>* Please note that:
+1. Try the image by browsing to *https://\<host\>.\<domain\>/container* Please note that:
 	* By default the video room plugin configuration (configuration file: "janus.plugin.videoroom.jcfg") is set to require string video room names which is not the Janus gateway default configuraiton.
 	* The default configuration allows only HTTPS transport through secure ports 8089 - janus-api and 7889 - janus-admin.
 
