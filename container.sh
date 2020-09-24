@@ -29,8 +29,6 @@ echo
 TOP_DIR=$(pwd)
 JANUS_SRC_CONFIG_DIR=$TOP_DIR/janus_config
 
-FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_VERSION
-FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_VERSION
 
 # test_parameter PARAMETER_NAME $PARAMETER_NAME [mandatory|optional]
 test_parameter() {
@@ -68,6 +66,8 @@ else
 		BUILD_IMAGE_VERSION="latest"
 		echo Parameter BUILD_IMAGE_VERSION set to "$BUILD_IMAGE_VERSION"
 	fi
+
+	FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_VERSION
 
 	docker build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
 fi
@@ -126,6 +126,8 @@ else
 		echo "Using Janus gateway configuration from build image (copied during the build image creation)"
 		CONFIG_DIR_MOUNT=""
 	fi
+	
+	FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_VERSION
 	
 	docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock $CONFIG_DIR_MOUNT \
 	-e "JANUS_REPO=$JANUS_REPO" \
