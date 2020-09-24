@@ -34,7 +34,10 @@ FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_VERSION
 
 # test_parameter PARAMETER_NAME $PARAMETER_NAME [mandatory|optional]
 test_parameter() {
-	if [ -z "$2" ] && [ "$3" == "mandatory" ]; then
+	if [ "$3" != "mandatory" ] && [ "$3" != "optional" ]; then
+		echo "Parameter $1 must either be mandatory or optional"
+		exit 1
+	elif [ -z "$2" ] && [ "$3" == "mandatory" ]; then
 		echo "Mandatory parameter $1 emtpy"
 		exit 1
 	elif [ -z "$2" ]; then
@@ -45,7 +48,7 @@ test_parameter() {
 }
 
 # The buld image creation process requires only the image name and tag
-if [ "$SKIP_BUILD_IMAGE" == 'true' ]; then
+if [ "$SKIP_BUILD_IMAGE" == "true" ]; then
 	echo
 	echo " Skipping build image creation "
 	echo "-------------------------------"
