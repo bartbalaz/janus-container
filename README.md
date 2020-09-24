@@ -181,14 +181,15 @@ steps for some additional convenience settings.
 	```bash
 	export JANUS_REPO = # Repository to fetch Janus gatway sources from (e.g. https://github.com/bartbalaz/janus-gateway.git). If none is specified the default Meetech Janus gateway repository will be used
 	export JANUS_VERSION = # Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
-	export TARGET_IMAGE_NAME = # Target image name (e.g. janus), must be specified.
-	export TARGET_IMAGE_VERSION = # The version to tag the target image with (e.g. 01), must be specified.
-	export BUILD_IMAGE_NAME = # Name of the build image (e.g. janus_build), must be specified.
-	export BUILD_IMAGE_VERSION = # The version to tag the build image with (e.g. 01), must be specified.
-	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>), must be specified.
-	export SKIP_BUILD_IMAGE = # When set to "true" the build image will not be built
-	export SKIP_TARGET_IMAGE = # When set to "true" the target image will not be build
-	export USE_HOST_CONFIG_DIR = # When set to 'true' the build image will mount the host Janus gateway configuration directory (e.g. <clone directory>/janus-config) instead of using the one that was copied during the build image creation
+	export TARGET_IMAGE_NAME = # Target image name (e.g. janus), defaults to "janus".
+	export TARGET_IMAGE_VERSION = # The version to tag the target image with (e.g. 01), defaults to "latest".
+	export BUILD_IMAGE_NAME = # Name of the build image (e.g. janus_build),defaults to "janus_build".
+	export BUILD_IMAGE_VERSION = # The version to tag the build image with (e.g. 01), defaults to "latest".
+	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>), defaults to place holder "<host>.<domain>"
+	export SKIP_BUILD_IMAGE = # When set to "true" the build image will not be built, by default not set
+	export SKIP_TARGET_IMAGE = # When set to "true" the target image will not be build, be default not set 
+	export USE_HOST_CONFIG_DIR = # When set to 'true' the build image will mount the host Janus gateway configuration directory (e.g. <clone directory>/janus-config) 
+	instead of using the one that was copied during the build image creation, by default not set
 	```
 1. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the target image.
 1. Launch the build process, this process performs two steps: creates the build image (unless the *SKIP_BUILD_IMAGE* is set to *"true"*), 

@@ -56,8 +56,18 @@ else
 	echo
 	echo " Creating the build image "
 	echo "--------------------------"
-	test_parameter BUILD_IMAGE_NAME $BUILD_IMAGE_NAME mandatory
-	test_parameter BUILD_IMAGE_VERSION $BUILD_IMAGE_VERSION mandatory
+	test_parameter BUILD_IMAGE_NAME $BUILD_IMAGE_NAME optional
+	test_parameter BUILD_IMAGE_VERSION $BUILD_IMAGE_VERSION optional
+
+	if [ -z $BUILD_IMAGE_NAME ]; then
+		$BUILD_IMAGE_NAME = "janus_build"
+		echo Parameter BUILD_IMAGE_NAME set to "$BUILD_IMAGE_NAME"
+	fi
+
+	if [ -z $BUILD_IMAGE_VERSION ]; then
+		$BUILD_IMAGE_VERSION = "latest"
+		echo Parameter BUILD_IMAGE_VERSION set to "$BUILD_IMAGE_VERSION"
+	fi
 
 	docker build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
 fi
@@ -73,13 +83,39 @@ else
 	echo
 	echo " Executing the build image to create the target image "
 	echo "------------------------------------------------------"
+	test_parameter JANUS_REPO $HOST_NAME optional
 	test_parameter JANUS_REPO $JANUS_REPO optional
 	test_parameter JANUS_VERSION $JANUS_VERSION optional
-	test_parameter TARGET_IMAGE_NAME $TARGET_IMAGE_NAME mandatory
-	test_parameter TARGET_IMAGE_VERSION $TARGET_IMAGE_VERSION mandatory
-	test_parameter BUILD_IMAGE_NAME $BUILD_IMAGE_NAME mandatory
-	test_parameter BUILD_IMAGE_VERSION $BUILD_IMAGE_VERSION mandatory
+	test_parameter TARGET_IMAGE_NAME $TARGET_IMAGE_NAME optional
+	test_parameter TARGET_IMAGE_VERSION $TARGET_IMAGE_VERSION optional
+	test_parameter BUILD_IMAGE_NAME $BUILD_IMAGE_NAME optional
+	test_parameter BUILD_IMAGE_VERSION $BUILD_IMAGE_VERSION optional
 	test_parameter USE_HOST_CONFIG_DIR $USE_HOST_CONFIG_DIR optional
+
+	if [ -z $HOST_NAME ]; then
+		$HOST_NAME = "<host>.<domain>"
+		echo Parameter HOST_NAME set to "$HOST_NAME"
+	fi
+
+	if [ -z $TARGET_IMAGE_NAME ]; then
+		$TARGET_IMAGE_NAME = "janus"
+		echo Parameter TARGET_IMAGE_NAME set to "$TARGET_IMAGE_NAME"
+	fi
+
+	if [ -z $TARGET_IMAGE_VERSION ]; then
+		$TARGET_IMAGE_VERSION = "latest"
+		echo Parameter TARGET_IMAGE_VERSION set to "$TARGET_IMAGE_VERSION"
+	fi
+
+	if [ -z $BUILD_IMAGE_NAME ]; then
+		$BUILD_IMAGE_NAME = "janus_build"
+		echo Parameter BUILD_IMAGE_NAME set to "$BUILD_IMAGE_NAME"
+	fi
+
+	if [ -z $BUILD_IMAGE_VERSION ]; then
+		$BUILD_IMAGE_VERSION = "latest"
+		echo Parameter BUILD_IMAGE_VERSION set to "$BUILD_IMAGE_VERSION"
+	fi
 
 	if [ "$USE_HOST_CONFIG_DIR" == 'true' ]; then
 		echo
@@ -96,7 +132,6 @@ else
 	-e "JANUS_VERSION=$JANUS_VERSION" \
 	-e "TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME" \
 	-e "TARGET_IMAGE_VERSION=$TARGET_IMAGE_VERSION" \
-	-e "HOST_NAME=$HOST_NAME" \
 	$FULL_BUILD_IMAGE_NAME	
 	echo
 	echo "To execute the Janus gateway target image non-interactively issue the following command: "

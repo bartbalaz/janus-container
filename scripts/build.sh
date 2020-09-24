@@ -15,7 +15,6 @@ echo
 # JANUS_VERSION - Version of the Janus gateway sources to checkout (e.g. v0.10.0)
 # TARGET_IMAGE_NAME - Target image name (e.g. janus)
 # TARGET_IMAGE_VERSION - Target image version (e.g. 01) 
-# HOST_NAME - Name of the host including the fqdn (e.g. <host>.<domain>), please note that it may be difficult 
 # to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate 
 
@@ -63,13 +62,16 @@ purge_dir() {
 
 # test_parameter PARAMETER_NAME $PARAMETER_NAME [mandatory|optional]
 test_parameter() {
-	if [ -z "$2" ] && [ "$3" == "mandatory" ]; then
+	if [ "$3" != "mandatory" ] && [ "$3" != "optional" ]; then
+		echo "Parameter $1 must either be mandatory or optional"
+		exit 1
+	elif [ -z "$2" ] && [ "$3" == "mandatory" ]; then
 		echo "Mandatory parameter $1 emtpy"
 		exit 1
 	elif [ -z "$2" ]; then
 		echo "Non-mandatory parameter $1 empty"
 	else
-		echo "Parameter $1 = $2 OK"
+		echo Parameter "$1 = $2"
 	fi
 }
 
@@ -80,9 +82,19 @@ echo
 echo " Verifying parameters "
 echo "----------------------"
 test_parameter JANUS_REPO $JANUS_REPO optional
-test_parameter JANUS_REPO $JANUS_VERSION optional
-test_parameter TARGET_IMAGE_NAME $TARGET_IMAGE_NAME mandatory
-test_parameter TARGET_IMAGE_VERSION $TARGET_IMAGE_VERSION mandatory
+test_parameter JANUS_VERSION $JANUS_VERSION optional
+test_parameter TARGET_IMAGE_NAME $TARGET_IMAGE_NAME optional
+test_parameter TARGET_IMAGE_VERSION $TARGET_IMAGE_VERSION optional
+
+	if [ -z $TARGET_IMAGE_NAME ]; then
+		$TARGET_IMAGE_NAME = "janus"
+		echo Parameter TARGET_IMAGE_NAME set to "$TARGET_IMAGE_NAME"
+	fi
+
+	if [ -z $TARGET_IMAGE_VERSION ]; then
+		$TARGET_IMAGE_VERSION = "latest"
+		echo Parameter TARGET_IMAGE_VERSION set to "$TARGET_IMAGE_VERSION"
+	fi
 
 
 echo

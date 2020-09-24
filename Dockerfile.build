@@ -2,7 +2,7 @@
 # Trigger the image build by issuing:
 # docker build -t <buld image name> -f Dockerfile.build .
 # To run the image:
-# docker run -rm -v /var/run/docker.sock:/var/run/docker.sock export -e "JANUS_REPO=<git repo>" -e "JANUS_VERSION=<verstion to use>" -e "IMAGE_NAME=<target image name>" -e "IMAGE_VERSION=<target image version>" -e "HOST_NAME=<host.fqdn>" <buld image name> 
+# docker run -rm -v /var/run/docker.sock:/var/run/docker.sock export -e "JANUS_REPO=<git repo>" -e "JANUS_VERSION=<verstion to use>" -e "IMAGE_NAME=<target image name>" -e "IMAGE_VERSION=<target image version>" <buld image name> 
 # docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock janus_build /bin/bash
 
 FROM ubuntu:18.04
