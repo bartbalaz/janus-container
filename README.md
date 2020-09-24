@@ -16,6 +16,7 @@ Please note:
 * Only the video room plugin (and echo test plugin) with HTTP transport have been tried. Possibly, other plugins and transports may require adjustments in the content of the 
 target image (e.g. included Ubuntu packages).
 * At the bottom of this page in the Experimentation and observations section, we have added a dicussion about some limitations that need to be considered when deploying the target image.
+* The master branch changes often, it may be broken from time to time, if this happens please fall back to any of the existing tags.
 * The author welcomes comments and sugestions!
 
 ## Host setup
