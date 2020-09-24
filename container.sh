@@ -56,16 +56,16 @@ else
 	echo
 	echo " Creating the build image "
 	echo "--------------------------"
-	test_parameter BUILD_IMAGE_NAME $BUILD_IMAGE_NAME optional
-	test_parameter BUILD_IMAGE_VERSION $BUILD_IMAGE_VERSION optional
+	test_parameter BUILD_IMAGE_NAME "$BUILD_IMAGE_NAME" optional
+	test_parameter BUILD_IMAGE_VERSION "$BUILD_IMAGE_VERSION" optional
 
 	if [ -z $BUILD_IMAGE_NAME ]; then
-		$BUILD_IMAGE_NAME = "janus_build"
+		BUILD_IMAGE_NAME = "janus_build"
 		echo Parameter BUILD_IMAGE_NAME set to "$BUILD_IMAGE_NAME"
 	fi
 
 	if [ -z $BUILD_IMAGE_VERSION ]; then
-		$BUILD_IMAGE_VERSION = "latest"
+		BUILD_IMAGE_VERSION = "latest"
 		echo Parameter BUILD_IMAGE_VERSION set to "$BUILD_IMAGE_VERSION"
 	fi
 
@@ -91,29 +91,29 @@ else
 	test_parameter BUILD_IMAGE_NAME $BUILD_IMAGE_NAME optional
 	test_parameter BUILD_IMAGE_VERSION $BUILD_IMAGE_VERSION optional
 	test_parameter USE_HOST_CONFIG_DIR $USE_HOST_CONFIG_DIR optional
-
+	
 	if [ -z $HOST_NAME ]; then
-		$HOST_NAME = "<host>.<domain>"
+		HOST_NAME = "<host>.<domain>"
 		echo Parameter HOST_NAME set to "$HOST_NAME"
 	fi
 
 	if [ -z $TARGET_IMAGE_NAME ]; then
-		$TARGET_IMAGE_NAME = "janus"
+		TARGET_IMAGE_NAME = "janus"
 		echo Parameter TARGET_IMAGE_NAME set to "$TARGET_IMAGE_NAME"
 	fi
 
 	if [ -z $TARGET_IMAGE_VERSION ]; then
-		$TARGET_IMAGE_VERSION = "latest"
+		TARGET_IMAGE_VERSION = "latest"
 		echo Parameter TARGET_IMAGE_VERSION set to "$TARGET_IMAGE_VERSION"
 	fi
 
 	if [ -z $BUILD_IMAGE_NAME ]; then
-		$BUILD_IMAGE_NAME = "janus_build"
+		BUILD_IMAGE_NAME = "janus_build"
 		echo Parameter BUILD_IMAGE_NAME set to "$BUILD_IMAGE_NAME"
 	fi
 
 	if [ -z $BUILD_IMAGE_VERSION ]; then
-		$BUILD_IMAGE_VERSION = "latest"
+		BUILD_IMAGE_VERSION = "latest"
 		echo Parameter BUILD_IMAGE_VERSION set to "$BUILD_IMAGE_VERSION"
 	fi
 
