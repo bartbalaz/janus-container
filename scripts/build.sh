@@ -87,12 +87,12 @@ test_parameter TARGET_IMAGE_NAME "$TARGET_IMAGE_NAME" optional
 test_parameter TARGET_IMAGE_VERSION "$TARGET_IMAGE_VERSION" optional
 
 	if [ -z $TARGET_IMAGE_NAME ]; then
-		TARGET_IMAGE_NAME = "janus"
+		TARGET_IMAGE_NAME="janus"
 		echo Parameter TARGET_IMAGE_NAME set to "$TARGET_IMAGE_NAME"
 	fi
 
 	if [ -z $TARGET_IMAGE_VERSION ]; then
-		TARGET_IMAGE_VERSION = "latest"
+		TARGET_IMAGE_VERSION="latest"
 		echo Parameter TARGET_IMAGE_VERSION set to "$TARGET_IMAGE_VERSION"
 	fi
 
