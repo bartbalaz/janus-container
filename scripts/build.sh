@@ -44,7 +44,6 @@ START_SCRIPT_SRC=$TOP_DIR/start.sh
 START_SCRIPT_DST=$ROOT_DIR/start.sh 
 
 JANUS_CLONE_DIR=$STAGING_DIR/janus
-FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_VERSION
 
 # create_dir PATH
 create_dir() {
@@ -96,6 +95,7 @@ test_parameter TARGET_IMAGE_VERSION "$TARGET_IMAGE_VERSION" optional
 		echo Parameter TARGET_IMAGE_VERSION set to "$TARGET_IMAGE_VERSION"
 	fi
 
+FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_VERSION
 
 echo
 echo " Creating root and staging directories "
