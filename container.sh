@@ -19,8 +19,10 @@ echo
 # BUILD_IMAGE_VERSION - Version of the build image allowing to build the Janus gateway image
 # SKIP_BUILD_IMAGE - When set to 'true', the build image will not be created, the available build image will be used to create the tarteg image
 # SKIP_TARGET_IMAGE - When set to 'true', the target image will not be created.
-# USE_HOST_CONFIG_DIR - When set to 'true' the build image will mount the host Janus configuration directory instead of using the one that was copied
+# BUILD_WITH_HOST_CONFIG_DIR - When set to 'true' the build image will mount the host Janus configuration directory instead of using the one that was copied
 # during the build image creation
+# RUN_WITH_HOST_CONFIGURATION_DIR - When set to "true" the image execution command displayed at the end of the sucessful build will add an option to use host Janus server configuration directory 
+# i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process
 # HOST_NAME - Name of the host including the fqdn (e.g. <host>.<domain>), please note that it may be difficult 
 # to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate 
@@ -90,7 +92,7 @@ else
 	test_parameter TARGET_IMAGE_VERSION "$TARGET_IMAGE_VERSION" optional
 	test_parameter BUILD_IMAGE_NAME "$BUILD_IMAGE_NAME" optional
 	test_parameter BUILD_IMAGE_VERSION "$BUILD_IMAGE_VERSION" optional
-	test_parameter USE_HOST_CONFIG_DIR "$USE_HOST_CONFIG_DIR" optional
+	test_parameter BUILD_WITH_HOST_CONFIG_DIR "$BUILD_WITH_HOST_CONFIG_DIR" optional
 	
 	if [ -z $HOST_NAME ]; then
 		HOST_NAME="<host>.<domain>"
@@ -117,7 +119,7 @@ else
 		echo Parameter BUILD_IMAGE_VERSION set to "$BUILD_IMAGE_VERSION"
 	fi
 
-	if [ "$USE_HOST_CONFIG_DIR" == 'true' ]; then
+	if [ "$BUILD_WITH_HOST_CONFIG_DIR" == 'true' ]; then
 		echo
 		echo "Using Janus gateway configuration from host folder $JANUS_SRC_CONFIG_DIR"
 		CONFIG_DIR_MOUNT="-v $JANUS_SRC_CONFIG_DIR:/image/janus_config"
@@ -137,15 +139,19 @@ else
 	-e "TARGET_IMAGE_VERSION=$TARGET_IMAGE_VERSION" \
 	$FULL_BUILD_IMAGE_NAME
 	
+	
+	if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true" ]; then
+		$COMMAND_EXTENSION = " -v $JANUS_SRC_CONFIG_DIR:/janus/etc/janus_host -e \"RUN_WITH_HOST_CONFIGURATION_DIR=true\""
+	fi
+	
 	echo
 	echo "To execute the Janus gateway target image non-interactively issue the following command: "
-	echo "docker run --rm -d -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $FULL_TARGET_IMAGE_NAME"
+	echo "docker run --rm -d -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $COMMAND_EXTENSION $FULL_TARGET_IMAGE_NAME "
 	echo
 	echo "To execute the Janus gateway target image interactively issue the following command: "
-	echo "docker run --rm -it -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $FULL_TARGET_IMAGE_NAME"
+	echo "docker run --rm -it -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $COMMAND_EXTENSION $FULL_TARGET_IMAGE_NAME"
 	echo
-	echo "Notes: "
-	echo "- To provide custom Janus gateway configuraiton from a <Janus config host folder> to the target image, add the following parameter before the image name: -v <Janus config host folder absolute path>:/janus/etc/janus"
+	echo
 fi
 
 

@@ -35,6 +35,7 @@ JANUS_DST_HTML_MOUNT_DIR=$ROOT_DIR/html
 JANUS_DST_INCLUDE_DIR=$JANUS_DST_DIR/include
 JANUS_DST_SHARE_DIR=$JANUS_DST_DIR/share
 JANUS_DST_CONFIG_DIR=$JANUS_DST_DIR/etc/janus
+JANUS_DST_HOST_CONFIG_DIR=$JANUS_DST_DIR/etc/janus_host
 JANUS_DST_RECORDING_DIR=$JANUS_DST_DIR/bin/janus-recordings
 
 CERTIFICATE_LINKS_DIR=$ROOT_DIR/etc/certs
@@ -154,6 +155,10 @@ echo
 echo " Removing default configuration "
 echo "--------------------------------"
 purge_dir $JANUS_DST_CONFIG_DIR
+
+echo " Crating host configuration directory "
+echo "--------------------------------------"
+create_dir $JANUS_DST_HOST_CONFIG_DIR
 
 echo
 echo " Copying custom configuration "
