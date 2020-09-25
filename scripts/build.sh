@@ -156,6 +156,7 @@ echo " Removing default configuration "
 echo "--------------------------------"
 purge_dir $JANUS_DST_CONFIG_DIR
 
+echo
 echo " Crating host configuration directory "
 echo "--------------------------------------"
 create_dir $JANUS_DST_HOST_CONFIG_DIR
