@@ -26,7 +26,7 @@ echo "----------------------"
 cd /janus/bin
 
 CONFIG_DIR="/janus/etc/janus"
-if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true"]; then
+if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true" ]; then
 	CONFIG_DIR="/janus/etc/janus_host"
 fi
 echo Running janus with configuration directory: "$CONFIG_DIR"
