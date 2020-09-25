@@ -189,9 +189,8 @@ steps for some additional convenience settings.
 	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>), defaults to place holder "<host>.<domain>"
 	export SKIP_BUILD_IMAGE = # When set to "true" the build image will not be built, by default not set
 	export SKIP_TARGET_IMAGE = # When set to "true" the target image will not be build, be default not set 
-	export BUILD_WITH_HOST_CONFIG_DIR = # When set to 'true' the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation, by default not set
-	export RUN_WITH_HOST_CONFIGURATION_DIR= # When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory 
-	# i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process
+	export BUILD_WITH_HOST_CONFIG_DIR = # When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation, by default not set
+	export RUN_WITH_HOST_CONFIGURATION_DIR= # When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process, by default not set.
 	```
 1. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the target image.
 1. Launch the build process, this process performs two steps: creates the build image (unless the *SKIP_BUILD_IMAGE* is set to *"true"*), 
