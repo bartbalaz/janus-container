@@ -127,6 +127,7 @@ else
 		CONFIG_DIR_MOUNT=""
 	fi
 	
+	FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_VERSION
 	FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_VERSION
 	
 	docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock $CONFIG_DIR_MOUNT \
@@ -134,7 +135,8 @@ else
 	-e "JANUS_VERSION=$JANUS_VERSION" \
 	-e "TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME" \
 	-e "TARGET_IMAGE_VERSION=$TARGET_IMAGE_VERSION" \
-	$FULL_BUILD_IMAGE_NAME	
+	$FULL_BUILD_IMAGE_NAME
+	
 	echo
 	echo "To execute the Janus gateway target image non-interactively issue the following command: "
 	echo "docker run --rm -d -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $FULL_TARGET_IMAGE_NAME"
