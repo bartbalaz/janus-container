@@ -93,6 +93,7 @@ else
 	test_parameter BUILD_IMAGE_NAME "$BUILD_IMAGE_NAME" optional
 	test_parameter BUILD_IMAGE_VERSION "$BUILD_IMAGE_VERSION" optional
 	test_parameter BUILD_WITH_HOST_CONFIG_DIR "$BUILD_WITH_HOST_CONFIG_DIR" optional
+	test_parameter RUN_WITH_HOST_CONFIGURATION_DIR "$RUN_WITH_HOST_CONFIGURATION_DIR" optional
 	
 	if [ -z $HOST_NAME ]; then
 		HOST_NAME="<host>.<domain>"
