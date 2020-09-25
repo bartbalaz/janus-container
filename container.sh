@@ -142,7 +142,7 @@ else
 	
 	
 	if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true" ]; then
-		$COMMAND_EXTENSION = " -v $JANUS_SRC_CONFIG_DIR:/janus/etc/janus_host -e \"RUN_WITH_HOST_CONFIGURATION_DIR=true\""
+		COMMAND_EXTENSION=" -v $JANUS_SRC_CONFIG_DIR:/janus/etc/janus_host -e \"RUN_WITH_HOST_CONFIGURATION_DIR=true\""
 	fi
 	
 	echo
