@@ -8,19 +8,12 @@ echo "    Running $0 "
 echo "***************************" 
 echo
 
-# Configuration - Set these parameters to the appropriate values, we suggest to create a configuration file with 
-# a set of export statements that is "source'd" before the execution of this script
-
 # JANUS_REPO - Repository to fetch Janus gatweay sources from (e.g. https://github.com/bartbalaz/janus-gateway.git)
 # JANUS_VERSION - Version of the Janus gateway sources to checkout (e.g. v0.10.0)
 # TARGET_IMAGE_NAME - Target image name (e.g. janus)
 # TARGET_IMAGE_VERSION - Target image version (e.g. 01) 
-# to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
-# environments where the returned values may not be appropriate 
 
-# Global variables - Should not need to be modified
-# This is the top directory inside the container where the staging subdirectory will be created for performing the build activities as
-# well as the root directory that will be added to the resulting Janus gateway image.
+# This is the top directory inside the container where "staging" and "root" subdirectories will be created
 TOP_DIR=/image
 
 ROOT_DIR=$TOP_DIR/root
@@ -47,6 +40,7 @@ START_SCRIPT_DST=$ROOT_DIR/start.sh
 JANUS_CLONE_DIR=$STAGING_DIR/janus
 
 # create_dir PATH
+# Creates the required directory path if it does not exist
 create_dir() {
 	if [ ! -d "$1" ]; then
 		mkdir -p $1
@@ -54,6 +48,7 @@ create_dir() {
 }
 
 # purge_dir PATH
+# Removes the directory if it exists
 purge_dir() {
 	if [ -d "$1" ]; then
 		rm -rf $1
@@ -61,6 +56,7 @@ purge_dir() {
 }
 
 # test_parameter PARAMETER_NAME $PARAMETER_NAME [mandatory|optional]
+# Tests a parameter, if the parameter is emty while mandatory, the script exits
 test_parameter() {
 	if [ "$3" != "mandatory" ] && [ "$3" != "optional" ]; then
 		echo "Parameter $1 must either be mandatory or optional"
@@ -85,6 +81,8 @@ test_parameter JANUS_REPO "$JANUS_REPO" optional
 test_parameter JANUS_VERSION "$JANUS_VERSION" optional
 test_parameter TARGET_IMAGE_NAME "$TARGET_IMAGE_NAME" optional
 test_parameter TARGET_IMAGE_VERSION "$TARGET_IMAGE_VERSION" optional
+
+# Set the default values (JANUS_REPO and JANUS_VERSION are tested and set below)
 
 	if [ -z $TARGET_IMAGE_NAME ]; then
 		TARGET_IMAGE_NAME="janus"
@@ -192,7 +190,7 @@ cp $START_SCRIPT_SRC $START_SCRIPT_DST
 chmod a+x $START_SCRIPT_DST
 
 echo
-echo " Building the Janus docker image "
-echo "---------------------------------"
+echo " Building the Janus gateway target image "
+echo "-----------------------------------------"
 cd $TOP_DIR
 docker build -t $FULL_TARGET_IMAGE_NAME -f Dockerfile.exec .

@@ -1,3 +1,5 @@
+# Docker file for creating a Janus gateway target image.
+
 FROM ubuntu:18.04
 
 # API secure ports only 
