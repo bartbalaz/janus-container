@@ -51,16 +51,16 @@ The figure below depicts the target image creation process.
 The process consists in the following steps:
 1. *Preparation*: The project is cloned from the Github repository. The default Janus gateway server configuration in _\<clone directory\>/janus_config_ sub-folder is reviewed and modified according 
 to the requirements of the target image.  
-1. *Build image creation*: Triggered by invoking the *container.sh* script. The build relies on *Dockerfile.build* and *setup.sh* scripts along with some environment variables (see below).
-to install the necessary components in the build image. The Janus gateway configuration is copied into the build image, it will be used in the target image creation.
+1. *Build image creation*: Triggered by invoking the *container.sh* script. The build relies on *Dockerfile.build* and *setup.sh* scripts along with some environment variables (*see below*)
+to install the necessary components of the build image. The Janus gateway configuration is copied into the build image, it will be used in the next step.
 1. *Target Image creation*: Once the build image is created the *container.sh* script triggers the target image build process that relies on *Dockerfile.exec* and *build.sh* scripts, copied into the 
-build image in the previous step. In this step, the required version of the Janus software is cloned and checked out as specified in the _JANUS_REPO_ and _JANUS_VERSION_ variables.
-Binary and source dependencies are fetched. The whole package is compiled and the target image is created. Instead of using the embedded Janus gateway configuration during the build image creation it is possible, 
-by defining the _BUILD_WITH_HOST_CONFIG_DIR_ variable (see below), to mount the _\<clone directory\>/janus_config_, or any other host directory containing Janus gateway configuration, 
-during the target image creation process. In that case configuration from the mounted directory will be copied into the target image.
-1. *Target image execution*: The created image contains a *start.sh* script that is configured as the entry point. This scripts copies the Janus HTML samples and invokes the Janus gateway application. If
+build image (_/image_ directory) in the previous step. In this step, the required version of the Janus software is cloned and checked out as specified by the _JANUS_REPO_ and _JANUS_VERSION_ environment variables.
+Binary and source dependencies are fetched. The whole package is compiled and the target image is created. In this step, instead of using the embedded Janus gateway configuration it is possible, 
+by defining the _BUILD_WITH_HOST_CONFIG_DIR_ variable, to mount the _\<clone directory\>/janus_config_, containing Janus gateway configuration. In that case configuration from the 
+mounted directory will be copied into the target image.
+1. *Target image execution*: The created target image contains a *start.sh* script that is configured as the entry point. This scripts copies the Janus HTML samples and invokes the Janus gateway application. If
 _RUN_WITH_HOST_CONFIGURATION_DIR_ is set to "true" the *start.sh* script will use the Janus configuration host folder mounted inside the container at _/janus/etc/janus_host_ instead
-of using the embedded configuration inside image located in _/janus/etc/janus_ directory.
+of using the embedded configuration located in _/janus/etc/janus_ directory.
 
 ## Installation procedure
 This section provides the default installation procedure. The default configuration allows to access the server only through HTTPs using the host's 
@@ -152,7 +152,7 @@ steps for some additional convenience settings.
 		```
 	**These files are links from the */etc/letsencrypt/archive* directory.**
 	
-	**!!VERY IMPORTANT!! Make sure the NON *root* user has _read_ access to the links and the certificates.**
+	**!!VERY IMPORTANT!! Make sure the NON _root_ user has _read_ access to the links and the certificates.**
 	```bash
 	chmod -R a+r+x /etc/letsencrypt/live
 	chmod -R a+r+x /etc/letsencrypt/archive
@@ -186,7 +186,7 @@ steps for some additional convenience settings.
 	sudo mkdir -p /var/janus/recordings
 	```
 ## Build procedure
-1. Set the build parameters
+1. Set the build parameters environment variables
 	```bash
 	export JANUS_REPO = # Repository to fetch Janus gatway sources from (e.g. https://github.com/bartbalaz/janus-gateway.git). If none is specified the default Meetech Janus gateway repository will be used
 	export JANUS_VERSION = # Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
@@ -196,7 +196,7 @@ steps for some additional convenience settings.
 	export BUILD_IMAGE_VERSION = # The version to tag the build image with (e.g. 01), defaults to "latest".
 	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>), defaults to place holder "<host>.<domain>"
 	export SKIP_BUILD_IMAGE = # When set to "true" the build image will not be built, by default not set
-	export SKIP_TARGET_IMAGE = # When set to "true" the target image will not be build, be default not set 
+	export SKIP_TARGET_IMAGE = # When set to "true" the target image will not be build, by default not set 
 	export BUILD_WITH_HOST_CONFIG_DIR = # When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation, by default not set
 	export RUN_WITH_HOST_CONFIGURATION_DIR= # When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process, by default not set.
 	```
@@ -211,7 +211,7 @@ step set the above mentioned *"SKIP_"* parameters to the appropriate values.
 1. Launch the target image by invoking either of the commands that are displayed at the end of a **successful** target image build (if *SKIP_TARGET_IMAGE* was set to *"false"* or not exported).
 1. Try the image by browsing to *https://\<host\>.\<domain\>/container* Please note that:
 	* By default the video room plugin configuration (configuration file: *\<clone directory\>/janus_config/janus.plugin.videoroom.jcfg*) is set to require string video room names which is not the Janus gateway default configuraiton.
-	* The default configuration allows only HTTPS transport through secure ports 8089 - janus-api and 7889 - janus-admin.
+	* The default configuration allows *only* HTTPS transport through secure ports 8089 - janus-api and 7889 - janus-admin.
 
 ## Quick Docker tips
 1. List all the images available locally
