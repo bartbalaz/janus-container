@@ -148,7 +148,7 @@ else
 	-e "TARGET_IMAGE_VERSION=$TARGET_IMAGE_VERSION" \
 	$FULL_BUILD_IMAGE_NAME
 	
-	
+	# If required, add an extension to the command displayed below that allows the container to mount and use a host configuration folder
 	if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true" ]; then
 		COMMAND_EXTENSION=" -v $JANUS_SRC_CONFIG_DIR:/janus/etc/janus_host -e \"RUN_WITH_HOST_CONFIGURATION_DIR=true\""
 	fi
