@@ -2,7 +2,7 @@
 
 ## Introduction
 This project creates the Janus gateway Docker image and provides the procedure to set up the container using the default *bridge* network driver. There are multiple advantages to support this
-configuration such as it avoids having to reserve dedicated IP address per container, configuring/parameterizing the image to use different sets of ports and makes automatic scaling much easier. 
+configuration such as it avoids having to reserve dedicated IP address per container, configuring/parameterizing the image to use different sets of ports internally and makes automatic scaling much easier. 
 The default *bridge* configuration has the most constraints so basically if an image supports it that image will support most of other configurations.
 
 The strategy followed in this project is to create a build Docker image (build image for short) first. The build image runs the Docker tools as well as the Janus build environment. It
@@ -15,7 +15,7 @@ Please note:
 * Out-of-the-box this project provides the simplest single host Docker configuration which may be tailored to any other more complex configurations.
 * Only the video room plugin (and echo test plugin) with HTTP transport have been tried. Possibly, other plugins and transports may require adjustments in the content of the 
 target image (e.g. included Ubuntu packages).
-* At the bottom of this page in the Experimentation and observations section, we have added a dicussion about some limitations that need to be considered when deploying the target image.
+* At the bottom of this page in the Experimentation and observations section, we have added a discussion about some limitations that need to be considered when deploying the target image.
 * The master branch changes often, it may be broken from time to time, if this happens please fall back to any of the existing tags.
 * The author welcomes comments and sugestions!
 
