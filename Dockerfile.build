@@ -3,7 +3,7 @@
 FROM ubuntu:18.04
 
 # Add the scripts
-ADD scripts/setup.sh scripts/build.sh scripts/start.sh Dockerfile.exec /image/
+ADD scripts/setup.sh scripts/build.sh scripts/start.sh scripts/Dockerfile.exec /image/
 
 # Add janus configuration
 ADD janus_config /image/janus_config

@@ -7,24 +7,24 @@ The default *bridge* configuration has the most constraints so basically if an i
 
 The strategy followed in this project is to create a build Docker image (build image for short) first. The build image runs the Docker tools as well as the Janus build environment. It
 compiles and creates the target Janus gateway image (target image for short) stored on the host image repository. This allows to create a substantially smaller target image than if a single image
- combining the build and execution was built (~300MB vs ~1.6GB). A build image may also be used in a CI/CD pipline for test and deployment automation. This process requires the setup of a 
+ combining the build and execution was built (~300MB vs ~1.6GB). A build image may also be used in a CI/CD pipeline for test and deployment automation. This process requires the setup of a 
  Docker host that purpose is to store the build and target images as well as to allow the execution of the target image for the purpose of testing and experimentation.
 
 Please note:
 * Please visit [Meetecho Janus project](https://janus.conf.meetecho.com/docs/) for a detailed description of the Janus gateway.
-* Out-of-the-box this project provides the simplest single host Docker configuration which may be tailored to any other more complex configurations.
-* Only the video room plugin (and echo test plugin) with HTTP transport have been tried. Possibly, other plugins and transports may require adjustments in the content of the 
+* Out-of-the-box this project provides the simplest single host Docker configuration which may be tailored to any other more complex configuration.
+* Only the video room plug-in (and echo test plug-in) with HTTP transport have been tried. Possibly, other plug-ins and transports may require adjustments in the content of the 
 target image (e.g. included Ubuntu packages).
 * At the bottom of this page in the Experimentation and observations section, we have added a discussion about some limitations that need to be considered when deploying the target image.
 * The master branch changes often, it may be broken from time to time, if this happens please fall back to any of the existing tags.
-* The author welcomes comments and sugestions!
+* The author welcomes comments and suggestions!
 
 ## Host setup
 The figure below depicts the host configuration.
 
 ![Host setup](doc/host_setup.jpg)
 
-The host contains the following componets:
+The host contains the following components:
 * Docker engine for executing the build and target images.
 * Nginx HTTP server for allowing Certbot automatic Letsencrypt certificates update and for serving the Janus HTML samples.
 * Cetbot certificate renewal service.
@@ -33,15 +33,15 @@ The Janus target image mounts the following host volumes:
 * */var/www/html/container* (to container */html*): Upon startup the target image copies the content of the folder containing the Janus HTML samples. This folder is accessible through HTTPS. 
 Please note that the /var/www/html folder contains the Nginx default index.html page which is accessible through HTTP. Its purpose is to allow Letsencrypt host validation.
 * */var/janus/recordings* (to container */janus/bin/janus-recordings*): This folder is used by the target image to store the video room recordings (when enabled).
-* */etc/letsencrypt/live/* (to container */etc/certs*) and */etc/letsecrypt/archive* (to container */archive*): These folders contain the links and Letsencrypt certificates requried for TLS and DTLS 
+* */etc/letsencrypt/live/* (to container */etc/certs*) and */etc/letsecrypt/archive* (to container */archive*): These folders contain the links and Letsencrypt certificates required for TLS and DTLS 
 shared by both Nginx and Janus gateway
-* *\<Janus config host folder\>* (to container */janus/etc/janus_host*: Optionally (when the RUN_WITH_HOST_CONFIGURATION_DIR environment variable is set) 
+* *\<Janus config host folder\>* (to container */janus/etc/janus_host*: Optionally (when the _RUN_WITH_HOST_CONFIGURATION_DIR_ environment variable is set) 
 the target image may mount a configuration folder from the host, this configuration will override the built-in configuration.
 
 The Janus build image mounts the following host volume:
 * */var/run/docker.sock* (to container */var/run/docker.sock*) enables the build image to use the Docker service from the host.
 * *\<clone directory\>/janus_config*, when the BUILD_WITH_HOST_CONFIG_DIR build parameter is set to 'true' the host janus configuration directory will be mounted and used in the 
-target image cration process instead of using the default configuration that has been embedded into the build image during the build image creation.
+target image creation process instead of using the default configuration that has been embedded into the build image during the build image creation.
 
 ## Process
 The figure below depicts the target image creation process.
@@ -49,14 +49,18 @@ The figure below depicts the target image creation process.
 ![Process](doc/process.jpg)
 
 The process consists in the following steps:
-1. The project is cloned from the Github repository. The default Janus gatway server configuration in *\<clone directory\>/janus_config* subfolder is reviewed and modified according 
-to the requirements of the target image. This folder is copied into the build image and will be used in the target image creation. Instead of using the copied content during 
-the build image creation, by defining the BUILD_WITH_HOST_CONFIG_DIR variable (see below), it is possible to mount the *\<clone directory\>/janus_config* during the target image creation process.
-1. The build image creation is triggered by setting some required environment variables and invoking the *container.sh* script. The build relies on *Dockerfile.build* and *setup.sh* scripts 
-to install the necessary components in the build image. 
-1. Once the build image is created the *container.sh* script triggers the target image build process that relies on *Dockerfile.exec* and *build.sh* scripts, copied into the 
-build image in the previous step. 
-1. The created image contains a *start.sh* script that is configured as the entry point. This scripts copies the Janus HTML samples and invokes the Janus gateway application.
+1. *Preparation*: The project is cloned from the Github repository. The default Janus gateway server configuration in _\<clone directory\>/janus_config_ sub-folder is reviewed and modified according 
+to the requirements of the target image.  
+1. *Build image creation*: Triggered by invoking the *container.sh* script. The build relies on *Dockerfile.build* and *setup.sh* scripts along with some environment variables (see below).
+to install the necessary components in the build image. The Janus gateway configuration is copied into the build image, it will be used in the target image creation.
+1. *Target Image creation*: Once the build image is created the *container.sh* script triggers the target image build process that relies on *Dockerfile.exec* and *build.sh* scripts, copied into the 
+build image in the previous step. In this step, the required version of the Janus software is cloned and checked out as specified in the _JANUS_REPO_ and _JANUS_VERSION_ variables.
+Binary and source dependencies are fetched. The whole package is compiled and the target image is created. Instead of using the embedded Janus gateway configuration during the build image creation it is possible, 
+by defining the _BUILD_WITH_HOST_CONFIG_DIR_ variable (see below), to mount the _\<clone directory\>/janus_config_, or any other host directory containing Janus gateway configuration, 
+during the target image creation process. In that case configuration from the mounted directory will be copied into the target image.
+1. *Target image execution*: The created image contains a *start.sh* script that is configured as the entry point. This scripts copies the Janus HTML samples and invokes the Janus gateway application. If
+_RUN_WITH_HOST_CONFIGURATION_DIR_ is set to "true" the *start.sh* script will use the Janus configuration host folder mounted inside the container at _/janus/etc/janus_host_ instead
+of using the embedded configuration inside image located in _/janus/etc/janus_ directory.
 
 ## Installation procedure
 This section provides the default installation procedure. The default configuration allows to access the server only through HTTPs using the host's 
@@ -66,7 +70,7 @@ only on that specific version, a priori, there are no reasons for it not to work
 ### Build/docker experimental host installation
 First let's install a Janus host for building and running the docker image. 
 1. Install Ubuntu 18.04 physical or virtual host with the default packages and using the default parameters. Make sure that you have 
-access to a *sudo* capable user. We assume that the host is directly connected to the internet through a 1-to-1 NAT. 
+access to a *sudo* capable user. We assume that the host is directly connected to the Internet through a 1-to-1 NAT. 
 	1. Make sure that the 1-to-1 NAT redirects the following ports: 80 (http), 443 (https), 8089 (janus-api), 7889 (janus-admin) to the Janus host.
 	1. Reserve a name for your host in your domain (e.g. \<host\>.\<domain\>) and update the */etc/hosts* file accordingly, for example:
 		```bash
