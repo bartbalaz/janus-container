@@ -224,7 +224,7 @@ step set the above mentioned *"SKIP_"* parameters to the appropriate values.
 	```
 1. Remove an image
 	```bash
-	docker rmi <first few chars of the container id as displayed by "images" command>
+	docker rmi <first few chars of the image id as displayed by "images" command>
 	```
 1. Stop a container
 	```bash
