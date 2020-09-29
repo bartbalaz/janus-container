@@ -33,8 +33,11 @@ The Janus target image mounts the following host volumes:
 * */var/www/html/container* (to container */html*): Upon startup the target image copies the content of the folder containing the Janus HTML samples. This folder is accessible through HTTPS. 
 Please note that the /var/www/html folder contains the Nginx default index.html page which is accessible through HTTP. Its purpose is to allow Letsencrypt host validation.
 * */var/janus/recordings* (to container */janus/bin/janus-recordings*): This folder is used by the target image to store the video room recordings (when enabled).
-* */etc/letsencrypt/live/* (to container */etc/certs*) and */etc/letsecrypt/archive* (to container */archive*): These folders contain the links and actual Letsencrypt certificates requried for TLS and DTLS shared by both Nginx and Janus gateway
-* *\<Janus config host folder\>* (to container */janus/etc/janus*: Optionally the target image may mount a configuration folder from the host, this configuration will override the built-in configuration.
+* */etc/letsencrypt/live/* (to container */etc/certs*) and */etc/letsecrypt/archive* (to container */archive*): These folders contain the links and Letsencrypt certificates requried for TLS and DTLS 
+shared by both Nginx and Janus gateway
+* *\<Janus config host folder\>* (to container */janus/etc/janus_host*: Optionally (when the RUN_WITH_HOST_CONFIGURATION_DIR environment variable is set) 
+the target image may mount a configuration folder from the host, this configuration will override the built-in configuration.
+
 The Janus build image mounts the following host volume:
 * */var/run/docker.sock* (to container */var/run/docker.sock*) enables the build image to use the Docker service from the host.
 * *\<clone directory\>/janus_config*, when the BUILD_WITH_HOST_CONFIG_DIR build parameter is set to 'true' the host janus configuration directory will be mounted and used in the 
@@ -47,11 +50,12 @@ The figure below depicts the target image creation process.
 
 The process consists in the following steps:
 1. The project is cloned from the Github repository. The default Janus gatway server configuration in *\<clone directory\>/janus_config* subfolder is reviewed and modified according 
-to the requirements of the target image. This folder is copied into the build image and will be used in the target image creation. Instead of using the copied conted during 
+to the requirements of the target image. This folder is copied into the build image and will be used in the target image creation. Instead of using the copied content during 
 the build image creation, by defining the BUILD_WITH_HOST_CONFIG_DIR variable (see below), it is possible to mount the *\<clone directory\>/janus_config* during the target image creation process.
 1. The build image creation is triggered by setting some required environment variables and invoking the *container.sh* script. The build relies on *Dockerfile.build* and *setup.sh* scripts 
 to install the necessary components in the build image. 
-1. Once the build image is created the *container.sh* script triggers the target image build process that relies on *Dockerfile.exec* and *build.sh* scripts, copied into the build image in the previous step. 
+1. Once the build image is created the *container.sh* script triggers the target image build process that relies on *Dockerfile.exec* and *build.sh* scripts, copied into the 
+build image in the previous step. 
 1. The created image contains a *start.sh* script that is configured as the entry point. This scripts copies the Janus HTML samples and invokes the Janus gateway application.
 
 ## Installation procedure
