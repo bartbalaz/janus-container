@@ -148,7 +148,7 @@ steps for some additional convenience settings.
 		```
 	**These files are links from the */etc/letsencrypt/archive* directory.**
 	
-	**!!VERY IMPORTANT!! Make sure the NON *root* user has read access to the links and the certificates.**
+	**!!VERY IMPORTANT!! Make sure the NON *root* user has _read_ access to the links and the certificates.**
 	```bash
 	chmod -R a+r+x /etc/letsencrypt/live
 	chmod -R a+r+x /etc/letsencrypt/archive
@@ -217,6 +217,14 @@ step set the above mentioned *"SKIP_"* parameters to the appropriate values.
 1. List all the containers that are stopped but have not been removed
 	```bash
 	docker ps -a
+	```
+1. Remove a stopped container
+	```bash
+	docker rm <first few chars of the container id as displayed by "ps" command>
+	```
+1. Remove an image
+	```bash
+	docker rmi <first few chars of the container id as displayed by "images" command>
 	```
 1. Stop a container
 	```bash
