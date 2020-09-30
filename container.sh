@@ -91,7 +91,7 @@ else
 	echo "------------------------------------------------------"
 	
 	# All parameters are optional
-	test_parameter JANUS_REPO "$HOST_NAME" optional
+	test_parameter HOST_NAME "$HOST_NAME" optional
 	test_parameter JANUS_REPO "$JANUS_REPO" optional
 	test_parameter JANUS_VERSION "$JANUS_VERSION" optional
 	test_parameter TARGET_IMAGE_NAME "$TARGET_IMAGE_NAME" optional
