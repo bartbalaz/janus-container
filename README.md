@@ -1,7 +1,7 @@
 # Janus container
 
 ## Introduction
-This project creates the Janus gateway Docker image and provides the procedure to set up the container using the default *bridge* network driver. There are multiple advantages to support this
+This project creates the Janus Gateway Docker image and provides the procedure to set up the container using the default *bridge* network driver. There are multiple advantages to support this
 configuration such as it avoids having to reserve dedicated IP address per container, configuring/parameterizing the image to use different sets of ports internally and makes automatic scaling much easier. 
 The default *bridge* configuration has the most constraints so basically if an image supports it that image will support most of other configurations.
 
@@ -12,7 +12,10 @@ compiles and creates the target Janus gateway image (target image for short) sto
 
 Please note:
 * Please visit [Meetecho Janus project](https://janus.conf.meetecho.com/docs/) for a detailed description of the Janus gateway.
-* Out-of-the-box this project provides the simplest single host Docker configuration which may be tailored to any other more complex configuration.
+* Out-of-the-box this project provides the simplest single host Docker configuration which may be tailored to any other more complex configuration. Please note that the 
+procedure below allows to setup a single host running the Janus Gateway in a Docker container accessed using HTTPS only and relying on the host for certificate management. 
+This procedure may be greately simplified by modifying the Janus Gateway configuraiton to avoid mounting multiple host folders, avoiding the installation of Certbot and 
+the HTTP server (Nginx) etc. and, allowing instead, to simply run the Janus Gateway image.
 * Only the video room plug-in (and echo test plug-in) with HTTP transport have been tried. Possibly, other plug-ins and transports may require adjustments in the content of the 
 target image (e.g. included Ubuntu packages).
 * At the bottom of this page in the Experimentation and observations section, we have added a discussion about some limitations that need to be considered when deploying the target image.
