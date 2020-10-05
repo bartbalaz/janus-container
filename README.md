@@ -70,8 +70,8 @@ This section provides the default installation procedure. The default configurat
 obtanied Letsencrypt certificates. Please note that this project is using Ubuntu 18.04-LTS Linux distribution. Although it has been tried 
 only on that specific version, a priori, there are no reasons for it not to work on any other recent version of the Ubuntu distribution.
 
-** Please note that if you already have a Docker host (required for building the target image) and are only instested in building the running the image, 
-please skip directly to the build procedure section **
+**Please note that if you already have a Docker host (required for building the target image) and are only instested in building the running the image, 
+please skip directly to the build procedure section**
 
 ### Build/docker experimental host installation
 First let's install a Janus host for building and running the docker image. 
