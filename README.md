@@ -70,7 +70,7 @@ This section provides the default installation procedure. The default configurat
 obtanied Letsencrypt certificates. Please note that this project is using Ubuntu 18.04-LTS Linux distribution. Although it has been tried 
 only on that specific version, a priori, there are no reasons for it not to work on any other recent version of the Ubuntu distribution.
 
-**Please note that if you already have a Docker host (required for building the target image) and are only instested in building the running the image, 
+**Please note that if you already have a Docker host (required for building the target image) and are only instested in building and running the image, 
 please skip directly to the build procedure section below.**
 
 ### Build/docker experimental host installation
@@ -194,16 +194,16 @@ steps for some additional convenience settings.
 ## Build procedure
 1. Set the build parameters environment variables
 	```bash
-	export JANUS_REPO = # Repository to fetch Janus gatway sources from (e.g. https://github.com/bartbalaz/janus-gateway.git). If none is specified the default Meetech Janus gateway repository will be used
+	export JANUS_REPO = # Repository to fetch Janus gatway sources from (e.g. https://github.com/bartbalaz/janus-gateway.git). If none is specified the default Meetech Janus gateway repository will be used.
 	export JANUS_VERSION = # Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
 	export TARGET_IMAGE_NAME = # Target image name (e.g. janus), defaults to "janus".
 	export TARGET_IMAGE_VERSION = # The version to tag the target image with (e.g. 01), defaults to "latest".
 	export BUILD_IMAGE_NAME = # Name of the build image (e.g. janus_build),defaults to "janus_build".
 	export BUILD_IMAGE_VERSION = # The version to tag the build image with (e.g. 01), defaults to "latest".
-	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>), defaults to place holder "<host>.<domain>"
-	export SKIP_BUILD_IMAGE = # When set to "true" the build image will not be built, by default not set
-	export SKIP_TARGET_IMAGE = # When set to "true" the target image will not be build, by default not set 
-	export BUILD_WITH_HOST_CONFIG_DIR = # When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation, by default not set
+	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>), defaults to place holder "<host>.<domain>".
+	export SKIP_BUILD_IMAGE = # When set to "true" the build image will not be built, by default not set.
+	export SKIP_TARGET_IMAGE = # When set to "true" the target image will not be build, by default not set.
+	export BUILD_WITH_HOST_CONFIG_DIR = # When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation, by default not set.
 	export RUN_WITH_HOST_CONFIGURATION_DIR= # When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process, by default not set.
 	```
 1. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the target image.
