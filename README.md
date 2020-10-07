@@ -206,7 +206,7 @@ steps for some additional convenience settings.
 	export BUILD_WITH_HOST_CONFIG_DIR = # When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation, by default not set.
 	export RUN_WITH_HOST_CONFIGURATION_DIR= # When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process, by default not set.
 	```
-1. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the target image.
+1. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the build image and into the target image.
 1. Launch the build process, this process performs two steps: creates the build image (unless the *SKIP_BUILD_IMAGE* is set to *"true"*), 
 then creates the target image (unless *SKIP_TARGET_IMAGE* is set to *"true"*). Both images will appear in the local image Docker registry (issue *"docker images"* to verify). To perform either 
 step set the above mentioned *"SKIP_"* parameters to the appropriate values.
