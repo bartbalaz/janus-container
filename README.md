@@ -193,20 +193,24 @@ steps for some additional convenience settings.
 	```
 ## Build procedure
 1. Set the build parameters environment variables
-	```bash
-	export JANUS_REPO = # Repository to fetch Janus gatway sources from (e.g. https://github.com/bartbalaz/janus-gateway.git). If none is specified the default Meetech Janus gateway repository will be used.
-	export JANUS_VERSION = # Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
-	export TARGET_IMAGE_NAME = # Target image name (e.g. janus), defaults to "janus".
-	export TARGET_IMAGE_VERSION = # The version to tag the target image with (e.g. 01), defaults to "latest".
-	export BUILD_IMAGE_NAME = # Name of the build image (e.g. janus_build),defaults to "janus_build".
-	export BUILD_IMAGE_VERSION = # The version to tag the build image with (e.g. 01), defaults to "latest".
-	export HOST_NAME = # Name of the host including the fqdn (e.g. <host>.<domain>), defaults to place holder "<host>.<domain>".
-	export SKIP_BUILD_IMAGE = # When set to "true" the build image will not be built, by default not set.
-	export SKIP_TARGET_IMAGE = # When set to "true" the target image will not be build, by default not set.
-	export BUILD_WITH_HOST_CONFIG_DIR = # When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation, by default not set.
-	export RUN_WITH_HOST_CONFIGURATION_DIR= # When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process, by default not set.
+	```bash 
+	export SOME_PARAMETER=some_value
 	```
-1. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the build image and into the target image.
+
+| Parameter  | Mandatory (Y/N/C) | Default value if empty or not set | Description |
+| :----------------: | :---: | :--- | ------------- |
+JANUS_REPO | N | https://github.com/meetecho/janus-gateway.git | Repository to fetch Janus gatway sources from
+JANUS_VERSION | N | master |  Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
+TARGET_IMAGE_NAME | N | janus | Target image name.
+TARGET_IMAGE_VERSION | N | latest | The version to tag the target image with.
+BUILD_IMAGE_NAME | N | janus_build | Name of the build image.
+BUILD_IMAGE_VERSION | N | latest | The version to tag the build image with.
+HOST_NAME | N | \<host\>.\<domain\> |  Name of the host in full fqdn format. This value is only used in displaying the execution command at the end of an successful build.
+SKIP_BUILD_IMAGE | N | false | When set to "true" the target image will not be build.
+BUILD_WITH_HOST_CONFIG_DIR | N | false | When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation.
+RUN_WITH_HOST_CONFIGURATION_DIR | N | false | When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process.
+
+2. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the build image and into the target image.
 1. Launch the build process, this process performs two steps: creates the build image (unless the *SKIP_BUILD_IMAGE* is set to *"true"*), 
 then creates the target image (unless *SKIP_TARGET_IMAGE* is set to *"true"*). Both images will appear in the local image Docker registry (issue *"docker images"* to verify). To perform either 
 step set the above mentioned *"SKIP_"* parameters to the appropriate values.
