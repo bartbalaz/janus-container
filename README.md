@@ -207,6 +207,7 @@ BUILD_IMAGE_NAME | N | janus_build | Name of the build image.
 BUILD_IMAGE_VERSION | N | latest | The version to tag the build image with.
 HOST_NAME | N | \<host\>.\<domain\> |  Name of the host in full fqdn format. This value is only used in displaying the execution command at the end of an successful build.
 SKIP_BUILD_IMAGE | N | false | When set to "true" the target image will not be build.
+SKIP_TARGET_IMAGE | N | false | When set to "true" the build image will not be build.
 BUILD_WITH_HOST_CONFIG_DIR | N | false | When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation.
 RUN_WITH_HOST_CONFIGURATION_DIR | N | false | When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process.
 
