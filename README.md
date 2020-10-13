@@ -198,7 +198,7 @@ steps for some additional convenience settings.
 	```
 
  Parameter  | Mandatory (Y/N/C) | Default | Description 
- --- | --- | --- | --- 
+ :---: | :---: | :---: | :--- 
 JANUS_REPO | N | https://github.com/meetecho/janus-gateway.git | Repository to fetch Janus gatway sources from
 JANUS_VERSION | N | master |  Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
 TARGET_IMAGE_NAME | N | janus | Target image name.
