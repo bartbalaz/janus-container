@@ -24,6 +24,7 @@ echo
 # HOST_NAME - Name of the host (e.g. <host>.<domain>), please note that it may be difficult 
 # to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate 
+# IMAGE_TOOL - Tool for creating and managing the images either "podman" or "docker", defaults to "docker"
 
 # Global variables - Should not need to be modified
 TOP_DIR=$(pwd)
@@ -60,6 +61,7 @@ else
 	# All the parameters are optional
 	test_parameter BUILD_IMAGE_NAME "$BUILD_IMAGE_NAME" optional
 	test_parameter BUILD_IMAGE_TAG "$BUILD_IMAGE_TAG" optional
+	test_parameter IMAGE_TOOL "$IMAGE_TOOL" optional
 
 	# The empty parameters are configured with default values
 	if [ -z $BUILD_IMAGE_NAME ]; then
@@ -71,11 +73,18 @@ else
 		BUILD_IMAGE_TAG="latest"
 		echo Parameter BUILD_IMAGE_TAG set to "$BUILD_IMAGE_TAG"
 	fi
+	
+	if [ -z $IMAGE_TOOL ]; then
+		IMAGE_TOOL="docker"
+	fi
+
+	echo
+	echo "Using $IMAGE_TOOL for building and managing images"
 
 	FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
 
 	# Create the build image
-	docker build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
+	$IMAGE_TOOL build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
 fi
 
 # Second step: Create the target image
@@ -100,6 +109,7 @@ else
 	test_parameter BUILD_IMAGE_TAG "$BUILD_IMAGE_TAG" optional
 	test_parameter BUILD_WITH_HOST_CONFIG_DIR "$BUILD_WITH_HOST_CONFIG_DIR" optional
 	test_parameter RUN_WITH_HOST_CONFIGURATION_DIR "$RUN_WITH_HOST_CONFIGURATION_DIR" optional
+	test_parameter IMAGE_TOOL "$IMAGE_TOOL" optional
 	
 	# The empty parameters are configured with default values
 	if [ -z $HOST_NAME ]; then
@@ -126,26 +136,40 @@ else
 		BUILD_IMAGE_TAG="latest"
 		echo Parameter BUILD_IMAGE_TAG set to "$BUILD_IMAGE_TAG"
 	fi
+	
+	if [ -z $IMAGE_TOOL ]; then
+		IMAGE_TOOL="docker"
+	fi
 
+	echo
+	echo "Using $IMAGE_TOOL for building and managing images"
+
+	MOUNT_CONFIG_DIR=""
 	if [ "$BUILD_WITH_HOST_CONFIG_DIR" == 'true' ]; then
 		echo
 		echo "Using Janus gateway configuration from host folder $JANUS_SRC_CONFIG_DIR"
-		CONFIG_DIR_MOUNT="-v $JANUS_SRC_CONFIG_DIR:/image/janus_config"
+		MOUNT_CONFIG_DIR="-v $JANUS_SRC_CONFIG_DIR:/image/janus_config"
 	else
 		echo
-		echo "Using Janus gateway configuration from build image (copied during the build image creation)"
-		CONFIG_DIR_MOUNT=""
+		echo "Using Janus gateway configuration from build image (copied during the build image creation)"	
 	fi
+	
+	MOUNT_DOCKER_SOCKET=""
+	if [ "$IMAGE_TOOL" == "docker" ]
+		# If we are using docker then the build image needs to mount the docker socket
+		MOUNT_DOCKER_SOCKET="-v /var/run/docker.sock:/var/run/docker.sock"
+	fi 
 	
 	FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
 	FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
 	
 	# Create the target image
-	docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock $CONFIG_DIR_MOUNT \
+	$IMAGE_TOOL run --rm -it $MOUNT_DOCKER_SOCKET $MOUNT_CONFIG_DIR \
 	-e "JANUS_REPO=$JANUS_REPO" \
 	-e "JANUS_VERSION=$JANUS_VERSION" \
 	-e "TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME" \
 	-e "TARGET_IMAGE_TAG=$TARGET_IMAGE_TAG" \
+	-e "IMAGE_TOOL=$IMAGE_TOOL" \
 	$FULL_BUILD_IMAGE_NAME
 	
 	# If required, add an extension to the command displayed below that allows the container to mount and use a host configuration folder
@@ -155,10 +179,10 @@ else
 	
 	echo
 	echo "To execute the Janus gateway target image non-interactively issue the following command: "
-	echo "docker run --rm -d -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $COMMAND_EXTENSION $FULL_TARGET_IMAGE_NAME "
+	echo "$IMAGE_TOOL run --rm -d -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $COMMAND_EXTENSION $FULL_TARGET_IMAGE_NAME "
 	echo
 	echo "To execute the Janus gateway target image interactively issue the following command: "
-	echo "docker run --rm -it -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $COMMAND_EXTENSION $FULL_TARGET_IMAGE_NAME"
+	echo "$IMAGE_TOOL run --rm -it -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $COMMAND_EXTENSION $FULL_TARGET_IMAGE_NAME"
 	echo
 	echo
 fi

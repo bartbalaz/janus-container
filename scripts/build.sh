@@ -81,6 +81,7 @@ test_parameter JANUS_REPO "$JANUS_REPO" optional
 test_parameter JANUS_VERSION "$JANUS_VERSION" optional
 test_parameter TARGET_IMAGE_NAME "$TARGET_IMAGE_NAME" optional
 test_parameter TARGET_IMAGE_TAG "$TARGET_IMAGE_TAG" optional
+test_parameter IMAGE_TOOL "$IMAGE_TOOL" optional
 
 # Set the default values (JANUS_REPO and JANUS_VERSION are tested and set below)
 
@@ -93,6 +94,14 @@ test_parameter TARGET_IMAGE_TAG "$TARGET_IMAGE_TAG" optional
 		TARGET_IMAGE_TAG="latest"
 		echo Parameter TARGET_IMAGE_TAG set to "$TARGET_IMAGE_TAG"
 	fi
+	
+	if [ -z $IMAGE_TOOL ]; then
+		IMAGE_TOOL="docker"
+	fi
+
+	echo
+	echo "Using $IMAGE_TOOL for building and managing images"
+
 
 FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
 

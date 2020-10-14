@@ -197,19 +197,20 @@ steps for some additional convenience settings.
 	export SOME_PARAMETER=some_value
 	```
 
- Parameter  | Mandatory (Y/N/C) | Default | Description 
- :---: | :---: | :---: | :--- 
-JANUS_REPO | N | https://github.com/meetecho/janus-gateway.git | Repository to fetch Janus gatway sources from
-JANUS_VERSION | N | master |  Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
-TARGET_IMAGE_NAME | N | janus | Target image name.
-TARGET_IMAGE_TAG | N | latest | The version to tag the target image with.
-BUILD_IMAGE_NAME | N | janus_build | Name of the build image.
-BUILD_IMAGE_TAG | N | latest | The version to tag the build image with.
-HOST_NAME | N | \<host\>.\<domain\> |  Name of the host in full fqdn format. This value is only used in displaying the execution command at the end of an successful build.
-SKIP_BUILD_IMAGE | N | false | When set to "true" the build image will not be build.
-SKIP_TARGET_IMAGE | N | false | When set to "true" the target image will not be build.
-BUILD_WITH_HOST_CONFIG_DIR | N | false | When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation.
-RUN_WITH_HOST_CONFIGURATION_DIR | N | false | When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory (i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process.
+ Parameter  | Mandatory (Y/N/C) | Default | Build step | Description 
+ :---: | :---: | :---: | :---: |:--- 
+BUILD_IMAGE_NAME | N | janus_build | 2, 3 | Name of the build image.
+BUILD_IMAGE_TAG | N | latest | 2, 3 | The version to tag the build image with.
+IMAGE_TOOL | N | docker | 2, 3 | Tool for creating and managing the images either "podman" or "docker".
+HOST_NAME | N | \<host\>.\<domain\> | 3 |  Name of the host in full fqdn format. This value is only used in displaying the execution command at the end of an successful build.
+JANUS_REPO | N | https://github.com/meetecho/janus-gateway.git | 3 | Repository to fetch Janus gatway sources from
+JANUS_VERSION | N | master | 3 |  Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
+TARGET_IMAGE_NAME | N | janus | 3 | Target image name.
+TARGET_IMAGE_TAG | N | latest | 3 | The version to tag the target image with.
+SKIP_BUILD_IMAGE | N | false | 3 | When set to "true" the build image will not be build.
+SKIP_TARGET_IMAGE | N | false | 3 | When set to "true" the target image will not be build.
+BUILD_WITH_HOST_CONFIG_DIR | N | 3 | false | When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation.
+RUN_WITH_HOST_CONFIGURATION_DIR | 3 | N | false | When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory (i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process.
 
 2. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the build image and into the target image.
 1. Launch the build process, this process performs two steps: creates the build image (unless the *SKIP_BUILD_IMAGE* is set to *"true"*), 
