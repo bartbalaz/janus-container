@@ -12,6 +12,10 @@ echo
 # JANUS_VERSION - Version of the Janus gateway sources to checkout (e.g. v0.10.0)
 # TARGET_IMAGE_NAME - Target image name (e.g. janus)
 # TARGET_IMAGE_TAG - Target image version (e.g. 01) 
+# IMAGE_TOOL - Tool for creating and managing the images either "podman" or "docker", defaults to "docker"
+# IMAGE_REGISTRY - The registry to store the image at, by default not set
+# IMAGE_REGISTRY_USER - The registry user, by default not set
+# IMAGE_REGISTRY_PASSWORD - The registry password, by default not set
 
 # This is the top directory inside the container where "staging" and "root" subdirectories will be created
 TOP_DIR=/image
@@ -101,7 +105,6 @@ test_parameter IMAGE_TOOL "$IMAGE_TOOL" optional
 
 	echo
 	echo "Using $IMAGE_TOOL for building and managing images"
-
 
 FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
 
@@ -202,4 +205,4 @@ echo
 echo " Building the Janus gateway target image "
 echo "-----------------------------------------"
 cd $TOP_DIR
-docker build -t $FULL_TARGET_IMAGE_NAME -f Dockerfile.exec .
+$IMAGE_TOOL build -t $FULL_TARGET_IMAGE_NAME -f Dockerfile.exec .

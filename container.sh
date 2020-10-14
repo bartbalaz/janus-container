@@ -25,6 +25,9 @@ echo
 # to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate 
 # IMAGE_TOOL - Tool for creating and managing the images either "podman" or "docker", defaults to "docker"
+# IMAGE_REGISTRY - The registry to store the image at, by default not set
+# IMAGE_REGISTRY_USER - The registry user, by default not set
+# IMAGE_REGISTRY_PASSWORD - The registry password, by default not set
 
 # Global variables - Should not need to be modified
 TOP_DIR=$(pwd)
@@ -62,17 +65,26 @@ else
 	test_parameter BUILD_IMAGE_NAME "$BUILD_IMAGE_NAME" optional
 	test_parameter BUILD_IMAGE_TAG "$BUILD_IMAGE_TAG" optional
 	test_parameter IMAGE_TOOL "$IMAGE_TOOL" optional
+	test_parameter IMAGE_REGISTRY "$IMAGE_REGISTRY" optional
+	test_parameter IMAGE_REGISTRY_USER "$IMAGE_REGISTRY_USER" optional
+	test_parameter IMAGE_REGISTRY_PASSWORD "$IMAGE_REGISTRY_PASSWORD" optional
 
 	# The empty parameters are configured with default values
 	if [ -z $BUILD_IMAGE_NAME ]; then
 		BUILD_IMAGE_NAME="janus_build"
 		echo Parameter BUILD_IMAGE_NAME set to "$BUILD_IMAGE_NAME"
 	fi
-
+	
 	if [ -z $BUILD_IMAGE_TAG ]; then
 		BUILD_IMAGE_TAG="latest"
+		echo Parameter BUILD_IMAGE_NAME set to "$BUILD_IMAGE_TAG"
+	fi
+	
+	if [ ! -z $IMAGE_REGISTRY ]; then
+		IMAGE_REGISTRY=$IMAGE_REGISTRY"/"
 		echo Parameter BUILD_IMAGE_TAG set to "$BUILD_IMAGE_TAG"
 	fi
+
 	
 	if [ -z $IMAGE_TOOL ]; then
 		IMAGE_TOOL="docker"
@@ -81,10 +93,25 @@ else
 	echo
 	echo "Using $IMAGE_TOOL for building and managing images"
 
-	FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
+	FULL_BUILD_IMAGE_NAME=$IMAGE_REGISTRY$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
 
 	# Create the build image
-	$IMAGE_TOOL build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
+	$IMAGE_TOOL build -t $FULL_BUILD_IMAGE_NAME \
+		-e "IMAGE_TOOL=$IMAGE_TOOL" \
+		-f Dockerfile.build . 
+		
+	if[ "$IMAGE_REGISTRY" != "/" ]; then 
+		# We need to push the image to registry
+	
+		echo 
+		echo "Pushing image to registry $IMAGE_REGISTRY"
+		if [ "$IMAGE_TOOL" == "docker" ]; then
+			$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD
+			$IMAGE_TOOL push $FULL_BUILD_IMAGE_NAME
+		else
+			$IMAGE_TOOL push --creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_BUILD_IMAGE_NAME
+		fi
+	fi
 fi
 
 # Second step: Create the target image
@@ -110,6 +137,9 @@ else
 	test_parameter BUILD_WITH_HOST_CONFIG_DIR "$BUILD_WITH_HOST_CONFIG_DIR" optional
 	test_parameter RUN_WITH_HOST_CONFIGURATION_DIR "$RUN_WITH_HOST_CONFIGURATION_DIR" optional
 	test_parameter IMAGE_TOOL "$IMAGE_TOOL" optional
+	test_parameter IMAGE_REGISTRY "$IMAGE_REGISTRY" optional
+	test_parameter IMAGE_REGISTRY_USER "$IMAGE_REGISTRY_USER" optional
+	test_parameter IMAGE_REGISTRY_PASSWORD "$IMAGE_REGISTRY_PASSWORD" optional
 	
 	# The empty parameters are configured with default values
 	if [ -z $HOST_NAME ]; then
@@ -137,6 +167,11 @@ else
 		echo Parameter BUILD_IMAGE_TAG set to "$BUILD_IMAGE_TAG"
 	fi
 	
+	if [ ! -z $IMAGE_REGISTRY ]; then
+		IMAGE_REGISTRY=$IMAGE_REGISTRY"/"
+		echo Parameter BUILD_IMAGE_TAG set to "$BUILD_IMAGE_TAG"
+	fi
+
 	if [ -z $IMAGE_TOOL ]; then
 		IMAGE_TOOL="docker"
 	fi
@@ -160,8 +195,8 @@ else
 		MOUNT_DOCKER_SOCKET="-v /var/run/docker.sock:/var/run/docker.sock"
 	fi 
 	
-	FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
-	FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
+	FULL_BUILD_IMAGE_NAME=$IMAGE_REGISTRY$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
+	FULL_TARGET_IMAGE_NAME=$IMAGE_REGISTRY$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
 	
 	# Create the target image
 	$IMAGE_TOOL run --rm -it $MOUNT_DOCKER_SOCKET $MOUNT_CONFIG_DIR \
@@ -170,6 +205,9 @@ else
 	-e "TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME" \
 	-e "TARGET_IMAGE_TAG=$TARGET_IMAGE_TAG" \
 	-e "IMAGE_TOOL=$IMAGE_TOOL" \
+	-e "IMAGE_REGISTRY=$IMAGE_REGISTRY" \
+	-e "IMAGE_REGISTRY_USER=$IMAGE_REGISTRY_USER" \
+	-e "IMAGE_REGISTRY_PASSWORD=$IMAGE_REGISTRY_PASSWORD" \
 	$FULL_BUILD_IMAGE_NAME
 	
 	# If required, add an extension to the command displayed below that allows the container to mount and use a host configuration folder

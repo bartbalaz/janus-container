@@ -1,4 +1,7 @@
 # Configuration used in building the build and target image
+export IMAGE_REGISTRY=
+export IMAGE_REGISTRY_USER=
+export IMAGE_REGISTRY_PASSWORD=
 export BUILD_IMAGE_NAME= 
 export BUILD_IMAGE_TAG=
 export IMAGE_TOOL=
