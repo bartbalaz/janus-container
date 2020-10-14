@@ -11,7 +11,7 @@ echo
 # JANUS_REPO - Repository to fetch Janus gatweay sources from (e.g. https://github.com/bartbalaz/janus-gateway.git)
 # JANUS_VERSION - Version of the Janus gateway sources to checkout (e.g. v0.10.0)
 # TARGET_IMAGE_NAME - Target image name (e.g. janus)
-# TARGET_IMAGE_VERSION - Target image version (e.g. 01) 
+# TARGET_IMAGE_TAG - Target image version (e.g. 01) 
 
 # This is the top directory inside the container where "staging" and "root" subdirectories will be created
 TOP_DIR=/image
@@ -80,7 +80,7 @@ echo "----------------------"
 test_parameter JANUS_REPO "$JANUS_REPO" optional
 test_parameter JANUS_VERSION "$JANUS_VERSION" optional
 test_parameter TARGET_IMAGE_NAME "$TARGET_IMAGE_NAME" optional
-test_parameter TARGET_IMAGE_VERSION "$TARGET_IMAGE_VERSION" optional
+test_parameter TARGET_IMAGE_TAG "$TARGET_IMAGE_TAG" optional
 
 # Set the default values (JANUS_REPO and JANUS_VERSION are tested and set below)
 
@@ -89,12 +89,12 @@ test_parameter TARGET_IMAGE_VERSION "$TARGET_IMAGE_VERSION" optional
 		echo Parameter TARGET_IMAGE_NAME set to "$TARGET_IMAGE_NAME"
 	fi
 
-	if [ -z $TARGET_IMAGE_VERSION ]; then
-		TARGET_IMAGE_VERSION="latest"
-		echo Parameter TARGET_IMAGE_VERSION set to "$TARGET_IMAGE_VERSION"
+	if [ -z $TARGET_IMAGE_TAG ]; then
+		TARGET_IMAGE_TAG="latest"
+		echo Parameter TARGET_IMAGE_TAG set to "$TARGET_IMAGE_TAG"
 	fi
 
-FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_VERSION
+FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
 
 echo
 echo " Creating root and staging directories "

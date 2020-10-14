@@ -202,9 +202,9 @@ steps for some additional convenience settings.
 JANUS_REPO | N | https://github.com/meetecho/janus-gateway.git | Repository to fetch Janus gatway sources from
 JANUS_VERSION | N | master |  Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
 TARGET_IMAGE_NAME | N | janus | Target image name.
-TARGET_IMAGE_VERSION | N | latest | The version to tag the target image with.
+TARGET_IMAGE_TAG | N | latest | The version to tag the target image with.
 BUILD_IMAGE_NAME | N | janus_build | Name of the build image.
-BUILD_IMAGE_VERSION | N | latest | The version to tag the build image with.
+BUILD_IMAGE_TAG | N | latest | The version to tag the build image with.
 HOST_NAME | N | \<host\>.\<domain\> |  Name of the host in full fqdn format. This value is only used in displaying the execution command at the end of an successful build.
 SKIP_BUILD_IMAGE | N | false | When set to "true" the build image will not be build.
 SKIP_TARGET_IMAGE | N | false | When set to "true" the target image will not be build.

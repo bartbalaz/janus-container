@@ -13,9 +13,9 @@ echo
 # JANUS_REPO - Repository to fetch Janus gatweay sources from, defaults to https://github.com/bartbalaz/janus-gateway.git
 # JANUS_VERSION - Version of the Janus gateway sources to checkout (e.g. v0.10.0), not set by default, the latest version of the maser branch will be used
 # TARGET_IMAGE_NAME - Target Janus gateway image name, defaults to "janus"
-# TARGET_IMAGE_VERSION - Target Janus gateway image version, defaults to "latest"
+# TARGET_IMAGE_TAG - Target Janus gateway image version, defaults to "latest"
 # BUILD_IMAGE_NAME - Name of the build image allowing to build the Janus gateway image, defaults to "janus_build"
-# BUILD_IMAGE_VERSION - Version of the build image allowing to build the Janus gateway image, defaults to "latests"
+# BUILD_IMAGE_TAG - Version of the build image allowing to build the Janus gateway image, defaults to "latests"
 # SKIP_BUILD_IMAGE - When set to "true", the build image will not be created, the available build image will be used to create the target image, by default not set
 # SKIP_TARGET_IMAGE - When set to "true", the target image will not be created, by default not set
 # BUILD_WITH_HOST_CONFIG_DIR - When set to "true" the build image will mount the host Janus configuration directory instead of using the one that was copied during the build image creation, by dfault not set
@@ -59,7 +59,7 @@ else
 	
 	# All the parameters are optional
 	test_parameter BUILD_IMAGE_NAME "$BUILD_IMAGE_NAME" optional
-	test_parameter BUILD_IMAGE_VERSION "$BUILD_IMAGE_VERSION" optional
+	test_parameter BUILD_IMAGE_TAG "$BUILD_IMAGE_TAG" optional
 
 	# The empty parameters are configured with default values
 	if [ -z $BUILD_IMAGE_NAME ]; then
@@ -67,12 +67,12 @@ else
 		echo Parameter BUILD_IMAGE_NAME set to "$BUILD_IMAGE_NAME"
 	fi
 
-	if [ -z $BUILD_IMAGE_VERSION ]; then
-		BUILD_IMAGE_VERSION="latest"
-		echo Parameter BUILD_IMAGE_VERSION set to "$BUILD_IMAGE_VERSION"
+	if [ -z $BUILD_IMAGE_TAG ]; then
+		BUILD_IMAGE_TAG="latest"
+		echo Parameter BUILD_IMAGE_TAG set to "$BUILD_IMAGE_TAG"
 	fi
 
-	FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_VERSION
+	FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
 
 	# Create the build image
 	docker build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
@@ -95,9 +95,9 @@ else
 	test_parameter JANUS_REPO "$JANUS_REPO" optional
 	test_parameter JANUS_VERSION "$JANUS_VERSION" optional
 	test_parameter TARGET_IMAGE_NAME "$TARGET_IMAGE_NAME" optional
-	test_parameter TARGET_IMAGE_VERSION "$TARGET_IMAGE_VERSION" optional
+	test_parameter TARGET_IMAGE_TAG "$TARGET_IMAGE_TAG" optional
 	test_parameter BUILD_IMAGE_NAME "$BUILD_IMAGE_NAME" optional
-	test_parameter BUILD_IMAGE_VERSION "$BUILD_IMAGE_VERSION" optional
+	test_parameter BUILD_IMAGE_TAG "$BUILD_IMAGE_TAG" optional
 	test_parameter BUILD_WITH_HOST_CONFIG_DIR "$BUILD_WITH_HOST_CONFIG_DIR" optional
 	test_parameter RUN_WITH_HOST_CONFIGURATION_DIR "$RUN_WITH_HOST_CONFIGURATION_DIR" optional
 	
@@ -112,9 +112,9 @@ else
 		echo Parameter TARGET_IMAGE_NAME set to "$TARGET_IMAGE_NAME"
 	fi
 
-	if [ -z $TARGET_IMAGE_VERSION ]; then
-		TARGET_IMAGE_VERSION="latest"
-		echo Parameter TARGET_IMAGE_VERSION set to "$TARGET_IMAGE_VERSION"
+	if [ -z $TARGET_IMAGE_TAG ]; then
+		TARGET_IMAGE_TAG="latest"
+		echo Parameter TARGET_IMAGE_TAG set to "$TARGET_IMAGE_TAG"
 	fi
 
 	if [ -z $BUILD_IMAGE_NAME ]; then
@@ -122,9 +122,9 @@ else
 		echo Parameter BUILD_IMAGE_NAME set to "$BUILD_IMAGE_NAME"
 	fi
 
-	if [ -z $BUILD_IMAGE_VERSION ]; then
-		BUILD_IMAGE_VERSION="latest"
-		echo Parameter BUILD_IMAGE_VERSION set to "$BUILD_IMAGE_VERSION"
+	if [ -z $BUILD_IMAGE_TAG ]; then
+		BUILD_IMAGE_TAG="latest"
+		echo Parameter BUILD_IMAGE_TAG set to "$BUILD_IMAGE_TAG"
 	fi
 
 	if [ "$BUILD_WITH_HOST_CONFIG_DIR" == 'true' ]; then
@@ -137,15 +137,15 @@ else
 		CONFIG_DIR_MOUNT=""
 	fi
 	
-	FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_VERSION
-	FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_VERSION
+	FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
+	FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
 	
 	# Create the target image
 	docker run --rm -it -v /var/run/docker.sock:/var/run/docker.sock $CONFIG_DIR_MOUNT \
 	-e "JANUS_REPO=$JANUS_REPO" \
 	-e "JANUS_VERSION=$JANUS_VERSION" \
 	-e "TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME" \
-	-e "TARGET_IMAGE_VERSION=$TARGET_IMAGE_VERSION" \
+	-e "TARGET_IMAGE_TAG=$TARGET_IMAGE_TAG" \
 	$FULL_BUILD_IMAGE_NAME
 	
 	# If required, add an extension to the command displayed below that allows the container to mount and use a host configuration folder
