@@ -86,7 +86,7 @@ access to a *sudo* capable user. We assume that the host is directly connected t
 1. Install Docker following [these](https://docs.docker.com/engine/install/ubuntu/) instructions then follow 
 [these](https://docs.docker.com/engine/install/linux-postinstall/) steps for some additional convenience settings. Please note that the 
 build process includes also the option to use Podman instead of Docker but Podman only allows to create the build image. It does not work 
-yet for the target image creation. If yo wish to experiment with Podman you may use [these] (https://podman.io/getting-started/installation.html)
+yet for the target image creation. If yo wish to experiment with Podman you may use [these](https://podman.io/getting-started/installation.html)
 installation instructions. Both Podman and Docker may be installed on the same platform.
 1. Install Nginx HTTP server. We need NGINX to automate the [Letsencrypt](https://letsencrypt.org/) certificate updates using the 
 [Certbot](https://certbot.eff.org/) and for serving the janus HTML examples (from the /var/www/html/container host directory) 
