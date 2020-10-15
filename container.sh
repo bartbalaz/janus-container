@@ -32,7 +32,6 @@ echo
 # Global variables - Should not need to be modified
 TOP_DIR=$(pwd)
 JANUS_SRC_CONFIG_DIR=$TOP_DIR/janus_config
-ROOT_DIR=$TOP_DIR/root
 
 # test_parameter PARAMETER_NAME $PARAMETER_NAME [mandatory|optional]
 # Verfies if the parameter is configured, if not while it is mandatory the script exits
