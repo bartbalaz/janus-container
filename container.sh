@@ -206,7 +206,7 @@ else
 			echo 
 			echo "Setting the credentials"
 			echo "-----------------------"
-			$REGISTRY_CREDENTIALS="--creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_BUILD_IMAGE_NAME"
+			REGISTRY_CREDENTIALS="--creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_BUILD_IMAGE_NAME"
 		fi
 	fi
 	
