@@ -100,10 +100,16 @@ else
 		FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
 	fi
 
+	echo 
+	echo "Creating the root directory"
+	echo "--------------------------------------"
 	create_dir $ROOT_DIR
 	if [ "$IMAGE_TOOL" == "podman" ]; then
-		create_dir $ROOT_DIR/usr/share/zoneinfo
-		cp -a /usr/share/zoneinfo $ROOT_DIR/usr/share/zoneinfo
+		echo 
+		echo "Copying the content of the /usr/share/zoneinfo"
+		echo "----------------------------------------------"
+		create_dir $ROOT_DIR/usr/share
+		cp -a /usr/share/zoneinfo $ROOT_DIR/usr/share
 	fi
 
 	echo 
