@@ -58,6 +58,15 @@ create_dir() {
 	fi
 }
 
+# purge_dir PATH
+# Removes the directory if it exists
+purge_dir() {
+	if [ -d "$1" ]; then
+		rm -rf $1
+	fi
+}
+
+
 # Main script starts here
 
 # First step: Create the build image
@@ -101,8 +110,9 @@ else
 	fi
 
 	echo 
-	echo "Creating the root directory"
-	echo "--------------------------------------"
+	echo "Deleting and recreating the root directory"
+	echo "------------------------------------------"
+	purge_dir $ROOT_DIR
 	create_dir $ROOT_DIR
 	if [ "$IMAGE_TOOL" == "podman" ]; then
 		echo 
