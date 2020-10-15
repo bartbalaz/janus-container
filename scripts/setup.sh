@@ -29,7 +29,7 @@ echo
 apt update
 DEBIAN_FRONTEND="noninteractive" apt install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
 
-if [ -z "$IMAGE_TOOL" == "docker" ]; then
+if [ "$IMAGE_TOOL" == "docker" ]; then
 	# Procedure from https://docs.docker.com/engine/install/ubuntu/
 	
 	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
