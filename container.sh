@@ -92,7 +92,7 @@ else
 	fi
 
 	echo 
-	echo "Creating the build image using  $IMAGE_TOOL"
+	echo "Creating the build image using $IMAGE_TOOL"
 	echo "--------------------------------------"
 	$IMAGE_TOOL build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
 
@@ -117,7 +117,6 @@ if [ "$SKIP_TARGET_IMAGE" == "true" ]; then
 	echo
 	echo " Skipping target image creation "
 	echo "--------------------------------"
-	
 else
 	echo
 	echo " Executing the build image to create the target image "
@@ -166,10 +165,8 @@ else
 	
 	if [ -z $IMAGE_TOOL ]; then
 		IMAGE_TOOL="docker"
+		echo Parameter IMAGE_TOOL set to $IMAGE_TOOL
 	fi
-
-	echo
-	echo "Using $IMAGE_TOOL for building and managing images"
 
 	MOUNT_CONFIG_DIR=""
 	if [ "$BUILD_WITH_HOST_CONFIG_DIR" == "true" ]; then
@@ -195,7 +192,9 @@ else
 		FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
 	fi
 	
-	# Create the target image
+	echo 
+	echo "Creating the target image using $IMAGE_TOOL"
+	echo "--------------------------------------"
 	$IMAGE_TOOL run --rm -it $MOUNT_DOCKER_SOCKET $MOUNT_CONFIG_DIR \
 	-e "JANUS_REPO=$JANUS_REPO" \
 	-e "JANUS_VERSION=$JANUS_VERSION" \
