@@ -24,7 +24,7 @@ DEBIAN_FRONTEND="noninteractive" apt install -y apt-utils build-essential wget
 
 echo
 echo " Step 2 - Installing $IMAGE_TOOL "
-echo "----------------------------"
+echo "---------------------------"
 echo
 apt update
 DEBIAN_FRONTEND="noninteractive" apt install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common

@@ -82,10 +82,8 @@ else
 		
 	if [ -z $IMAGE_TOOL ]; then
 		IMAGE_TOOL="docker"
+		echo Parameter IMAGE_TOOL set to $IMAGE_TOOL
 	fi
-	
-	echo
-	echo "Using $IMAGE_TOOL for building and managing images"
 
 	if [ ! -z $IMAGE_REGISTRY ]; then
 		FULL_BUILD_IMAGE_NAME=$IMAGE_REGISTRY/$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
@@ -93,22 +91,24 @@ else
 		FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
 	fi
 
-	# Create the build image
+	echo 
+	echo "Creating the build image using  $IMAGE_TOOL"
+	echo "--------------------------------------"
 	$IMAGE_TOOL build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
 
-#	if [ ! -z $IMAGE_REGISTRY ]; then 
-#		# We need to push the image to registry
-#		echo 
-#		echo "Pushing image to registry $IMAGE_REGISTRY"
-#		echo "----------------------------------------------"
-#		if [ "$IMAGE_TOOL" == "docker" ]; then
-#			$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
-#			$IMAGE_TOOL push $FULL_BUILD_IMAGE_NAME
-#			$IMAGE_TOOL logout $IMAGE_REGISTRY
-#		else
-#			$IMAGE_TOOL push --creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_BUILD_IMAGE_NAME
-#		fi
-#	fi
+	if [ ! -z $IMAGE_REGISTRY ]; then 
+		# We need to push the image to registry
+		echo 
+		echo "Pushing image to registry $IMAGE_REGISTRY"
+		echo "----------------------------------------------"
+		if [ "$IMAGE_TOOL" == "docker" ]; then
+			$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
+			$IMAGE_TOOL push $FULL_BUILD_IMAGE_NAME
+			$IMAGE_TOOL logout $IMAGE_REGISTRY
+		else
+			$IMAGE_TOOL push --creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_BUILD_IMAGE_NAME
+		fi
+	fi
 fi
 
 # Second step: Create the target image
@@ -182,7 +182,7 @@ else
 	fi
 	
 	MOUNT_DOCKER_SOCKET=""
-	if [ "$IMAGE_TOOL" == "docker" ]
+	if [ "$IMAGE_TOOL" == "docker" ]; then
 		# If we are using docker then the build image needs to mount the docker socket
 		MOUNT_DOCKER_SOCKET="-v /var/run/docker.sock:/var/run/docker.sock"
 	fi 
