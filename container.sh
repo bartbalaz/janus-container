@@ -94,9 +94,7 @@ else
 	fi
 
 	# Create the build image
-	$IMAGE_TOOL build -t $FULL_BUILD_IMAGE_NAME \
-		-e "IMAGE_TOOL=$IMAGE_TOOL" \
-		-f Dockerfile.build . 
+	$IMAGE_TOOL build -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
 
 #	if [ ! -z $IMAGE_REGISTRY ]; then 
 #		# We need to push the image to registry
