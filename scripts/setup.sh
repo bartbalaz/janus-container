@@ -10,6 +10,8 @@ echo
 
 if [ -z $IMAGE_TOOL ]; then
 	IMAGE_TOOL="docker"
+	echo
+	echo Parameter IMAGE_TOOL set to "$IMAGE_TOOL"
 fi
 
 echo
