@@ -24,7 +24,7 @@ echo
 # HOST_NAME - Name of the host (e.g. <host>.<domain>), please note that it may be difficult 
 # to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate 
-# IMAGE_TOOL - Tool for creating and managing the images either "podman" or "docker", defaults to "docker"
+# IMAGE_TOOL - Tool for creating and managing the images either "podman", "docker" or "none", defaults to "docker"
 # IMAGE_REGISTRY - The registry to store the image at, by default not set
 # IMAGE_REGISTRY_USER - The registry user, by default not set
 # IMAGE_REGISTRY_PASSWORD - The registry password, by default not set
@@ -107,19 +107,6 @@ else
 		FULL_BUILD_IMAGE_NAME=$IMAGE_REGISTRY/$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
 	else
 		FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
-	fi
-
-	echo 
-	echo "Deleting and recreating the root directory"
-	echo "------------------------------------------"
-	purge_dir $ROOT_DIR
-	create_dir $ROOT_DIR
-	if [ "$IMAGE_TOOL" == "podman" ]; then
-		echo 
-		echo "Copying the content of the /usr/share/zoneinfo"
-		echo "----------------------------------------------"
-		create_dir $ROOT_DIR/usr/share
-		cp -a /usr/share/zoneinfo $ROOT_DIR/usr/share
 	fi
 
 	echo 
