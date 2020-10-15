@@ -209,9 +209,10 @@ cp $START_SCRIPT_SRC $START_SCRIPT_DST
 chmod a+x $START_SCRIPT_DST
 
 echo
-echo " Building the Janus gateway target image "
-echo "-----------------------------------------"
+echo " Building the Janus gateway target image using $IMAGE_TOOL"
+echo "--------------------------------------------------"
 cd $TOP_DIR
+
 $IMAGE_TOOL build -t $FULL_TARGET_IMAGE_NAME -f Dockerfile.exec .
 
 if [ ! -z $IMAGE_REGISTRY ]; then 
