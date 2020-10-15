@@ -94,8 +94,8 @@ else
 	echo 
 	echo "Creating the build image using $IMAGE_TOOL"
 	echo "--------------------------------------"
-	$IMAGE_TOOL build  -t --build-arg IMAGE_TOOL="$IMAGE_TOOL" $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
-
+	$IMAGE_TOOL build --build-arg IMAGE_TOOL=$IMAGE_TOOL -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
+# 
 	if [ ! -z $IMAGE_REGISTRY ]; then 
 		# We need to push the image to registry
 		echo 
