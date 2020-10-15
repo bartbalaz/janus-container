@@ -192,16 +192,16 @@ else
 		FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
 	fi
 	
-	echo 
-	echo "Creating the target image using $IMAGE_TOOL"
-	echo "--------------------------------------"
-	
 	if [ ! -z $IMAGE_REGISTRY ]; then 
 		echo 
 		echo "Logging into the registry"
 		echo "-------------------------"
 		$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
 	fi
+
+	echo 
+	echo "Creating the target image using $IMAGE_TOOL"
+	echo "--------------------------------------"
 	
 	$IMAGE_TOOL run --rm -it $MOUNT_DOCKER_SOCKET $MOUNT_CONFIG_DIR $REGISTRY_CREDENTIALS\
 	-e "JANUS_REPO=$JANUS_REPO" \
