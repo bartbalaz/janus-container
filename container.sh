@@ -218,7 +218,7 @@ else
 		echo 
 		echo "Logging out of the registry"
 		echo "---------------------------"
-		$IMAGE_TOOL logout
+		$IMAGE_TOOL logout $IMAGE_REGISTRY
 	fi
 	
 	
