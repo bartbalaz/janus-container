@@ -111,7 +111,7 @@ else
 #			$IMAGE_TOOL push --creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_BUILD_IMAGE_NAME
 #		fi
 #	fi
-#fi
+fi
 
 # Second step: Create the target image
 # The build image must exist to run this step while skipping the first one.
@@ -174,7 +174,7 @@ else
 	echo "Using $IMAGE_TOOL for building and managing images"
 
 	MOUNT_CONFIG_DIR=""
-	if [ "$BUILD_WITH_HOST_CONFIG_DIR" == 'true' ]; then
+	if [ "$BUILD_WITH_HOST_CONFIG_DIR" == "true" ]; then
 		echo
 		echo "Using Janus gateway configuration from host folder $JANUS_SRC_CONFIG_DIR"
 		MOUNT_CONFIG_DIR="-v $JANUS_SRC_CONFIG_DIR:/image/janus_config"
