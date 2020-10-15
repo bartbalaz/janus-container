@@ -32,6 +32,7 @@ echo
 # Global variables - Should not need to be modified
 TOP_DIR=$(pwd)
 JANUS_SRC_CONFIG_DIR=$TOP_DIR/janus_config
+ROOT_DIR=$TOP_DIR/root
 
 # test_parameter PARAMETER_NAME $PARAMETER_NAME [mandatory|optional]
 # Verfies if the parameter is configured, if not while it is mandatory the script exits
@@ -46,6 +47,14 @@ test_parameter() {
 		echo "Non-mandatory parameter $1 empty"
 	else
 		echo Parameter "$1 = $2"
+	fi
+}
+
+# create_dir PATH
+# Creates the required directory path if it does not exist
+create_dir() {
+	if [ ! -d "$1" ]; then
+		mkdir -p $1
 	fi
 }
 
@@ -89,6 +98,12 @@ else
 		FULL_BUILD_IMAGE_NAME=$IMAGE_REGISTRY/$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
 	else
 		FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
+	fi
+
+	create_dir $ROOT_DIR
+	if [ "$IMAGE_TOOL" == "podman" ]; then
+		create_dir $ROOT_DIR/usr/share/zoneinfo
+		cp -a /usr/share/zoneinfo $ROOT_DIR/usr/share/zoneinfo
 	fi
 
 	echo 
