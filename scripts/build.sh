@@ -90,7 +90,7 @@ test_parameter IMAGE_REGISTRY "$IMAGE_REGISTRY" optional
 test_parameter IMAGE_REGISTRY_USER "$IMAGE_REGISTRY_USER" optional
 test_parameter IMAGE_REGISTRY_PASSWORD "$IMAGE_REGISTRY_PASSWORD" optional
 
-# Set the default values (JANUS_REPO and JANUS_VERSION are tested and set below)
+# Set the default values
 
 if [ -z $TARGET_IMAGE_NAME ]; then
 	TARGET_IMAGE_NAME="janus"

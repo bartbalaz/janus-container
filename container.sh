@@ -97,22 +97,21 @@ else
 	$IMAGE_TOOL build -t $FULL_BUILD_IMAGE_NAME \
 		-e "IMAGE_TOOL=$IMAGE_TOOL" \
 		-f Dockerfile.build . 
-		
-	if[ ! -z $IMAGE_REGISTRY ]; then 
-		# We need to push the image to registry
-	
-		echo 
-		echo "Pushing image to registry $IMAGE_REGISTRY"
-		echo "----------------------------------------------"
-		if [ "$IMAGE_TOOL" == "docker" ]; then
-			$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
-			$IMAGE_TOOL push $FULL_BUILD_IMAGE_NAME
-			$IMAGE_TOOL logout $IMAGE_REGISTRY
-		else
-			$IMAGE_TOOL push --creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_BUILD_IMAGE_NAME
-		fi
-	fi
-fi
+
+#	if [ ! -z $IMAGE_REGISTRY ]; then 
+#		# We need to push the image to registry
+#		echo 
+#		echo "Pushing image to registry $IMAGE_REGISTRY"
+#		echo "----------------------------------------------"
+#		if [ "$IMAGE_TOOL" == "docker" ]; then
+#			$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
+#			$IMAGE_TOOL push $FULL_BUILD_IMAGE_NAME
+#			$IMAGE_TOOL logout $IMAGE_REGISTRY
+#		else
+#			$IMAGE_TOOL push --creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_BUILD_IMAGE_NAME
+#		fi
+#	fi
+#fi
 
 # Second step: Create the target image
 # The build image must exist to run this step while skipping the first one.
