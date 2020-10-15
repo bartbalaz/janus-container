@@ -1,0 +1,18 @@
+# Configuration used in building the build and target image
+export IMAGE_REGISTRY=
+export IMAGE_REGISTRY_USER=
+export IMAGE_REGISTRY_PASSWORD=
+export BUILD_IMAGE_NAME= 
+export BUILD_IMAGE_TAG=
+export IMAGE_TOOL=
+
+# Configuration used in building the target image
+export JANUS_REPO=  
+export JANUS_VERSION= 
+export TARGET_IMAGE_NAME=
+export TARGET_IMAGE_TAG= 
+export HOST_NAME=
+export SKIP_BUILD_IMAGE= 
+export SKIP_TARGET_IMAGE=
+export BUILD_WITH_HOST_CONFIG_DIR= 
+export RUN_WITH_HOST_CONFIGURATION_DIR=

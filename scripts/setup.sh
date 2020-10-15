@@ -8,23 +8,53 @@ echo "    Running $0 "
 echo "***************************" 
 echo
 
+if [ -z $IMAGE_TOOL ]; then
+	IMAGE_TOOL="docker"
+	echo
+	echo Parameter IMAGE_TOOL set to "$IMAGE_TOOL"
+fi
+
+echo
+echo "Using $IMAGE_TOOL for building and managing images"
+
 echo
 echo " Step 1 - Installing the prerequisites and convenience packages "
 echo "----------------------------------------------------------------"
 echo
 apt update
-DEBIAN_FRONTEND="noninteractive" apt install -y apt-utils build-essential tree wget vim
+DEBIAN_FRONTEND="noninteractive" apt install -y apt-utils build-essential wget git 
+
+# NOTE: Currently it is impossible to create the target image using Podman hence we install docker unless IMAGE_TOOL
 
 echo
-echo " Step 2 - Installing docker "
-echo "----------------------------"
+echo " Step 2a - Installing Docker "
+echo "-----------------------------"
 echo
 apt update
-DEBIAN_FRONTEND="noninteractive" apt install -y apt-transport-https ca-certificates curl gnupg-agent software-properties-common
+DEBIAN_FRONTEND="noninteractive" apt install -y apt-transport-https curl ca-certificates gnupg-agent software-properties-common
+
+# Procedure from https://docs.docker.com/engine/install/ubuntu/
+
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | apt-key add -
 add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
 apt update
 DEBIAN_FRONTEND="noninteractive" apt install -y docker-ce docker-ce-cli containerd.io
+	
+if [ "$IMAGE_TOOL" == "podman" ]; then
+	echo
+	echo " Step 2b - Installing Podman "
+	echo "-----------------------------"
+	echo
+
+	# Procedure from https://podman.io/getting-started/installation.html
+	
+	. /etc/os-release
+	echo "deb https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/ /" | tee /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+	curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/xUbuntu_${VERSION_ID}/Release.key | apt-key add -
+	apt update
+	DEBIAN_FRONTEND="noninteractive" apt -y upgrade 
+	DEBIAN_FRONTEND="noninteractive" apt -y install podman
+fi
 
 echo
 echo " Step 3 - Installing the build requirements "
