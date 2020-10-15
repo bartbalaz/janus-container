@@ -24,7 +24,7 @@ echo
 # HOST_NAME - Name of the host (e.g. <host>.<domain>), please note that it may be difficult 
 # to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate 
-# IMAGE_TOOL - Tool for creating and managing the images either "podman", "docker" or "none", defaults to "docker"
+# IMAGE_TOOL - Tool for creating and managing the images either "podman" or "docker", defaults to "docker"
 # IMAGE_REGISTRY - The registry to store the image at, by default not set
 # IMAGE_REGISTRY_USER - The registry user, by default not set
 # IMAGE_REGISTRY_PASSWORD - The registry password, by default not set
@@ -65,7 +65,6 @@ purge_dir() {
 		rm -rf $1
 	fi
 }
-
 
 # Main script starts here
 
@@ -238,7 +237,6 @@ else
 		echo "---------------------------"
 		$IMAGE_TOOL logout $IMAGE_REGISTRY
 	fi
-	
 	
 	# If required, add an extension to the command displayed below that allows the container to mount and use a host configuration folder
 	if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true" ]; then
