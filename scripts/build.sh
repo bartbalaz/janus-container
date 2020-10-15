@@ -86,27 +86,34 @@ test_parameter JANUS_VERSION "$JANUS_VERSION" optional
 test_parameter TARGET_IMAGE_NAME "$TARGET_IMAGE_NAME" optional
 test_parameter TARGET_IMAGE_TAG "$TARGET_IMAGE_TAG" optional
 test_parameter IMAGE_TOOL "$IMAGE_TOOL" optional
+test_parameter IMAGE_REGISTRY "$IMAGE_REGISTRY" optional
+test_parameter IMAGE_REGISTRY_USER "$IMAGE_REGISTRY_USER" optional
+test_parameter IMAGE_REGISTRY_PASSWORD "$IMAGE_REGISTRY_PASSWORD" optional
 
 # Set the default values (JANUS_REPO and JANUS_VERSION are tested and set below)
 
-	if [ -z $TARGET_IMAGE_NAME ]; then
-		TARGET_IMAGE_NAME="janus"
-		echo Parameter TARGET_IMAGE_NAME set to "$TARGET_IMAGE_NAME"
-	fi
+if [ -z $TARGET_IMAGE_NAME ]; then
+	TARGET_IMAGE_NAME="janus"
+	echo Parameter TARGET_IMAGE_NAME set to "$TARGET_IMAGE_NAME"
+fi
 
-	if [ -z $TARGET_IMAGE_TAG ]; then
-		TARGET_IMAGE_TAG="latest"
-		echo Parameter TARGET_IMAGE_TAG set to "$TARGET_IMAGE_TAG"
-	fi
-	
-	if [ -z $IMAGE_TOOL ]; then
-		IMAGE_TOOL="docker"
-	fi
+if [ -z $TARGET_IMAGE_TAG ]; then
+	TARGET_IMAGE_TAG="latest"
+	echo Parameter TARGET_IMAGE_TAG set to "$TARGET_IMAGE_TAG"
+fi
 
-	echo
-	echo "Using $IMAGE_TOOL for building and managing images"
+if [ -z $IMAGE_TOOL ]; then
+	IMAGE_TOOL="docker"
+fi
 
-FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
+echo
+echo "Using $IMAGE_TOOL for building and managing images"
+
+if [ ! -z $IMAGE_REGISTRY ]; then
+	FULL_TARGET_IMAGE_NAME=$IMAGE_REGISTRY/$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
+else
+	FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
+fi
 
 echo
 echo " Creating root and staging directories "
@@ -206,3 +213,18 @@ echo " Building the Janus gateway target image "
 echo "-----------------------------------------"
 cd $TOP_DIR
 $IMAGE_TOOL build -t $FULL_TARGET_IMAGE_NAME -f Dockerfile.exec .
+
+if[ ! -z $IMAGE_REGISTRY ]; then 
+	# We need to push the image to registry
+
+	echo 
+	echo "Pushing image to registry $IMAGE_REGISTRY"
+	echo "----------------------------------------------"
+	if [ "$IMAGE_TOOL" == "docker" ]; then
+		$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
+		$IMAGE_TOOL push $FULL_TARGET_IMAGE_NAME
+		$IMAGE_TOOL logout $IMAGE_REGISTRY
+	else
+		$IMAGE_TOOL push --creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_TARGET_IMAGE_NAME
+	fi
+fi

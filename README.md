@@ -199,22 +199,21 @@ steps for some additional convenience settings.
 
  Parameter  | Mandatory (Y/N/C) | Default | Build step | Description 
  :---: | :---: | :---: | :---: |:--- 
-IMAGE_REGISTRY | N | not set | 2, 3 | The registry for storing the image
-IMAGE_REGISTRY_USER | N | not set | 2, 3 | The registry user
-IMAGE_REGISTRY_PASSWORD | N | not set | 2, 3 | The registry password
-BUILD_IMAGE_NAME | N | janus_build | 2, 3 | Name of the build image.
-BUILD_IMAGE_TAG | N | latest | 2, 3 | The version to tag the build image with.
-IMAGE_TOOL | N | docker | 2, 3 | Tool for creating and managing the images either "podman" or "docker".
-HOST_NAME | N | \<host\>.\<domain\> | 3 |  Name of the host in full fqdn format. This value is only used in displaying the execution command at the end of an successful build.
-JANUS_REPO | N | https://github.com/meetecho/janus-gateway.git | 3 | Repository to fetch Janus gatway sources from
-JANUS_VERSION | N | master | 3 |  Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used.
-TARGET_IMAGE_NAME | N | janus | 3 | Target image name.
-TARGET_IMAGE_TAG | N | latest | 3 | The version to tag the target image with.
-SKIP_BUILD_IMAGE | N | false | 3 | When set to "true" the build image will not be build.
-SKIP_TARGET_IMAGE | N | false | 3 | When set to "true" the target image will not be build.
-BUILD_WITH_HOST_CONFIG_DIR | N | false | 3 | When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation.
-RUN_WITH_HOST_CONFIGURATION_DIR | N | false | 3 | When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory (i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process.
-
+_IMAGE_REGISTRY_ | N | not set | 2, 3 | Registry for storing both the build and target images (i.e. docker.io)
+_IMAGE_REGISTRY_USER_ | N | not set | 2, 3 | Registry user name
+_IMAGE_REGISTRY_PASSWORD_ | N | not set | 2, 3 | Registry user password
+_BUILD_IMAGE_NAME_ | N | janus_build | 2, 3 | Name of the build image
+_BUILD_IMAGE_TAG_ | N | latest | 2, 3 | The version to tag the build image with
+_IMAGE_TOOL_ | N | docker | 2, 3 | Tool for creating and managing the images, either "podman" or "docker"
+_HOST_NAME_ | N | \<host\>.\<domain\> | 3 |  Name of the host in full fqdn format. This value is only used in displaying the execution command at the end of an successful build
+_JANUS_REPO_ | N | https://github.com/meetecho/janus-gateway.git | 3 | Repository to fetch Janus gatway sources from
+_JANUS_VERSION_ | N | master | 3 |  Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used
+_TARGET_IMAGE_NAME_ | N | janus | 3 | Target image name
+_TARGET_IMAGE_TAG_ | N | latest | 3 | The version to tag the target image with
+_SKIP_BUILD_IMAGE_ | N | false | 3 | When set to "true" the build image will not be build
+_SKIP_TARGET_IMAGE_ | N | false | 3 | When set to "true" the target image will not be build
+_BUILD_WITH_HOST_CONFIG_DIR_ | N | false | 3 | When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation
+_RUN_WITH_HOST_CONFIGURATION_DIR_ | N | false | 3 | When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory (i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process
 
 2. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the build image and into the target image.
 1. Launch the build process, this process performs two steps: creates the build image (unless the *SKIP_BUILD_IMAGE* is set to *"true"*), 

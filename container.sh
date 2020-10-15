@@ -77,37 +77,37 @@ else
 	
 	if [ -z $BUILD_IMAGE_TAG ]; then
 		BUILD_IMAGE_TAG="latest"
-		echo Parameter BUILD_IMAGE_NAME set to "$BUILD_IMAGE_TAG"
-	fi
-	
-	if [ ! -z $IMAGE_REGISTRY ]; then
-		IMAGE_REGISTRY=$IMAGE_REGISTRY"/"
 		echo Parameter BUILD_IMAGE_TAG set to "$BUILD_IMAGE_TAG"
 	fi
-
-	
+		
 	if [ -z $IMAGE_TOOL ]; then
 		IMAGE_TOOL="docker"
 	fi
-
+	
 	echo
 	echo "Using $IMAGE_TOOL for building and managing images"
 
-	FULL_BUILD_IMAGE_NAME=$IMAGE_REGISTRY$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
+	if [ ! -z $IMAGE_REGISTRY ]; then
+		FULL_BUILD_IMAGE_NAME=$IMAGE_REGISTRY/$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
+	else
+		FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
+	fi
 
 	# Create the build image
 	$IMAGE_TOOL build -t $FULL_BUILD_IMAGE_NAME \
 		-e "IMAGE_TOOL=$IMAGE_TOOL" \
 		-f Dockerfile.build . 
 		
-	if[ "$IMAGE_REGISTRY" != "/" ]; then 
+	if[ ! -z $IMAGE_REGISTRY ]; then 
 		# We need to push the image to registry
 	
 		echo 
 		echo "Pushing image to registry $IMAGE_REGISTRY"
+		echo "----------------------------------------------"
 		if [ "$IMAGE_TOOL" == "docker" ]; then
-			$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD
+			$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
 			$IMAGE_TOOL push $FULL_BUILD_IMAGE_NAME
+			$IMAGE_TOOL logout $IMAGE_REGISTRY
 		else
 			$IMAGE_TOOL push --creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_BUILD_IMAGE_NAME
 		fi
@@ -167,11 +167,6 @@ else
 		echo Parameter BUILD_IMAGE_TAG set to "$BUILD_IMAGE_TAG"
 	fi
 	
-	if [ ! -z $IMAGE_REGISTRY ]; then
-		IMAGE_REGISTRY=$IMAGE_REGISTRY"/"
-		echo Parameter BUILD_IMAGE_TAG set to "$BUILD_IMAGE_TAG"
-	fi
-
 	if [ -z $IMAGE_TOOL ]; then
 		IMAGE_TOOL="docker"
 	fi
@@ -195,8 +190,13 @@ else
 		MOUNT_DOCKER_SOCKET="-v /var/run/docker.sock:/var/run/docker.sock"
 	fi 
 	
-	FULL_BUILD_IMAGE_NAME=$IMAGE_REGISTRY$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
-	FULL_TARGET_IMAGE_NAME=$IMAGE_REGISTRY$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
+	if [ ! -z $IMAGE_REGISTRY ]; then
+		FULL_BUILD_IMAGE_NAME=$IMAGE_REGISTRY/$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
+		FULL_TARGET_IMAGE_NAME=$IMAGE_REGISTRY/$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
+	else
+		FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
+		FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
+	fi
 	
 	# Create the target image
 	$IMAGE_TOOL run --rm -it $MOUNT_DOCKER_SOCKET $MOUNT_CONFIG_DIR \
@@ -208,7 +208,7 @@ else
 	-e "IMAGE_REGISTRY=$IMAGE_REGISTRY" \
 	-e "IMAGE_REGISTRY_USER=$IMAGE_REGISTRY_USER" \
 	-e "IMAGE_REGISTRY_PASSWORD=$IMAGE_REGISTRY_PASSWORD" \
-	$FULL_BUILD_IMAGE_NAME
+	$FULL_BUILD_IMAGE_NAME .
 	
 	# If required, add an extension to the command displayed below that allows the container to mount and use a host configuration folder
 	if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true" ]; then
