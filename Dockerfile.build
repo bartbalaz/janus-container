@@ -1,5 +1,8 @@
 # Docker file for creating a Janus gateway build image.
 
+# Specify the tool for creating and managing the images, docker by default
+ARG IMAGE_TOOL="docker"
+
 FROM ubuntu:18.04
 
 # Add the scripts
