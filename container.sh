@@ -195,7 +195,22 @@ else
 	echo 
 	echo "Creating the target image using $IMAGE_TOOL"
 	echo "--------------------------------------"
-	$IMAGE_TOOL run --rm -it $MOUNT_DOCKER_SOCKET $MOUNT_CONFIG_DIR \
+	
+	if [ ! -z $IMAGE_REGISTRY ]; then 
+		if [ "$IMAGE_TOOL" == "docker" ]; then
+			echo 
+			echo "Logging into the registry"
+			echo "-------------------------"
+			$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
+		else
+			echo 
+			echo "Setting the credentials"
+			echo "-----------------------"
+			$REGISTRY_CREDENTIALS="--creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_BUILD_IMAGE_NAME"
+		fi
+	fi
+	
+	$IMAGE_TOOL run --rm -it $MOUNT_DOCKER_SOCKET $MOUNT_CONFIG_DIR $REGISTRY_CREDENTIALS\
 	-e "JANUS_REPO=$JANUS_REPO" \
 	-e "JANUS_VERSION=$JANUS_VERSION" \
 	-e "TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME" \
@@ -205,6 +220,16 @@ else
 	-e "IMAGE_REGISTRY_USER=$IMAGE_REGISTRY_USER" \
 	-e "IMAGE_REGISTRY_PASSWORD=$IMAGE_REGISTRY_PASSWORD" \
 	$FULL_BUILD_IMAGE_NAME .
+	
+	if [ ! -z $IMAGE_REGISTRY ]; then 
+		if [ "$IMAGE_TOOL" == "docker" ]; then
+			echo 
+			echo "Logging out of the registry"
+			echo "---------------------------"
+			$IMAGE_TOOL logout
+		fi
+	fi
+	
 	
 	# If required, add an extension to the command displayed below that allows the container to mount and use a host configuration folder
 	if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true" ]; then
