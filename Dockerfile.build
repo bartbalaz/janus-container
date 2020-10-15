@@ -2,7 +2,7 @@
 
 FROM ubuntu:18.04
 
-# Specify the tool for creating and managing the images, docker by default
+# Specify the tool for creating and managing the images
 ARG IMAGE_TOOL
 
 # Add the scripts

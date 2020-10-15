@@ -22,7 +22,7 @@ echo " Step 1 - Installing the prerequisites and convenience packages "
 echo "----------------------------------------------------------------"
 echo
 apt update
-DEBIAN_FRONTEND="noninteractive" apt install -y apt-utils build-essential wget
+DEBIAN_FRONTEND="noninteractive" apt install -y apt-utils build-essential wget git
 
 echo
 echo " Step 2 - Installing $IMAGE_TOOL "
