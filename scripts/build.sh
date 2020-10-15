@@ -214,7 +214,7 @@ echo "-----------------------------------------"
 cd $TOP_DIR
 $IMAGE_TOOL build -t $FULL_TARGET_IMAGE_NAME -f Dockerfile.exec .
 
-if[ ! -z $IMAGE_REGISTRY ]; then 
+if [ ! -z $IMAGE_REGISTRY ]; then 
 	# We need to push the image to registry
 
 	echo 
