@@ -8,7 +8,7 @@ stages:
 publish_to_acr:
   only:
    - master
-   - tag
+   - tags
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
