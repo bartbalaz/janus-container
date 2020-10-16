@@ -24,7 +24,7 @@ echo
 # HOST_NAME - Name of the host (e.g. <host>.<domain>), please note that it may be difficult 
 # to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate 
-# IMAGE_TOOL - Tool for creating and managing the images either "podman" or "docker", defaults to "docker"
+# IMAGE_TOOL - Tool for creating and managing the images either "podman", "docker" or "external", defaults to "docker"
 # IMAGE_REGISTRY - The registry to store the image at, by default not set
 # IMAGE_REGISTRY_USER - The registry user, by default not set
 # IMAGE_REGISTRY_PASSWORD - The registry password, by default not set
@@ -107,23 +107,29 @@ else
 		FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
 	fi
 
-	echo 
-	echo "Creating the build image using $IMAGE_TOOL"
-	echo "--------------------------------------"
-	$IMAGE_TOOL build --build-arg IMAGE_TOOL=$IMAGE_TOOL -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
-
-	if [ ! -z $IMAGE_REGISTRY ]; then 
-		# We need to push the image to registry
+	if [ "$IMAGE_TOOL" != "external" ]; then
 		echo 
-		echo "Pushing image to registry $IMAGE_REGISTRY"
-		echo "----------------------------------------------"
-		if [ "$IMAGE_TOOL" == "docker" ]; then
-			$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
-			$IMAGE_TOOL push $FULL_BUILD_IMAGE_NAME
-			$IMAGE_TOOL logout $IMAGE_REGISTRY
-		else
-			$IMAGE_TOOL push --creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_BUILD_IMAGE_NAME
+		echo "Creating the build image using $IMAGE_TOOL"
+		echo "--------------------------------------"
+		$IMAGE_TOOL build --build-arg IMAGE_TOOL=$IMAGE_TOOL -t $FULL_BUILD_IMAGE_NAME -f Dockerfile.build . 
+
+		if [ ! -z $IMAGE_REGISTRY ]; then 
+			# We need to push the image to registry
+			echo 
+			echo "Pushing image to registry $IMAGE_REGISTRY"
+			echo "----------------------------------------------"
+			if [ "$IMAGE_TOOL" == "docker" ]; then
+				$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
+				$IMAGE_TOOL push $FULL_BUILD_IMAGE_NAME
+				$IMAGE_TOOL logout $IMAGE_REGISTRY
+			else
+				$IMAGE_TOOL push --creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_BUILD_IMAGE_NAME
+			fi
 		fi
+	else
+		echo 
+		echo " The creation of the image is left to the invoking script "
+		echo "----------------------------------------------------------"
 	fi
 fi
 
@@ -207,39 +213,46 @@ else
 		FULL_BUILD_IMAGE_NAME=$BUILD_IMAGE_NAME:$BUILD_IMAGE_TAG
 		FULL_TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME:$TARGET_IMAGE_TAG
 	fi
-	
-	if [ ! -z $IMAGE_REGISTRY ]; then 
-		echo 
-		echo "Logging into the registry"
-		echo "-------------------------"
-		$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
-	fi
 
-	echo 
-	echo "Creating the target image using $IMAGE_TOOL"
-	echo "--------------------------------------"
+	if [ "$IMAGE_TOOL" != "external" ]; then
 	
-	$IMAGE_TOOL run --rm -it $MOUNT_DOCKER_SOCKET $MOUNT_CONFIG_DIR $REGISTRY_CREDENTIALS\
-	-e "JANUS_REPO=$JANUS_REPO" \
-	-e "JANUS_VERSION=$JANUS_VERSION" \
-	-e "TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME" \
-	-e "TARGET_IMAGE_TAG=$TARGET_IMAGE_TAG" \
-	-e "IMAGE_TOOL=$IMAGE_TOOL" \
-	-e "IMAGE_REGISTRY=$IMAGE_REGISTRY" \
-	-e "IMAGE_REGISTRY_USER=$IMAGE_REGISTRY_USER" \
-	-e "IMAGE_REGISTRY_PASSWORD=$IMAGE_REGISTRY_PASSWORD" \
-	$FULL_BUILD_IMAGE_NAME .
+		if [ ! -z $IMAGE_REGISTRY ]; then 
+			echo 
+			echo "Logging into the registry"
+			echo "-------------------------"
+			$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
+		fi
 	
-	if [ ! -z $IMAGE_REGISTRY ]; then 
 		echo 
-		echo "Logging out of the registry"
-		echo "---------------------------"
-		$IMAGE_TOOL logout $IMAGE_REGISTRY
-	fi
-	
-	# If required, add an extension to the command displayed below that allows the container to mount and use a host configuration folder
-	if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true" ]; then
-		COMMAND_EXTENSION=" -v $JANUS_SRC_CONFIG_DIR:/janus/etc/janus_host -e \"RUN_WITH_HOST_CONFIGURATION_DIR=true\""
+		echo "Creating the target image using $IMAGE_TOOL"
+		echo "--------------------------------------"
+		
+		$IMAGE_TOOL run --rm -it $MOUNT_DOCKER_SOCKET $MOUNT_CONFIG_DIR $REGISTRY_CREDENTIALS\
+		-e "JANUS_REPO=$JANUS_REPO" \
+		-e "JANUS_VERSION=$JANUS_VERSION" \
+		-e "TARGET_IMAGE_NAME=$TARGET_IMAGE_NAME" \
+		-e "TARGET_IMAGE_TAG=$TARGET_IMAGE_TAG" \
+		-e "IMAGE_TOOL=$IMAGE_TOOL" \
+		-e "IMAGE_REGISTRY=$IMAGE_REGISTRY" \
+		-e "IMAGE_REGISTRY_USER=$IMAGE_REGISTRY_USER" \
+		-e "IMAGE_REGISTRY_PASSWORD=$IMAGE_REGISTRY_PASSWORD" \
+		$FULL_BUILD_IMAGE_NAME .
+		
+		if [ ! -z $IMAGE_REGISTRY ]; then 
+			echo 
+			echo "Logging out of the registry"
+			echo "---------------------------"
+			$IMAGE_TOOL logout $IMAGE_REGISTRY
+		fi
+		
+		# If required, add an extension to the command displayed below that allows the container to mount and use a host configuration folder
+		if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true" ]; then
+			COMMAND_EXTENSION=" -v $JANUS_SRC_CONFIG_DIR:/janus/etc/janus_host -e \"RUN_WITH_HOST_CONFIGURATION_DIR=true\""
+		fi
+	else
+		echo 
+		echo " The creation of the image is left to the invoking script "
+		echo "----------------------------------------------------------"
 	fi
 	
 	echo

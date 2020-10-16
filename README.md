@@ -207,7 +207,7 @@ _IMAGE_REGISTRY_USER_ | N | not set | 2, 3 | Registry user name
 _IMAGE_REGISTRY_PASSWORD_ | N | not set | 2, 3 | Registry user password
 _BUILD_IMAGE_NAME_ | N | janus_build | 2, 3 | Name of the build image
 _BUILD_IMAGE_TAG_ | N | latest | 2, 3 | The version to tag the build image with
-_IMAGE_TOOL_ | N | docker | 2, 3 | Tool for creating and managing the images, either "podman"or "docker"
+_IMAGE_TOOL_ | N | docker | 2, 3 | Tool for creating and managing the images, either "podman", "docker" or "external" when image building is handled outside of the project scripts
 _HOST_NAME_ | N | \<host\>.\<domain\> | 3 |  Name of the host in full fqdn format. This value is only used in displaying the execution command at the end of an successful build
 _JANUS_REPO_ | N | https://github.com/meetecho/janus-gateway.git | 3 | Repository to fetch Janus gatway sources from
 _JANUS_VERSION_ | N | master | 3 |  Version of the Janus gateway sources to checkout (e.g. v0.10.0). If none is specified the master branch latest available version will be used
