@@ -14,4 +14,4 @@ publish_to_acr:
     entrypoint: ["/busybox/sh"]
   script:
     - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"username\":\"$ACR_USER\",\"password\":\"$ACR_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --build-arg IMAGE_TOOL=external --context . --dockerfile Dockerfile.build --destination acrwebrtc.azurecr.io/access:latest
+    - /kaniko/executor --build-arg IMAGE_TOOL=external --context . --dockerfile Dockerfile.build --destination acrwebrtc.azurecr.io/janus_build:latest
