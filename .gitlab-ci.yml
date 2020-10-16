@@ -13,6 +13,8 @@ publish_to_acr:
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: ["/busybox/sh"]
+  before_script:
+    - if [ -z $CI_COMMIT_TAG ]; then CI_COMMIT_TAG=latest; fi
   script:
     - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"username\":\"$ACR_USER\",\"password\":\"$ACR_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --build-arg IMAGE_TOOL=external --context . --dockerfile Dockerfile.build --destination $ACR_REGISTRY/$JANUS_BUILD_IMAGE:$CI_COMMIT_TAG
