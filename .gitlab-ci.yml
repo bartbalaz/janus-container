@@ -5,12 +5,13 @@ default:
 stages:
   - build
 
-build:
+publish_to_acr:
+  only:
+   - master
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:debug
-    entrypoint: [""]
+    entrypoint: ["/busybox/sh"]
   script:
-    - mkdir -p /kaniko/.docker
     - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"username\":\"$ACR_USER\",\"password\":\"$ACR_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --build-arg IMAGE_TOOL=$IMAGE_TOOL --context $CI_PROJECT_DIR --dockerfile $CI_PROJECT_DIR/Dockerfile.build --destination $CI_REGISTRY_IMAGE:latest
+    - /kaniko/executor --build-arg IMAGE_TOOL=external --context . --dockerfile Dockerfile.build --destination acrwebrtc.azurecr.io/access:latest
