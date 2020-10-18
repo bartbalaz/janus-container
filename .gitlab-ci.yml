@@ -1,15 +1,17 @@
 default:
   tags:
-   - rancher2
+   - $RUNNER_TAG
 
 stages:
-  - build
+  - create_build_image
+  - create_target_image_content
+  - create_target_image
 
-publish_to_acr:
+create_build_image:
   only:
-   - master
+#   - master temporarely build only when a new tag is pushed
    - tags
-  stage: build
+  stage: create_build_image 
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: ["/busybox/sh"]
@@ -17,4 +19,41 @@ publish_to_acr:
     - if [ -z $CI_COMMIT_TAG ]; then CI_COMMIT_TAG=latest; fi
   script:
     - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"username\":\"$ACR_USER\",\"password\":\"$ACR_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --build-arg IMAGE_TOOL=docker --context . --dockerfile Dockerfile.build --destination $ACR_REGISTRY/$JANUS_BUILD_IMAGE:$CI_COMMIT_TAG --destination $ACR_REGISTRY/$JANUS_BUILD_IMAGE:latest
+    - /kaniko/executor --build-arg IMAGE_TOOL=docker --context . --dockerfile Dockerfile.build 
+        --destination $ACR_REGISTRY/$JANUS_BUILD_IMAGE:$CI_COMMIT_TAG 
+        --destination $ACR_REGISTRY/$JANUS_BUILD_IMAGE:latest
+
+create_target_image_content:
+  only:
+    - master
+    - tags
+  stage: create_target_image_content
+  image:
+    name: $ACR_REGISTRY/$JANUS_BUILD_IMAGE:latest
+    entrypoint: ["/bin/bash"]
+  before_script:
+    - IMAGE_TOOL=external
+  artifacts:
+    paths:
+      - /image
+    expire_in: 1 hour
+  script:
+    - cd /image
+    - ./build.sh
+  
+create_target_image:
+  only:
+    - master
+    - tags
+  stage: create_target_image
+  image:
+    name: gcr.io/kaniko-project/executor:debug
+    entrypoint: ["/busybox/sh"]
+  script:
+    - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"username\":\"$ACR_USER\",\"password\":\"$ACR_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - /kaniko/executor --context /image --dockerfile Dockerfile.exec 
+        --destination $ACR_REGISTRY/$JANUS_IMAGE:$CI_COMMIT_TAG 
+        --destination $ACR_REGISTRY/$JANUS_IMAGE:latest
+
+  
+    

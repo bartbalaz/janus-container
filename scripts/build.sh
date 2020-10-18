@@ -12,7 +12,7 @@ echo
 # JANUS_VERSION - Version of the Janus gateway sources to checkout (e.g. v0.10.0)
 # TARGET_IMAGE_NAME - Target image name (e.g. janus)
 # TARGET_IMAGE_TAG - Target image version (e.g. 01) 
-# IMAGE_TOOL - Tool for creating and managing the images either "podman" or "docker", defaults to "docker"
+# IMAGE_TOOL - Tool for creating and managing the images either "podman", "docker" or "external", defaults to "docker"
 # IMAGE_REGISTRY - The registry to store the image at, by default not set
 # IMAGE_REGISTRY_USER - The registry user, by default not set
 # IMAGE_REGISTRY_PASSWORD - The registry password, by default not set
@@ -208,24 +208,30 @@ echo "----------------------------------------------------"
 cp $START_SCRIPT_SRC $START_SCRIPT_DST
 chmod a+x $START_SCRIPT_DST
 
-echo
-echo " Building the Janus gateway target image using $IMAGE_TOOL"
-echo "--------------------------------------------------"
-cd $TOP_DIR
+if [ "$IMAGE_TOOL" != "external" ]; then 
+	echo
+	echo " Building the Janus gateway target image using $IMAGE_TOOL"
+	echo "--------------------------------------------------"
+	cd $TOP_DIR
 
-$IMAGE_TOOL build -t $FULL_TARGET_IMAGE_NAME -f Dockerfile.exec .
+	$IMAGE_TOOL build -t $FULL_TARGET_IMAGE_NAME -f Dockerfile.exec .
 
-if [ ! -z $IMAGE_REGISTRY ]; then 
-	# We need to push the image to registry
+	if [ ! -z $IMAGE_REGISTRY ]; then 
+		# We need to push the image to registry
 
-	echo 
-	echo "Pushing image to registry $IMAGE_REGISTRY"
-	echo "----------------------------------------------"
-	if [ "$IMAGE_TOOL" == "docker" ]; then
-		$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
-		$IMAGE_TOOL push $FULL_TARGET_IMAGE_NAME
-		$IMAGE_TOOL logout $IMAGE_REGISTRY
-	else
-		$IMAGE_TOOL push --creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_TARGET_IMAGE_NAME
+		echo 
+		echo "Pushing image to registry $IMAGE_REGISTRY"
+		echo "----------------------------------------------"
+		if [ "$IMAGE_TOOL" == "docker" ]; then
+			$IMAGE_TOOL login -u $IMAGE_REGISTRY_USER -p $IMAGE_REGISTRY_PASSWORD $IMAGE_REGISTRY
+			$IMAGE_TOOL push $FULL_TARGET_IMAGE_NAME
+			$IMAGE_TOOL logout $IMAGE_REGISTRY
+		else
+			$IMAGE_TOOL push --creds $IMAGE_REGISTRY_USER:$IMAGE_REGISTRY_PASSWORD $FULL_TARGET_IMAGE_NAME
+		fi
 	fi
+else
+	echo 
+	echo " The creation of the image is deferred to the invoking script "
+	echo "--------------------------------------------------------------"
 fi

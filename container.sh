@@ -128,8 +128,8 @@ else
 		fi
 	else
 		echo 
-		echo " The creation of the image is left to the invoking script "
-		echo "----------------------------------------------------------"
+		echo " The creation of the image is deferred to the invoking script "
+		echo "--------------------------------------------------------------"
 	fi
 fi
 
@@ -251,8 +251,8 @@ else
 		fi
 	else
 		echo 
-		echo " The creation of the image is left to the invoking script "
-		echo "----------------------------------------------------------"
+		echo " The creation of the image is deferred to the invoking script "
+		echo "--------------------------------------------------------------"
 	fi
 	
 	echo
