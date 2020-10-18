@@ -1,6 +1,6 @@
 default:
   tags:
-   - $RUNNER_TAG
+   - rancher2
 
 stages:
   - create_build_image
