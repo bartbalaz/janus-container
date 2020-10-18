@@ -29,7 +29,7 @@ create_target_image_content:
     - tags
   stage: create_target_image_content
   image:
-    name: $ACR_REGISTRY/$JANUS_BUILD_IMAGE:latest
+    name: acrwebrtc.azurecr.io/janus_build:latest
     entrypoint: ["/bin/bash"]
   before_script:
     - IMAGE_TOOL=external
