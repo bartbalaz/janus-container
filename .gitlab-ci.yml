@@ -9,20 +9,21 @@ stages:
 
 create_build_image:
   only:
-#   - master
+   - master
    - tags
   stage: create_build_image 
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: ["/busybox/sh"]
   script:
-    - if [ -z $CI_COMMIT_TAG ]; then export CI_COMMIT_TAG=latest; fi
+    - if [ -z \"$ACR_PROJECT\" ]; then export ACR_NAME=\"$ACR_REGISTRY/$JANUS_BUILD_IMAGE\"; else export ACR_NAME=\"$ACR_REGISTRY/$ACR_PROJECT/$JANUS_BUILD_IMAGE\""
+    - if [ -z \"$NCR_PROJECT\" ]; then export NCR_NAME=\"$NCR_REGISTRY/$JANUS_BUILD_IMAGE\"; else export NCR_NAME=\"$NCR_REGISTRY/$NCR_PROJECT/$JANUS_BUILD_IMAGE\""
     - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"username\":\"$ACR_USER\",\"password\":\"$ACR_PASSWORD\"},\"$NCR_REGISTRY\":{\"username\":\"$NCR_USER\",\"password\":\"$NCR_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --build-arg IMAGE_TOOL=external --context . --dockerfile Dockerfile.build 
-        --destination $ACR_REGISTRY/$JANUS_BUILD_IMAGE:$CI_COMMIT_TAG
-        --destination $ACR_REGISTRY/$JANUS_BUILD_IMAGE:latest
-        --destination $NCR_REGISTRY/$JANUS_BUILD_IMAGE:$CI_COMMIT_TAG
-        --destination $NCR_REGISTRY/$JANUS_BUILD_IMAGE:latest
+        --destination $ACR_NAME:$CI_COMMIT_TAG
+        --destination $ACR_NAME:latest
+        --destination $NCR_NAME:$CI_COMMIT_TAG
+        --destination $NCR_NAME:latest
 
 create_target_image_content:
   only:
@@ -41,7 +42,7 @@ create_target_image_content:
     - cd /image
     - ./build.sh
     - mv /image $CI_PROJECT_DIR
-  
+
 create_target_image:
   only:
     - master
@@ -51,10 +52,14 @@ create_target_image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: ["/busybox/sh"]
   script:
-    - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"username\":\"$ACR_USER\",\"password\":\"$ACR_PASSWORD\"}}}" > /kaniko/.docker/config.json
+    - if [ -z \"$ACR_PROJECT\" ]; then export ACR_NAME=\"$ACR_REGISTRY/$JANUS_TARGET_IMAGE\"; else export ACR_NAME=\"$ACR_REGISTRY/$ACR_PROJECT/$JANUS_TARGET_IMAGE\""
+    - if [ -z \"$NCR_PROJECT\" ]; then export NCR_NAME=\"$NCR_REGISTRY/$JANUS_TARGET_IMAGE\"; else export NCR_NAME=\"$NCR_REGISTRY/$NCR_PROJECT/$JANUS_TARGET_IMAGE\""
+    - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"username\":\"$ACR_USER\",\"password\":\"$ACR_PASSWORD\"},\"$NCR_REGISTRY\":{\"username\":\"$NCR_USER\",\"password\":\"$NCR_PASSWORD\"} }}" > /kaniko/.docker/config.json
     - /kaniko/executor --context ./image --dockerfile Dockerfile.exec 
-        --destination $ACR_REGISTRY/$JANUS_IMAGE:$CI_COMMIT_TAG 
-        --destination $ACR_REGISTRY/$JANUS_IMAGE:latest
+        --destination $ACR_NAME:$CI_COMMIT_TAG 
+        --destination $ACR_NAME:latest
+        --destination $NCR_NAME:$CI_COMMIT_TAG
+        --destination $NCR_NAME:latest
 
   
     
