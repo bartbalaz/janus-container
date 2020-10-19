@@ -44,7 +44,7 @@ create_target_image_content:
   
 create_target_image:
   only:
-#    - master
+    - master
     - tags
   stage: create_target_image
   image:
@@ -52,7 +52,7 @@ create_target_image:
     entrypoint: ["/busybox/sh"]
   script:
     - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"username\":\"$ACR_USER\",\"password\":\"$ACR_PASSWORD\"}}}" > /kaniko/.docker/config.json
-    - /kaniko/executor --context /image --dockerfile Dockerfile.exec 
+    - /kaniko/executor --context ./image --dockerfile Dockerfile.exec 
         --destination $ACR_REGISTRY/$JANUS_IMAGE:$CI_COMMIT_TAG 
         --destination $ACR_REGISTRY/$JANUS_IMAGE:latest
 
