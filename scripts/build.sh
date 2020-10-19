@@ -211,7 +211,7 @@ chmod a+x $START_SCRIPT_DST
 if [ "$IMAGE_TOOL" != "external" ]; then 
 	echo
 	echo " Building the Janus gateway target image using $IMAGE_TOOL"
-	echo "--------------------------------------------------"
+	echo "---------------------------------------------------"
 	cd $TOP_DIR
 
 	$IMAGE_TOOL build -t $FULL_TARGET_IMAGE_NAME -f Dockerfile.exec .

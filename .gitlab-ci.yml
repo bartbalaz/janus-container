@@ -9,15 +9,14 @@ stages:
 
 create_build_image:
   only:
-  # - master
+#   - master
    - tags
   stage: create_build_image 
   image:
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: ["/busybox/sh"]
-  before_script:
-    - if [ -z $CI_COMMIT_TAG ]; then CI_COMMIT_TAG=latest; fi
   script:
+    - if [ -z $CI_COMMIT_TAG ]; then export CI_COMMIT_TAG=latest; fi
     - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"username\":\"$ACR_USER\",\"password\":\"$ACR_PASSWORD\"},\"$NCR_REGISTRY\":{\"username\":\"$NCR_USER\",\"password\":\"$NCR_PASSWORD\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor --build-arg IMAGE_TOOL=external --context . --dockerfile Dockerfile.build 
         --destination $ACR_REGISTRY/$JANUS_BUILD_IMAGE:$CI_COMMIT_TAG
@@ -33,13 +32,12 @@ create_target_image_content:
   image:
     name: ncr.nuance.com/ewebrtc-docker-dev/janus_build:latest
     entrypoint: ["/bin/bash"]
-  before_script:
-    - IMAGE_TOOL=external
   artifacts:
     paths:
       - /image
     expire_in: 1 hour
   script:
+    - export IMAGE_TOOL=external
     - cd /image
     - ./build.sh
   
