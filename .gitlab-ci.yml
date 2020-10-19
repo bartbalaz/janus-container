@@ -34,12 +34,13 @@ create_target_image_content:
     entrypoint: ["/bin/bash"]
   artifacts:
     paths:
-      - /image
+      - image/
     expire_in: 1 hour
   script:
     - export IMAGE_TOOL=external
     - cd /image
     - ./build.sh
+    - mv /image $CI_PROJECT_DIR
   
 create_target_image:
   only:
