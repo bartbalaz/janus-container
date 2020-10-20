@@ -9,8 +9,7 @@ stages:
 
 create_build_image:
   only:
-   - master
-   - tags
+   - /^build-[0-9]+\.[0-9]+\.[0-9]+/
   stage: create_build_image 
   image:
     name: gcr.io/kaniko-project/executor:debug
@@ -27,8 +26,7 @@ create_build_image:
 
 create_target_image_content:
   only:
-    - master
-    - tags
+    - /^[0-9]+\.[0-9]+\.[0-9]+/
   stage: create_target_image_content
   image:
     name: ncr.nuance.com/ewebrtc-docker-dev/janus_build:latest
@@ -45,8 +43,7 @@ create_target_image_content:
 
 create_target_image:
   only:
-    - master
-    - tags
+    - /^[0-9]+\.[0-9]+\.[0-9]+/
   stage: create_target_image
   image:
     name: gcr.io/kaniko-project/executor:debug
