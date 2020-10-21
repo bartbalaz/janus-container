@@ -209,7 +209,7 @@ issuing the _source_ command. All the available parameters are sumarized in the 
 
 Parameter  | Mandatory (Y/N/C) | Default | Build step | Description 
  :---: | :---: | :---: | :---: |:--- 
-_IMAGE_REGISTRY_ | N | not set | 2, 3 | Registry for storing both the build and target images (i.e. docker.io)
+_IMAGE_REGISTRY_ | N | not set | 2, 3 | Registry for storing both the build and target images, including the project/user folder if necessary (i.e. docker.io/some_project)
 _IMAGE_REGISTRY_USER_ | N | not set | 2, 3 | Registry user name
 _IMAGE_REGISTRY_PASSWORD_ | N | not set | 2, 3 | Registry user password
 _BUILD_IMAGE_NAME_ | N | janus_build | 2, 3 | Name of the build image
