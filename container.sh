@@ -25,7 +25,7 @@ echo
 # to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate 
 # IMAGE_TOOL - Tool for creating and managing the images either "podman", "docker" or "external", defaults to "docker"
-# IMAGE_REGISTRY - The registry to store the image at, by default not set
+# IMAGE_REGISTRY - The registry to store the image at including the user/project folder (e.g. docker.io/some_project), by default not set
 # IMAGE_REGISTRY_USER - The registry user, by default not set
 # IMAGE_REGISTRY_PASSWORD - The registry password, by default not set
 
