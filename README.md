@@ -238,10 +238,10 @@ step set the above mentioned *"SKIP_"* parameters to the appropriate values.
 This procedure is integrated into GitLab and provides a full automation pipeline of the build and target images creation. The procedure relies 
 on the [Kaniko](https://github.com/GoogleContainerTools/kaniko) tool for creating the container images. The main advantage of Kaniko is that 
 it is self contained and does not require proviledged access to any host resources. The automation pipeline defined in the _.gitlab-ci.yml_ is 
-divided into three steps that are triggered by commiting two different types of tags:
+divided into three steps that are triggered by committing two different types of tags:
 
-1. Create the build image, triggered by commiting a tag the has the form _build-x.y.z_. The resulting build image will be tagged with _build-x.y.z_ and _latest_ tags.
-2. Create the target image content, triggered by commiting a tag that has the for _x.y.z_.
+1. Create the build image, triggered by committing a tag the has the form _build-x.y.z_. The resulting build image will be tagged with _build-x.y.z_ and _latest_ tags.
+2. Create the target image content, triggered by committing a tag that has the for _x.y.z_.
 3. Create the target image, triggered by the same tag as the previous step. The resulting target image will be tagged with _x.y.z_ and _latest_ tags.
 
 As stated earlier, the automation relies on GitLab [Kubernetes executor](https://docs.gitlab.com/runner/executors/kubernetes.html). Although, we did not try, the GitLab Docker 
