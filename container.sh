@@ -8,8 +8,8 @@ echo "    Running $0 "
 echo "***************************" 
 echo
 
-# Configuration - Set these parameters (environment variables) to the appropriate values prior to executing this script. 
-
+# Environment variables
+#
 # JANUS_REPO - Repository to fetch Janus gatweay sources from, defaults to https://github.com/bartbalaz/janus-gateway.git
 # JANUS_VERSION - Version of the Janus gateway sources to checkout (e.g. v0.10.0), not set by default, the latest version of the maser branch will be used
 # TARGET_IMAGE_NAME - Target Janus gateway image name, defaults to "janus"

@@ -8,6 +8,10 @@ echo "    Running $0 "
 echo "***************************" 
 echo
 
+# Environment variables
+#
+# IMAGE_TOOL - Tool for creating and managing the images either "podman", "docker" or "external", defaults to "docker"
+
 if [ -z $IMAGE_TOOL ]; then
 	IMAGE_TOOL="docker"
 	echo
@@ -25,7 +29,7 @@ apt update
 DEBIAN_FRONTEND="noninteractive" apt install -y apt-utils build-essential wget git 
 
 if [ "$IMAGE_TOOL" != "external" ]; then 
-	# NOTE: Currently it is impossible to create the target image using Podman hence we install docker unless IMAGE_TOOL
+	# NOTE: Currently it is impossible to create the target image using Podman hence we install docker unless IMAGE_TOOL is set to "external"
 	echo
 	echo " Step 2a - Installing Docker "
 	echo "-----------------------------"

@@ -1,3 +1,4 @@
+# Set the tag so all the jobs in this pipeline get assigned to the appropriate runner
 default:
   tags:
    - rancher2
@@ -8,16 +9,21 @@ stages:
   - create_target_image
 
 create_build_image:
-  only:
-   - /^build-[0-9]+\.[0-9]+\.[0-9]+/
+  only: 
+        # Trigger this stage when a "build-x.y.z" tag is commited to the repo
+    - /^build-[0-9]+\.[0-9]+\.[0-9]+/
   stage: create_build_image 
   image:
+        # Use the Kaniko image
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: ["/busybox/sh"]
   script:
+        # Create the full build image names including the repository and the project (if defined)
     - if [ -z "$ACR_PROJECT" ]; then export ACR_NAME="$ACR_REGISTRY/$JANUS_BUILD_IMAGE"; else export ACR_NAME="$ACR_REGISTRY/$ACR_PROJECT/$JANUS_BUILD_IMAGE"; fi
     - if [ -z "$NCR_PROJECT" ]; then export NCR_NAME="$NCR_REGISTRY/$JANUS_BUILD_IMAGE"; else export NCR_NAME="$NCR_REGISTRY/$NCR_PROJECT/$JANUS_BUILD_IMAGE"; fi
+        # Create the registry credentials file that will be used by Kaniko to push the images
     - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"auth\":\"$ACR_AUTH\"},\"$NCR_REGISTRY\":{\"auth\":\"$NCR_AUTH\"}}}" > /kaniko/.docker/config.json
+        # The IMAGE_TOOL is set to "external" to avoid installing Docker, the images are tagged with the tag that has been pushed and the "latest" tag
     - /kaniko/executor --build-arg IMAGE_TOOL=external --context . --dockerfile Dockerfile.build 
         --destination $ACR_NAME:$CI_COMMIT_TAG
         --destination $ACR_NAME:latest
@@ -26,32 +32,42 @@ create_build_image:
 
 create_target_image_content:
   only:
+        # Trigger this stage when a "x.y.z" tag is commited to the repo
     - /^([0-9]+\.[0-9]+\.[0-9]+)/
   stage: create_target_image_content
   image:
+        # Use the Janus build imgae
     name: ncr.nuance.com/ewebrtc-docker-dev/janus_build:build-0.0.1
     entrypoint: ["/bin/bash"]
   artifacts:
     paths:
+        # Define which artifact that will be used in the next stage
       - image/
     expire_in: 1 hour
   script:
+        # The IMAGE_TOOL is set to "external" to ensure that the "build.sh" script does not attempt to crate the image
     - export IMAGE_TOOL=external
     - cd /image
     - ./build.sh
+        # The artifacts are moved to the current project root so they are persisted by GitLab
     - mv /image $CI_PROJECT_DIR
 
 create_target_image:
   only:
+        # Trigger this stage when a "x.y.z" tag is commited to the repo
     - /^([0-9]+\.[0-9]+\.[0-9]+)/
   stage: create_target_image
   image:
+        # Use the Kaniko image
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: ["/busybox/sh"]
   script:
+        # Create the full target image names including the repository and the project (if defined)
     - if [ -z "$ACR_PROJECT" ]; then export ACR_NAME="$ACR_REGISTRY/$JANUS_TARGET_IMAGE"; else export ACR_NAME="$ACR_REGISTRY/$ACR_PROJECT/$JANUS_TARGET_IMAGE"; fi
     - if [ -z "$NCR_PROJECT" ]; then export NCR_NAME="$NCR_REGISTRY/$JANUS_TARGET_IMAGE"; else export NCR_NAME="$NCR_REGISTRY/$NCR_PROJECT/$JANUS_TARGET_IMAGE"; fi
+        # Create the registry credentials file that will be used by Kaniko to push the images
     - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"auth\":\"$ACR_AUTH\"},\"$NCR_REGISTRY\":{\"auth\":\"$NCR_AUTH\"}}}" > /kaniko/.docker/config.json
+        # Use the artifacts from the previous stage ("image" folder), the images are tagged with the tag that has been pushed and the "latest" tag
     - /kaniko/executor --context ./image --dockerfile Dockerfile.exec 
         --destination $ACR_NAME:$CI_COMMIT_TAG 
         --destination $ACR_NAME:latest

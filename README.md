@@ -3,12 +3,15 @@
 ## Introduction
 This project creates the Janus Gateway Docker image and provides the procedure to set up the container using the default *bridge* network driver. There are multiple advantages to support this
 configuration such as it avoids having to reserve dedicated IP address per container, configuring/parameterizing the image to use different sets of ports internally and makes automatic scaling much easier. 
-The default *bridge* configuration has the most constraints so basically if an image supports it that image will support most of other configurations.
+The default *bridge* configuration has the most constraints hence images supporting it will support most of other configurations.
 
-The strategy followed in this project is to create a build Docker image (build image for short) first. The build image runs the Docker tools as well as the Janus build environment. It
-compiles and creates the target Janus gateway image (target image for short) stored on the host image repository. This allows to create a substantially smaller target image than if a single image
- combining the build and execution was built (~300MB vs ~1.6GB). A build image may also be used in a CI/CD pipeline for test and deployment automation. This process requires the setup of a 
- Docker host that purpose is to store the build and target images as well as to allow the execution of the target image for the purpose of testing and experimentation.
+The strategy followed in this project is to create a build Docker image (build image for short) first. The build image runs the Docker tools as well as the Janus build environment. 
+It compiles and creates the target Janus gateway image (target image for short). This allows to create a substantially smaller target image than if a single image combining 
+the build and execution was built (~300MB vs ~1.6GB). We provide two ways of building the images, the first one is manual that requires a Docker 
+host that purpose is to build, store and run the target images. This build process is orchestrated by the _container.sh_ script. The second build method is directly using 
+[GitLab] (https://about.gitlab.com/) Continous Integration scheme orchestrated by the _.gitlab-ci.yml_ script. This method requires a GitLab setup that includes Kubernetes 
+executors and has access to a registry (e.g. the GitLab internal container registry) for storing the create images. The second method also requires a Docker host for 
+executing the target image. We did not try, but it should also be possible to use a Docker executor.
 
 Please note:
 * Please visit [Meetecho Janus project](https://janus.conf.meetecho.com/docs/) for a detailed description of the Janus gateway.
@@ -22,7 +25,7 @@ target image (e.g. included Ubuntu packages).
 * The master branch changes often, it may be broken from time to time, if this happens please fall back to any of the existing tags.
 * The author welcomes comments and suggestions!
 
-## Host setup
+## Docker host setup
 The figure below depicts the host configuration.
 
 ![Host setup](doc/host_setup.jpg)
@@ -65,17 +68,12 @@ mounted directory will be copied into the target image.
 _RUN_WITH_HOST_CONFIGURATION_DIR_ is set to "true" the *start.sh* script will use the Janus configuration host folder mounted inside the container at _/janus/etc/janus_host_ instead
 of using the embedded configuration located in _/janus/etc/janus_ directory.
 
-## Installation procedure
-This section provides the default installation procedure. The default configuration allows to access the server only through HTTPs using the host's 
+## Build/execution host installation
+This section provides the default installation procedure. The default configuration allows to access the Janus Gateway server only through HTTPs using the host's 
 obtanied Letsencrypt certificates. Please note that this project is using Ubuntu 18.04-LTS Linux distribution. Although it has been tried 
 only on that specific version, a priori, there are no reasons for it not to work on any other recent version of the Ubuntu distribution.
 
-**Please note that if you already have a Docker host (required for building the target image) and are only instested in building and running the image, 
-please skip directly to the build procedure section below.**
-
-### Build/docker experimental host installation
-First let's install a Janus host for building and running the docker image. 
-1. Install Ubuntu 18.04 physical or virtual host with the default packages and using the default parameters. Make sure that you have 
+1. Provision  Ubuntu 18.04 physical or virtual host with the default packages and using the default parameters. Make sure that you have 
 access to a *sudo* capable user. We assume that the host is directly connected to the Internet through a 1-to-1 NAT. 
 	1. Make sure that the 1-to-1 NAT redirects the following ports: 80 (http), 443 (https), 8089 (janus-api), 7889 (janus-admin) to the Janus host.
 	1. Reserve a name for your host in your domain (e.g. \<host\>.\<domain\>) and update the */etc/hosts* file accordingly, for example:
@@ -87,7 +85,7 @@ access to a *sudo* capable user. We assume that the host is directly connected t
 [these](https://docs.docker.com/engine/install/linux-postinstall/) steps for some additional convenience settings. Please note that the 
 build process includes also the option to use Podman instead of Docker but Podman only allows to create the build image. It does not work 
 yet for the target image creation. If yo wish to experiment with Podman you may use [these](https://podman.io/getting-started/installation.html)
-installation instructions. Both Podman and Docker may be installed on the same platform.
+installation instructions. Both Podman and Docker may be installed on the same host.
 1. Install Nginx HTTP server. We need NGINX to automate the [Letsencrypt](https://letsencrypt.org/) certificate updates using the 
 [Certbot](https://certbot.eff.org/) and for serving the janus HTML examples (from the /var/www/html/container host directory) 
 	```bash
@@ -161,7 +159,7 @@ installation instructions. Both Podman and Docker may be installed on the same p
 		```
 	**These files are links from the */etc/letsencrypt/archive* directory.**
 	
-	**!!VERY IMPORTANT!! Make sure the NON _root_ user has _read_ access to the links and the certificates.**
+	**!!VERY IMPORTANT!! Make sure that NON _root_ users have _read_ access to the links and the certificates.**
 	```bash
 	chmod -R a+r+x /etc/letsencrypt/live
 	chmod -R a+r+x /etc/letsencrypt/archive
@@ -194,13 +192,21 @@ installation instructions. Both Podman and Docker may be installed on the same p
 	```bash
 	sudo mkdir -p /var/janus/recordings
 	```
-## Build procedure
-1. Set the build parameters environment variables
+## Manual build procedure
+This procedure allows to create build and target images on a simple Docker host.
+
+1. Set the build parameters environment variables by issuing the _export_ command for each parameter or by editing the <clone directory>/scripts/config file and 
+issuing the _source command. All the available parameters are sumarized in the table below.
 	```bash 
+	# Set each parmeter individually 
 	export SOME_PARAMETER=some_value
+	
+	# Or set all the parameters saved in the config file
+	cd <clone directory>
+	source scripts/config
 	```
 
- Parameter  | Mandatory (Y/N/C) | Default | Build step | Description 
+Parameter  | Mandatory (Y/N/C) | Default | Build step | Description 
  :---: | :---: | :---: | :---: |:--- 
 _IMAGE_REGISTRY_ | N | not set | 2, 3 | Registry for storing both the build and target images (i.e. docker.io)
 _IMAGE_REGISTRY_USER_ | N | not set | 2, 3 | Registry user name
@@ -226,6 +232,40 @@ step set the above mentioned *"SKIP_"* parameters to the appropriate values.
 	cd <clone directory>
 	./container.sh
 	```
+
+## Gitlab continous integration build procedure
+This procedure is integrated into GitLab and provides a full automation pipeline of the build and target images creation. The procedure relies 
+on the [Kaniko](https://github.com/GoogleContainerTools/kaniko) tool for creating the container images. The main advantage of Kaniko is that 
+it is self contained and does not require proviledged access to any host resources. The automation pipeline defined in the _.gitlab-ci.yml_ is 
+divided into three steps that are triggered by commiting two different types of tags:
+
+1. Create the build image, triggered by commiting a tag the has the form _build-x.y.z_. The resulting build image will be tagged with _build-x.y.z_ and _latest_ tags.
+2. Create the target image content, triggered by commiting a tag that has the for _x.y.z_.
+3. Create the target image, triggered by the same tag as the previous step. The resulting target image will be tagged with _x.y.z_ and _latest_ tags.
+
+As stated earlier, the automation relies on GitLab [Kubernetes executor](https://docs.gitlab.com/runner/executors/kubernetes.html). Although, we did not try, the GitLab Docker 
+executor perhaps may also work.\
+The following parameters have to be defined in your environment. Please note that the current CI configuration pushes the images to two registries (ACR and NCR) if you would
+like to use a single registry instead simply remove the lines referring either to ACR or NCR from the _.gitlab-ci.yml_ file and ignore the related parameters below.
+
+Parameter  | Description 
+ :---: | :--- 
+ ACR_AUTH | Base64 encoded value of ACR image registry credentials "<username>:<password>" values, see section "Define an image from a private Container Registry" on [this page](https://docs.gitlab.com/ee/ci/docker/using_docker_images.html)
+ NCR_AUTH | Base64 encoded value of NCR image registry credentials "<username>:<password>" values, see section "Define an image from a private Container Registry" on [this page](https://docs.gitlab.com/ee/ci/docker/using_docker_images.html)
+ ACR_REGISTRY | ACR registry location (e.g. "gcr.io") 
+ NCR_REGISTRY | NCR registry location (e.g. "gcr.io") 
+ ACR_PROJECT | The project in the ACR registry where the images will be stored (e.g. "some_project_name"), may be left empty
+ NCR_PROJECT | The project in the NCR registry where the images will be stored (e.g. "some_project_name"), may be left empty
+ DOCKER_AUTH_CONFIG | See section "Define an image from a private Container Registry" on [this page](https://docs.gitlab.com/ee/ci/docker/using_docker_images.html)
+ JANUS_BUILD_IMAGE | Name of the Janus build image (e.g. "janus_build")
+ JANUS_TARGET_IMAGE | Name of the Janus Gateway target image (e.g. "janus")
+ JANUS_REPO | The repository to fetch the Janus Gateway source code (e.g. https://github.com/meetecho/janus-gateway.git)
+ JANUS_VERSION | The Janus Gateway source code version to checkout (e.g. "v.0.10.0")
+
+Further tuning of the _.gitlab-ci.yml_ is required to fit into your needs. For example, you must set the right location and version of the build image and you may need to tag 
+the jobs with different tags so they get picked up by the appropriate runner, set the right version of the janus buld image etc. 
+
+## Running the target image
 1. Launch the target image by invoking either of the commands that are displayed at the end of a **successful** target image build (if *SKIP_TARGET_IMAGE* was set to *"false"* or not exported).
 1. Try the image by browsing to *https://\<host\>.\<domain\>/container* Please note that:
 	* By default the video room plugin configuration (configuration file: *\<clone directory\>/janus_config/janus.plugin.videoroom.jcfg*) is set to require string video room names which is not the Janus gateway default configuraiton.

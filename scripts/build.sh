@@ -8,6 +8,8 @@ echo "    Running $0 "
 echo "***************************" 
 echo
 
+# Environment variables:
+#
 # JANUS_REPO - Repository to fetch Janus gatweay sources from (e.g. https://github.com/bartbalaz/janus-gateway.git)
 # JANUS_VERSION - Version of the Janus gateway sources to checkout (e.g. v0.10.0)
 # TARGET_IMAGE_NAME - Target image name (e.g. janus)
