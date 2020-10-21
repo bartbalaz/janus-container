@@ -13,15 +13,17 @@ host that purpose is to build, store and run the target images. This build proce
 executors and has access to a registry (e.g. the GitLab internal container registry) for storing the created images. The second method also requires a Docker host for 
 executing the target image.
 
+Finally, at the bottom of this page in the _Experimentation and observations section_, we have added a discussion about some limitations that need to be considered 
+when deploying the target image.
+
 Please note:
 * Please visit [Meetecho Janus project](https://janus.conf.meetecho.com/docs/) for a detailed description of the Janus gateway.
 * Out-of-the-box this project provides the simplest single host Docker configuration which may be tailored to any other more complex configuration. The 
 procedure below allows to setup a single host running the Janus Gateway in a Docker container accessed using HTTPS only and relying on the host for certificate management. 
 This procedure may be greately simplified by modifying the Janus Gateway configuraiton to avoid mounting multiple host folders, avoiding the installation of Certbot and 
 the HTTP server (Nginx) etc. and, allowing instead, to simply run the Janus Gateway image.
-* Only the video room plug-in (and echo test plug-in) with HTTP transport have been tried. Possibly, other plug-ins and transports may require adjustments in the content of the 
+* Only the video room plug-in (and echo test plug-in) with HTTP transport have been tried. Possibly, other plug-ins and transports will require adjustments in the content of the 
 target image (e.g. included Ubuntu packages).
-* At the bottom of this page in the Experimentation and observations section, we have added a discussion about some limitations that need to be considered when deploying the target image.
 * The author welcomes questions, comments and suggestions!
 
 ## Docker host setup
