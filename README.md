@@ -9,9 +9,9 @@ The strategy followed in this project is to create a build Docker image (build i
 It compiles and creates the target Janus gateway image (target image for short). This allows to create a substantially smaller target image than if a single image combining 
 the build and execution was built (~300MB vs ~1.6GB). We provide two ways of building the images, the first one is manual that requires a Docker 
 host that purpose is to build, store and run the target images. This build process is orchestrated by the _container.sh_ script. The second build method is directly using 
-[GitLab] (https://about.gitlab.com/) Continous Integration scheme orchestrated by the _.gitlab-ci.yml_ script. This method requires a GitLab setup that includes Kubernetes 
-executors and has access to a registry (e.g. the GitLab internal container registry) for storing the create images. The second method also requires a Docker host for 
-executing the target image. We did not try, but it should also be possible to use a Docker executor.
+[GitLab](https://about.gitlab.com/) Continous Integration scheme orchestrated by the _.gitlab-ci.yml_ script. This method requires a GitLab setup that includes Kubernetes 
+executors and has access to a registry (e.g. the GitLab internal container registry) for storing the created images. The second method also requires a Docker host for 
+executing the target image.
 
 Please note:
 * Please visit [Meetecho Janus project](https://janus.conf.meetecho.com/docs/) for a detailed description of the Janus gateway.
@@ -22,8 +22,7 @@ the HTTP server (Nginx) etc. and, allowing instead, to simply run the Janus Gate
 * Only the video room plug-in (and echo test plug-in) with HTTP transport have been tried. Possibly, other plug-ins and transports may require adjustments in the content of the 
 target image (e.g. included Ubuntu packages).
 * At the bottom of this page in the Experimentation and observations section, we have added a discussion about some limitations that need to be considered when deploying the target image.
-* The master branch changes often, it may be broken from time to time, if this happens please fall back to any of the existing tags.
-* The author welcomes comments and suggestions!
+* The author welcomes questions, comments and suggestions!
 
 ## Docker host setup
 The figure below depicts the host configuration.
@@ -195,8 +194,8 @@ installation instructions. Both Podman and Docker may be installed on the same h
 ## Manual build procedure
 This procedure allows to create build and target images on a simple Docker host.
 
-1. Set the build parameters environment variables by issuing the _export_ command for each parameter or by editing the <clone directory>/scripts/config file and 
-issuing the _source command. All the available parameters are sumarized in the table below.
+1. Set the build parameters environment variables by issuing the _export_ command for each parameter or by editing the _\<clone directory\>/scripts/config_ file and 
+issuing the _source_ command. All the available parameters are sumarized in the table below.
 	```bash 
 	# Set each parmeter individually 
 	export SOME_PARAMETER=some_value
@@ -262,13 +261,22 @@ Parameter  | Description
  JANUS_REPO | The repository to fetch the Janus Gateway source code (e.g. https://github.com/meetecho/janus-gateway.git)
  JANUS_VERSION | The Janus Gateway source code version to checkout (e.g. "v.0.10.0")
 
-Further tuning of the _.gitlab-ci.yml_ is required to fit into your needs. For example, you must set the right location and version of the build image and you may need to tag 
+Further tuning of the _.gitlab-ci.yml_ is required to fit into your setup. For example, you must set the right location and version of the build image and you may need to tag 
 the jobs with different tags so they get picked up by the appropriate runner, set the right version of the janus buld image etc. 
 
 ## Running the target image
-1. Launch the target image by invoking either of the commands that are displayed at the end of a **successful** target image build (if *SKIP_TARGET_IMAGE* was set to *"false"* or not exported).
+1. Launch the target image by invoking either of the commands on the build/execution host that are displayed at the end of a **successful** manual
+ target image build (if *SKIP_TARGET_IMAGE* was set to *"false"* or not exported). For example:
+	```bash 
+	docker run --rm -d -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html \
+		-v /etc/letsencrypt/live/<host>.<domain>:/etc/certs \
+		-v /etc/letsencrypt/archive:/archive \
+		-v /var/janus/recordings:/janus/bin/janus-recordings \
+		-v <clone folder>/janus_config:/janus/etc/janus_host -e "RUN_WITH_HOST_CONFIGURATION_DIR=true" \
+		some.container.registry.com/janus:some_tag
+	```
 1. Try the image by browsing to *https://\<host\>.\<domain\>/container* Please note that:
-	* By default the video room plugin configuration (configuration file: *\<clone directory\>/janus_config/janus.plugin.videoroom.jcfg*) is set to require string video room names which is not the Janus gateway default configuraiton.
+	* By default the video room plugin configuration (configuration file: _\<clone directory\>/janus_config/janus.plugin.videoroom.jcfg_) is set to require string video room names which is not the Janus gateway default configuraiton.
 	* The default configuration allows *only* HTTPS transport through secure ports 8089 - janus-api and 7889 - janus-admin.
 
 ## Quick Docker tips
