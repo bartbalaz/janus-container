@@ -9,7 +9,7 @@ The strategy followed in this project is to create a build Docker image (build i
 It compiles and creates the target Janus gateway image (target image for short). This allows to create a substantially smaller target image than if a single image combining 
 the build and execution was built (~300MB vs ~1.6GB). We provide two ways of building the images, the first one is manual that requires a Docker 
 host that purpose is to build, store and run the target images. This build process is orchestrated by the _container.sh_ script. The second build method is directly using 
-[GitLab](https://about.gitlab.com/) Continous Integration scheme orchestrated by the _.gitlab-ci.yml_ script. This method requires a GitLab setup that includes Kubernetes 
+[GitLab](https://about.gitlab.com/) Continous Integration (CI) scheme orchestrated by the _.gitlab-ci.yml_ script. This method requires a GitLab setup that includes Kubernetes 
 executors and has access to a registry (e.g. the GitLab internal container registry) for storing the created images. The second method also requires a Docker host for 
 executing the target image.
 
@@ -234,7 +234,7 @@ step set the above mentioned *"SKIP_"* parameters to the appropriate values.
 	./container.sh
 	```
 
-## Gitlab continous integration build procedure
+## Gitlab CI build procedure
 This procedure is integrated into GitLab and provides a full automation pipeline of the build and target images creation. The procedure relies 
 on the [Kaniko](https://github.com/GoogleContainerTools/kaniko) tool for creating the container images. The main advantage of Kaniko is that 
 it is self contained and does not require proviledged access to any host resources. The automation pipeline defined in the _.gitlab-ci.yml_ is 
@@ -261,12 +261,12 @@ Parameter  | Description
  JANUS_BUILD_IMAGE | Name of the Janus build image (e.g. "janus_build")
  JANUS_TARGET_IMAGE | Name of the Janus Gateway target image (e.g. "janus")
  JANUS_REPO | The repository to fetch the Janus Gateway source code (e.g. https://github.com/meetecho/janus-gateway.git)
- JANUS_VERSION | The Janus Gateway source code version to checkout (e.g. "v.0.10.0")
+ JANUS_VERSION | The Janus Gateway source code version to checkout (e.g. "v0.10.0")
 
 Further tuning of the _.gitlab-ci.yml_ is required to fit into your setup. For example, you must set the right location and version of the build image and you may need to tag 
 the jobs with different tags so they get picked up by the appropriate runner, set the right version of the janus buld image etc. 
 
-## Running the target image
+## Running the target image on the build/execution host
 1. Launch the target image by invoking either of the commands on the build/execution host that are displayed at the end of a **successful** manual
  target image build (if *SKIP_TARGET_IMAGE* was set to *"false"* or not exported). For example:
 	```bash 
