@@ -1,7 +1,7 @@
 # Set the tag so all the jobs in this pipeline get assigned to the appropriate runner
-default:
-  tags:
-   - rancher2
+#default:
+#  tags:
+#   - rancher2
 
 stages:
   - create_build_image
@@ -37,8 +37,7 @@ create_target_image_content:
   stage: create_target_image_content
   image:
         # Use the Janus build image ncr.nuance.com/ewebrtc-docker-dev/
-    name: 	
-        acrwebrtc.azurecr.io/janus_build:build-0.0.1
+    name: acrwebrtc.azurecr.io/janus_build:build-0.0.1
     entrypoint: ["/bin/bash"]
   artifacts:
     paths:
