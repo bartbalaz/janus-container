@@ -1,7 +1,7 @@
 # Set the tag so all the jobs in this pipeline get assigned to the appropriate runner
-#default:
-#  tags:
-#   - rancher2
+default:
+  tags:
+   - rancher2
 
 stages:
   - create_build_image

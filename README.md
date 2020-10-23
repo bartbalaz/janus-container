@@ -1,9 +1,10 @@
 # Janus container
 
 ## Introduction
-This project creates the Janus Gateway Docker image and provides the procedure to set up the container using the default *bridge* network driver. There are multiple advantages to support this
-configuration such as it avoids having to reserve dedicated IP address per container, configuring/parameterizing the image to use different sets of ports internally and makes automatic scaling much easier. 
-The default *bridge* configuration has the most constraints hence images supporting it will support most of other configurations.
+This project creates the Janus Gateway Docker image and provides the procedure to set up the container using the default *bridge* network driver. There are multiple 
+advantages to support this configuration such as it avoids having to reserve dedicated IP address per container, configuring/parameterizing the image to use different
+ sets of ports internally and makes automatic scaling much easier. The default *bridge* configuration has the most constraints hence images supporting it will support 
+ most of other configurations.
 
 The strategy followed in this project is to create a build Docker image (build image for short) first. The build image runs the Docker tools as well as the Janus build environment. 
 It compiles and creates the target Janus gateway image (target image for short). This allows to create a substantially smaller target image than if a single image combining 
