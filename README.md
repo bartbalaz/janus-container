@@ -17,7 +17,7 @@ executing the target image.
 Finally, at the bottom of this page in the _Experimentation and observations section_, we have added a discussion about some limitations that need to be considered 
 when deploying the target image.
 
-Please note:
+Notes:
 * Please visit [Meetecho Janus project](https://janus.conf.meetecho.com/docs/) for a detailed description of the Janus gateway.
 * Out-of-the-box this project provides the simplest single host Docker configuration which may be tailored to any other more complex configuration. The 
 procedure below allows to setup a single host running the Janus Gateway in a Docker container accessed using HTTPS only and relying on the host for certificate management. 
@@ -27,7 +27,7 @@ the HTTP server (Nginx) etc. and, allowing instead, to simply run the Janus Gate
 target image (e.g. included Ubuntu packages).
 * The author welcomes questions, comments and suggestions!
 
-## Docker host setup
+## Execution host setup
 The figure below depicts the host configuration.
 
 ![Host setup](doc/host_setup.jpg)
@@ -210,7 +210,7 @@ issuing the _source_ command. All the available parameters are sumarized in the 
 
 Parameter  | Mandatory (Y/N/C) | Default | Build step | Description 
  :---: | :---: | :---: | :---: |:--- 
-_IMAGE_REGISTRY_ | N | not set | 2, 3 | Registry for storing both the build and target images, including the project/user folder if necessary (i.e. docker.io/some_project)
+_IMAGE_REGISTRY_ | N | not set | 2, 3 | Registry for storing both the build and target images, including the project/user folder if necessary (i.e. docker.io/some_project).
 _IMAGE_REGISTRY_USER_ | N | not set | 2, 3 | Registry user name
 _IMAGE_REGISTRY_PASSWORD_ | N | not set | 2, 3 | Registry user password
 _BUILD_IMAGE_NAME_ | N | janus_build | 2, 3 | Name of the build image
@@ -264,8 +264,8 @@ Parameter  | Description
  JANUS_REPO | The repository to fetch the Janus Gateway source code (e.g. https://github.com/meetecho/janus-gateway.git)
  JANUS_VERSION | The Janus Gateway source code version to checkout (e.g. "v0.10.0")
 
-Further tuning of the _.gitlab-ci.yml_ is required to fit into your setup. For example, you must set the right location and version of the build image and you may need to tag 
-the jobs with different tags so they get picked up by the appropriate runner, set the right version of the janus buld image etc. 
+**Please note that further tuning of the _.gitlab-ci.yml_ is required to fit into your setup. For example, you must set the right location and version of the build image and you may need to tag 
+the jobs with different tags so they get picked up by the appropriate runner, set the right version of the janus buld image etc.**
 
 ## Running the target image on the build/execution host
 1. Launch the target image by invoking either of the commands on the build/execution host that are displayed at the end of a **successful** manual
