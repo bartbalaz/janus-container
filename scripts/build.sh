@@ -45,6 +45,10 @@ START_SCRIPT_DST=$ROOT_DIR/start.sh
 
 JANUS_CLONE_DIR=$STAGING_DIR/janus
 
+BUILD_INFO_FILE=$ROOT_DIR/build.info
+LIBNICE_VERSION=0.1.18
+
+
 # create_dir PATH
 # Creates the required directory path if it does not exist
 create_dir() {
@@ -123,17 +127,25 @@ echo "---------------------------------------"
 create_dir $ROOT_DIR
 create_dir $STAGING_DIR
 
+echo 
+echo " Opening the build information file: $BUILD_INFO_FILE "
+echo "------------------------------------------------------"
+echo "Build started at $(date)" >> $BUILD_INFO_FILE
+
 echo
-echo " Installing libnice (latest avaialble version) "
-echo "-----------------------------------------------"
+echo " Installing libnice version 0.1.18 "
+echo "-----------------------------------"
 cd $STAGING_DIR
 git clone https://gitlab.freedesktop.org/libnice/libnice
 cd libnice
+git checkout $LIBNICE_VERSION
 meson --prefix=$ROOT_DIR/usr build && ninja -C build &&  ninja -C build install 
 
+echo "Using libnice version $LIBNICE_VERSION" >> $BUILD_INFO_FILE
+
 echo
-echo " Installing libsrtp-2.2.0 "
-echo "--------------------------"
+echo " Installing libsrtp version v2.2.0 "
+echo "-----------------------------------"
 cd $STAGING_DIR
 wget https://github.com/cisco/libsrtp/archive/v2.2.0.tar.gz
 tar xfv v2.2.0.tar.gz
@@ -141,20 +153,29 @@ cd libsrtp-2.2.0
 ./configure --prefix=$ROOT_DIR/usr --enable-openssl
 make shared_library && make install
 
+echo "Using libsrtp version v2.2.0" >> $BUILD_INFO_FILE
+
 echo
 echo " Building janus-gateway "
 echo "--------------------------"
 cd $STAGING_DIR
-if [ -z "$JANUS_REPO" ]
-then 
-	echo "Cloning from default repo to $JANUS_CLONE_DIR"
-	git clone https://github.com/meetecho/janus-gateway.git $JANUS_CLONE_DIR
-else
-	echo "Cloning from $JANUS_REPO to $JANUS_CLONE_DIR"
-	git clone $JANUS_REPO $JANUS_CLONE_DIR
+
+if [ -z "$JANUS_REPO" ]; then 
+	JANUS_REPO=https://github.com/meetecho/janus-gateway.git
+fi 
+
+if [ -z "$JANUS_VERSION" ]; then
+	JANUS_VERSION=master
 fi
+
+echo "Using Janus repo: $JANUS_REPO, version: $JANUS_VERSION" >> $BUILD_INFO_FILE
+
+echo "Cloning from $JANUS_REPO to $JANUS_CLONE_DIR"
+git clone $JANUS_REPO $JANUS_CLONE_DIR
+
 cd $JANUS_CLONE_DIR
-[ ! -z "$JANUS_VERSION" ] && git checkout $JANUS_VERSION
+echo "Checking out version $JANUS_VERSION"
+git checkout $JANUS_VERSION
 /bin/bash $(pwd)/autogen.sh
 
 export PKG_CONFIG_PATH=$ROOT_DIR/usr/lib/pkgconfig:$ROOT_DIR/usr/lib/x86_64-linux-gnu/pkgconfig 
@@ -163,6 +184,8 @@ export PKG_CONFIG_PATH=$ROOT_DIR/usr/lib/pkgconfig:$ROOT_DIR/usr/lib/x86_64-linu
 make
 make install
 make configs 
+
+echo "Using libsrtp version v2.2.0" >> $BUILD_INFO_FILE
 
 echo
 echo " Removing include and share directories "
