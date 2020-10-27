@@ -185,8 +185,6 @@ make
 make install
 make configs 
 
-echo "Using libsrtp version v2.2.0" >> $BUILD_INFO_FILE
-
 echo
 echo " Removing include and share directories "
 echo "----------------------------------------"
@@ -232,6 +230,8 @@ echo " Copying the startup script into the root directory "
 echo "----------------------------------------------------"
 cp $START_SCRIPT_SRC $START_SCRIPT_DST
 chmod a+x $START_SCRIPT_DST
+
+echo "Build finished at $(date)" >> $BUILD_INFO_FILE
 
 if [ "$IMAGE_TOOL" != "external" ]; then 
 	echo
