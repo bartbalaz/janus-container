@@ -18,6 +18,7 @@ echo
 # IMAGE_REGISTRY - The registry to store the image at, by default not set
 # IMAGE_REGISTRY_USER - The registry user, by default not set
 # IMAGE_REGISTRY_PASSWORD - The registry password, by default not set
+# CI_COMMIT_TAG - Current commit tag set by GitLab CI
 
 # This is the top directory inside the container where "staging" and "root" subdirectories will be created
 TOP_DIR=/image
@@ -46,6 +47,7 @@ START_SCRIPT_DST=$ROOT_DIR/start.sh
 JANUS_CLONE_DIR=$STAGING_DIR/janus
 
 BUILD_INFO_FILE=$ROOT_DIR/build.info
+BUILD_IMAGE_INFO_FILE=/build.info
 LIBNICE_VERSION=0.1.18
 
 
@@ -83,6 +85,7 @@ test_parameter() {
 
 
 # Main script starts here
+cat /build.info
 
 echo
 echo " Verifying parameters "
@@ -95,8 +98,15 @@ test_parameter IMAGE_TOOL "$IMAGE_TOOL" optional
 test_parameter IMAGE_REGISTRY "$IMAGE_REGISTRY" optional
 test_parameter IMAGE_REGISTRY_USER "$IMAGE_REGISTRY_USER" optional
 test_parameter IMAGE_REGISTRY_PASSWORD "$IMAGE_REGISTRY_PASSWORD" optional
+test_parameter CI_COMMIT_TAG "$CI_COMMIT_TAG" optional
 
 # Set the default values
+if [ -z $CI_COMMIT_TAG ]; then
+	CI_COMMIT_TAG="none"
+	echo
+	echo Parameter CI_COMMIT_TAG set to "$CI_COMMIT_TAG"
+fi
+
 
 if [ -z $TARGET_IMAGE_NAME ]; then
 	TARGET_IMAGE_NAME="janus"
@@ -130,7 +140,11 @@ create_dir $STAGING_DIR
 echo 
 echo " Opening the build information file: $BUILD_INFO_FILE "
 echo "------------------------------------------------------"
+
+cat $BUILD_IMAGE_INFO_FILE >> $BUILD_INFO_FILE
+echo "-------------- TARGET IMAGE INFO --------------------" >> $BUILD_INFO_FILE
 echo "Build started at $(date)" >> $BUILD_INFO_FILE
+echo "Target image version: $CI_COMMIT_TAG" >> $BUILD_INFO_FILE
 
 echo
 echo " Installing libnice version 0.1.18 "
@@ -231,8 +245,6 @@ echo "----------------------------------------------------"
 cp $START_SCRIPT_SRC $START_SCRIPT_DST
 chmod a+x $START_SCRIPT_DST
 
-echo "Build finished at $(date)" >> $BUILD_INFO_FILE
-
 if [ "$IMAGE_TOOL" != "external" ]; then 
 	echo
 	echo " Building the Janus gateway target image using $IMAGE_TOOL"
@@ -260,3 +272,6 @@ else
 	echo " The creation of the image is deferred to the invoking script "
 	echo "--------------------------------------------------------------"
 fi
+
+echo "Build finished at $(date)" >> $BUILD_INFO_FILE
+echo "-----------------------------------------------------" >> $BUILD_INFO_FILE

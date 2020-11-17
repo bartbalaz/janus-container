@@ -23,6 +23,9 @@ cp -R /janus/html/* /html
 # Start the service 
 echo " Starting the service "
 echo "----------------------"
+# Image information printout
+cat /build.info
+
 cd /janus/bin
 
 CONFIG_DIR="/janus/etc/janus"

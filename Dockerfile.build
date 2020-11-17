@@ -3,7 +3,10 @@
 FROM ubuntu:18.04
 
 # Specify the tool for creating and managing the images
-ARG IMAGE_TOOL
+ARG IMAGE_TOOL=external
+
+# Specify the commit tag version
+ARG CI_COMMIT_TAG=none
 
 # Add the scripts
 ADD scripts/setup.sh scripts/build.sh scripts/start.sh scripts/Dockerfile.exec /image/
