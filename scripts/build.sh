@@ -85,6 +85,7 @@ test_parameter() {
 
 
 # Main script starts here
+cat /build.info
 
 echo
 echo " Verifying parameters "

@@ -40,7 +40,6 @@ echo " Opening the build information file: $BUILD_INFO_FILE "
 echo "------------------------------------------------------"
 
 echo "-------------- BUILD IMAGE INFO ---------------------" >> $BUILD_INFO_FILE
-echo "Build image information data" >> $BUILD_INFO_FILE
 echo "Build started at $(date)" >> $BUILD_INFO_FILE
 echo "Build image version: $CI_COMMIT_TAG" >> $BUILD_INFO_FILE
 echo "Build image tool: $IMAGE_TOOL" >> $BUILD_INFO_FILE
