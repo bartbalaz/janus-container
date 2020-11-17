@@ -74,9 +74,3 @@ create_target_image:
         --destination $ACR_NAME:latest
         --destination $NCR_NAME:$CI_COMMIT_TAG
         --destination $NCR_NAME:latest
-
-  
-    
-=======
-        --destination $NCR_NAME:latest
->>>>>>> master
