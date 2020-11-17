@@ -2,6 +2,8 @@
 
 FROM ubuntu:18.04
 
+ARG CI_COMMIT_TAG=none
+
 # API secure ports only 
 EXPOSE 8089/tcp 7889/tcp
 

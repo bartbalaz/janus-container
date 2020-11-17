@@ -10,7 +10,7 @@ stages:
 
 create_build_image:
   only: 
-        # Trigger this stage when a "build-x.y.z" tag is commited to the repo
+        # Trigger this stage when a "build-x.y.z" tag is committed to the repo
     - /^build-[0-9]+\.[0-9]+\.[0-9]+/
   stage: create_build_image 
   image:
@@ -23,8 +23,9 @@ create_build_image:
     - if [ -z "$NCR_PROJECT" ]; then export NCR_NAME="$NCR_REGISTRY/$JANUS_BUILD_IMAGE"; else export NCR_NAME="$NCR_REGISTRY/$NCR_PROJECT/$JANUS_BUILD_IMAGE"; fi
         # Create the registry credentials file that will be used by Kaniko to push the images
     - echo "{\"auths\":{\"$ACR_REGISTRY\":{\"auth\":\"$ACR_AUTH\"},\"$NCR_REGISTRY\":{\"auth\":\"$NCR_AUTH\"}}}" > /kaniko/.docker/config.json
-        # The IMAGE_TOOL is set to "external" to avoid installing Docker, the images are tagged with the tag that has been pushed and the "latest" tag
-    - /kaniko/executor --build-arg IMAGE_TOOL=external --context . --dockerfile Dockerfile.build 
+        # The CI_COMMIT_TAG is set to the current tag by GitLab, IMAGE_TOOL is not set to force using "external" the images are tagged with the tag that 
+        # has been pushed and the "latest" tag
+    - /kaniko/executor --build-arg CI_COMMIT_TAG=$CI_COMMIT_TAG --context . --dockerfile Dockerfile.build 
         --destination $ACR_NAME:$CI_COMMIT_TAG
         --destination $ACR_NAME:latest
         --destination $NCR_NAME:$CI_COMMIT_TAG
@@ -73,6 +74,3 @@ create_target_image:
         --destination $ACR_NAME:latest
         --destination $NCR_NAME:$CI_COMMIT_TAG
         --destination $NCR_NAME:latest
-
-  
-    
