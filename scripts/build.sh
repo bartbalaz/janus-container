@@ -18,6 +18,7 @@ echo
 # IMAGE_REGISTRY - The registry to store the image at, by default not set
 # IMAGE_REGISTRY_USER - The registry user, by default not set
 # IMAGE_REGISTRY_PASSWORD - The registry password, by default not set
+# CI_COMMIT_TAG - Current commit tag set by GitLab CI
 
 # This is the top directory inside the container where "staging" and "root" subdirectories will be created
 TOP_DIR=/image
@@ -44,6 +45,11 @@ START_SCRIPT_SRC=$TOP_DIR/start.sh
 START_SCRIPT_DST=$ROOT_DIR/start.sh 
 
 JANUS_CLONE_DIR=$STAGING_DIR/janus
+
+BUILD_INFO_FILE=$ROOT_DIR/build.info
+BUILD_IMAGE_INFO_FILE=/build.info
+LIBNICE_VERSION=0.1.18
+
 
 # create_dir PATH
 # Creates the required directory path if it does not exist
@@ -79,6 +85,7 @@ test_parameter() {
 
 
 # Main script starts here
+cat /build.info
 
 echo
 echo " Verifying parameters "
@@ -91,8 +98,15 @@ test_parameter IMAGE_TOOL "$IMAGE_TOOL" optional
 test_parameter IMAGE_REGISTRY "$IMAGE_REGISTRY" optional
 test_parameter IMAGE_REGISTRY_USER "$IMAGE_REGISTRY_USER" optional
 test_parameter IMAGE_REGISTRY_PASSWORD "$IMAGE_REGISTRY_PASSWORD" optional
+test_parameter CI_COMMIT_TAG "$CI_COMMIT_TAG" optional
 
 # Set the default values
+if [ -z $CI_COMMIT_TAG ]; then
+	CI_COMMIT_TAG="none"
+	echo
+	echo Parameter CI_COMMIT_TAG set to "$CI_COMMIT_TAG"
+fi
+
 
 if [ -z $TARGET_IMAGE_NAME ]; then
 	TARGET_IMAGE_NAME="janus"
@@ -123,17 +137,29 @@ echo "---------------------------------------"
 create_dir $ROOT_DIR
 create_dir $STAGING_DIR
 
+echo 
+echo " Opening the build information file: $BUILD_INFO_FILE "
+echo "------------------------------------------------------"
+
+cat $BUILD_IMAGE_INFO_FILE >> $BUILD_INFO_FILE
+echo "-------------- TARGET IMAGE INFO --------------------" >> $BUILD_INFO_FILE
+echo "Build started at $(date)" >> $BUILD_INFO_FILE
+echo "Target image version: $CI_COMMIT_TAG" >> $BUILD_INFO_FILE
+
 echo
-echo " Installing libnice (latest avaialble version) "
-echo "-----------------------------------------------"
+echo " Installing libnice version 0.1.18 "
+echo "-----------------------------------"
 cd $STAGING_DIR
 git clone https://gitlab.freedesktop.org/libnice/libnice
 cd libnice
+git checkout $LIBNICE_VERSION
 meson --prefix=$ROOT_DIR/usr build && ninja -C build &&  ninja -C build install 
 
+echo "Using libnice version $LIBNICE_VERSION" >> $BUILD_INFO_FILE
+
 echo
-echo " Installing libsrtp-2.2.0 "
-echo "--------------------------"
+echo " Installing libsrtp version v2.2.0 "
+echo "-----------------------------------"
 cd $STAGING_DIR
 wget https://github.com/cisco/libsrtp/archive/v2.2.0.tar.gz
 tar xfv v2.2.0.tar.gz
@@ -141,20 +167,29 @@ cd libsrtp-2.2.0
 ./configure --prefix=$ROOT_DIR/usr --enable-openssl
 make shared_library && make install
 
+echo "Using libsrtp version v2.2.0" >> $BUILD_INFO_FILE
+
 echo
 echo " Building janus-gateway "
 echo "--------------------------"
 cd $STAGING_DIR
-if [ -z "$JANUS_REPO" ]
-then 
-	echo "Cloning from default repo to $JANUS_CLONE_DIR"
-	git clone https://github.com/meetecho/janus-gateway.git $JANUS_CLONE_DIR
-else
-	echo "Cloning from $JANUS_REPO to $JANUS_CLONE_DIR"
-	git clone $JANUS_REPO $JANUS_CLONE_DIR
+
+if [ -z "$JANUS_REPO" ]; then 
+	JANUS_REPO=https://github.com/meetecho/janus-gateway.git
+fi 
+
+if [ -z "$JANUS_VERSION" ]; then
+	JANUS_VERSION=master
 fi
+
+echo "Using Janus repo: $JANUS_REPO, version: $JANUS_VERSION" >> $BUILD_INFO_FILE
+
+echo "Cloning from $JANUS_REPO to $JANUS_CLONE_DIR"
+git clone $JANUS_REPO $JANUS_CLONE_DIR
+
 cd $JANUS_CLONE_DIR
-[ ! -z "$JANUS_VERSION" ] && git checkout $JANUS_VERSION
+echo "Checking out version $JANUS_VERSION"
+git checkout $JANUS_VERSION
 /bin/bash $(pwd)/autogen.sh
 
 export PKG_CONFIG_PATH=$ROOT_DIR/usr/lib/pkgconfig:$ROOT_DIR/usr/lib/x86_64-linux-gnu/pkgconfig 
@@ -237,3 +272,6 @@ else
 	echo " The creation of the image is deferred to the invoking script "
 	echo "--------------------------------------------------------------"
 fi
+
+echo "Build finished at $(date)" >> $BUILD_INFO_FILE
+echo "-----------------------------------------------------" >> $BUILD_INFO_FILE

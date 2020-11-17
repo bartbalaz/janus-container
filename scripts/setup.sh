@@ -8,9 +8,17 @@ echo "    Running $0 "
 echo "***************************" 
 echo
 
+
 # Environment variables
 #
 # IMAGE_TOOL - Tool for creating and managing the images either "podman", "docker" or "external", defaults to "docker"
+# CI_COMMIT_TAG - Current commit tag set by GitLab CI
+
+if [ -z $CI_COMMIT_TAG ]; then
+	CI_COMMIT_TAG="none"
+	echo
+	echo Parameter CI_COMMIT_TAG set to "$CI_COMMIT_TAG"
+fi
 
 if [ -z $IMAGE_TOOL ]; then
 	IMAGE_TOOL="docker"
@@ -18,8 +26,23 @@ if [ -z $IMAGE_TOOL ]; then
 	echo Parameter IMAGE_TOOL set to "$IMAGE_TOOL"
 fi
 
+# This is the top directory inside the container
+TOP_DIR=/
+
+# The build info file provides some additional information about the image build
+BUILD_INFO_FILE=$ROOT_DIR/build.info
+
 echo
 echo "Using $IMAGE_TOOL for building and managing images"
+
+echo 
+echo " Opening the build information file: $BUILD_INFO_FILE "
+echo "------------------------------------------------------"
+
+echo "-------------- BUILD IMAGE INFO ---------------------" >> $BUILD_INFO_FILE
+echo "Build started at $(date)" >> $BUILD_INFO_FILE
+echo "Build image version: $CI_COMMIT_TAG" >> $BUILD_INFO_FILE
+echo "Build image tool: $IMAGE_TOOL" >> $BUILD_INFO_FILE
 
 echo
 echo " Step 1 - Installing the prerequisites and convenience packages "
@@ -73,3 +96,7 @@ apt update
 DEBIAN_FRONTEND="noninteractive" apt install -y python3-pip libmicrohttpd-dev libavutil-dev libavcodec-dev libavformat-dev libogg-dev libcurl4-openssl-dev libconfig-dev libjansson-dev libglib2.0-dev libssl-dev build-essential graphviz default-jdk flex bison cmake libtool automake liblua5.3-dev pkg-config gengetopt 
 pip3 install meson
 pip3 install ninja
+
+echo "Build finished at $(date)" >> $BUILD_INFO_FILE
+echo "-----------------------------------------------------" >> $BUILD_INFO_FILE
+
