@@ -21,6 +21,7 @@ echo
 # BUILD_WITH_HOST_CONFIG_DIR - When set to "true" the build image will mount the host Janus configuration directory instead of using the one that was copied during the build image creation, by dfault not set
 # RUN_WITH_HOST_CONFIGURATION_DIR - When set to "true" the image execution command displayed at the end of the sucessful build will show an option to use host Janus server configuration directory 
 # i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process
+# COPY_JANUS_SAMPLES - When set to "true" the image execution command displayed at the end of the successful build will add an option to trigger the image to copy the Janus HTML samples to a mounted folder.
 # HOST_NAME - Name of the host (e.g. <host>.<domain>), please note that it may be difficult 
 # to universally automate this parameter (e.g. by using 'hostname' command) because of the variety of
 # environments where the returned values may not be appropriate 
@@ -154,6 +155,7 @@ else
 	test_parameter BUILD_IMAGE_TAG "$BUILD_IMAGE_TAG" optional
 	test_parameter BUILD_WITH_HOST_CONFIG_DIR "$BUILD_WITH_HOST_CONFIG_DIR" optional
 	test_parameter RUN_WITH_HOST_CONFIGURATION_DIR "$RUN_WITH_HOST_CONFIGURATION_DIR" optional
+	test_parameter COPY_JANUS_SAMPLES "$COPY_JANUS_SAMPLES" optional
 	test_parameter IMAGE_TOOL "$IMAGE_TOOL" optional
 	test_parameter IMAGE_REGISTRY "$IMAGE_REGISTRY" optional
 	test_parameter IMAGE_REGISTRY_USER "$IMAGE_REGISTRY_USER" optional
@@ -246,8 +248,13 @@ else
 		fi
 		
 		# If required, add an extension to the command displayed below that allows the container to mount and use a host configuration folder
+		COMMAND_EXTENSION=""
 		if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true" ]; then
 			COMMAND_EXTENSION=" -v $JANUS_SRC_CONFIG_DIR:/janus/etc/janus_host -e \"RUN_WITH_HOST_CONFIGURATION_DIR=true\""
+		fi
+		
+		if [ "$COPY_JANUS_SAMPLES" == "true" ]; then
+			COMMAND_EXTENSION+=" -v /var/www/html/container:/html -e \"COPY_JANUS_SAMPLES=true\""
 		fi
 	else
 		echo 
@@ -257,10 +264,10 @@ else
 	
 	echo
 	echo "To execute the Janus gateway target image non-interactively issue the following command: "
-	echo "$IMAGE_TOOL run --rm -d -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $COMMAND_EXTENSION $FULL_TARGET_IMAGE_NAME "
+	echo "$IMAGE_TOOL run --rm -d -p 8089:8089 -p 7889:7889 -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $COMMAND_EXTENSION $FULL_TARGET_IMAGE_NAME "
 	echo
 	echo "To execute the Janus gateway target image interactively issue the following command: "
-	echo "$IMAGE_TOOL run --rm -it -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $COMMAND_EXTENSION $FULL_TARGET_IMAGE_NAME"
+	echo "$IMAGE_TOOL run --rm -it -p 8089:8089 -p 7889:7889 -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $COMMAND_EXTENSION $FULL_TARGET_IMAGE_NAME"
 	echo
 	echo
 fi

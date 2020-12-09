@@ -66,9 +66,9 @@ build image (_/image_ directory) in the previous step. In this step, the require
 Binary and source dependencies are fetched. The whole package is compiled and the target image is created. In this step, instead of using the embedded Janus gateway configuration it is possible, 
 by defining the _BUILD_WITH_HOST_CONFIG_DIR_ variable, to mount the _\<clone directory\>/janus_config_, containing Janus gateway configuration. In that case configuration from the 
 mounted directory will be copied into the target image.
-1. *Target image execution*: The created target image contains a *start.sh* script that is configured as the entry point. This scripts copies the Janus HTML samples and invokes the Janus gateway application. If
-_RUN_WITH_HOST_CONFIGURATION_DIR_ is set to "true" the *start.sh* script will use the Janus configuration host folder mounted inside the container at _/janus/etc/janus_host_ instead
-of using the embedded configuration located in _/janus/etc/janus_ directory.
+1. *Target image execution*: The created target image contains a *start.sh* script that is configured as the entry point. This scripts copies the Janus HTML samples, if the environment 
+variable _COPY_JANUS_SAMPLES_ is set to "true", and invokes the Janus gateway application. If _RUN_WITH_HOST_CONFIGURATION_DIR_ is set to "true" the *start.sh* script will use the Janus 
+configuration host folder mounted inside the container at _/janus/etc/janus_host_ instead of using the embedded configuration located in _/janus/etc/janus_ directory.
 
 ## Build/execution host installation
 This section provides the default installation procedure. The default configuration allows to access the Janus Gateway server only through HTTPs using the host's 
@@ -225,6 +225,8 @@ _SKIP_BUILD_IMAGE_ | N | false | 3 | When set to "true" the build image will not
 _SKIP_TARGET_IMAGE_ | N | false | 3 | When set to "true" the target image will not be build
 _BUILD_WITH_HOST_CONFIG_DIR_ | N | false | 3 | When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation
 _RUN_WITH_HOST_CONFIGURATION_DIR_ | N | false | 3 | When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory (i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process
+_COPY_JANUS_SAMPLES_ | N | false | 3 | When set to "true" the image execution command displayed at the end of the successful build will add an option to trigger the image to copy the Janus HTML samples to a mounted folder
+
 
 2. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the build image and into the target image.
 1. Launch the build process, this process performs two steps: creates the build image (unless the *SKIP_BUILD_IMAGE* is set to *"true"*), 
@@ -271,14 +273,18 @@ the jobs with different tags so they get picked up by the appropriate runner, se
 1. Launch the target image by invoking either of the commands on the build/execution host that are displayed at the end of a **successful** manual
  target image build (if *SKIP_TARGET_IMAGE* was set to *"false"* or not exported). For example:
 	```bash 
-	docker run --rm -d -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html \
+	docker run --rm -d -p 8089:8089 -p 7889:7889 \
 		-v /etc/letsencrypt/live/<host>.<domain>:/etc/certs \
 		-v /etc/letsencrypt/archive:/archive \
 		-v /var/janus/recordings:/janus/bin/janus-recordings \
 		-v <clone folder>/janus_config:/janus/etc/janus_host -e "RUN_WITH_HOST_CONFIGURATION_DIR=true" \
+		-v /var/www/html/container:/html -e "COPY_JANUS_SAMPLES=true" \
 		some.container.registry.com/janus:some_tag
 	```
-1. Try the image by browsing to *https://\<host\>.\<domain\>/container* Please note that:
+	Notes: 
+	* If the _RUN_WITH_HOST_CONFIGURATION_DIR_ parameter is set to "false" or not specified (see above) it is not necessary to mount the _\<clone folder\>\/janus_config_ folder.
+	* If the _COPY_JANUS_SAMPLES_ parameter is set to "false" or not specified (see above)it is not necessary to mount the _\/var\/www\/html\/container_ folder.
+2. Try the image by browsing to *https://\<host\>.\<domain\>/container* Please note that:
 	* By default the video room plugin configuration (configuration file: _\<clone directory\>/janus_config/janus.plugin.videoroom.jcfg_) is set to require string video room names which is not the Janus gateway default configuraiton.
 	* The default configuration allows *only* HTTPS transport through secure ports 8089 - janus-api and 7889 - janus-admin.
 
