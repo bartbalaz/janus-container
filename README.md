@@ -227,7 +227,6 @@ _BUILD_WITH_HOST_CONFIG_DIR_ | N | false | 3 | When set to "true" the build imag
 _RUN_WITH_HOST_CONFIGURATION_DIR_ | N | false | 3 | When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory (i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process
 _COPY_JANUS_SAMPLES_ | N | false | 3 | When set to "true" the image execution command displayed at the end of the successful build will add an option to trigger the image to copy the Janus HTML samples to a mounted folder
 
-
 2. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the build image and into the target image.
 1. Launch the build process, this process performs two steps: creates the build image (unless the *SKIP_BUILD_IMAGE* is set to *"true"*), 
 then creates the target image (unless *SKIP_TARGET_IMAGE* is set to *"true"*). Both images will appear in the local image Docker registry (issue *"docker images"* to verify). To perform either 
@@ -263,6 +262,10 @@ Parameter  | Description
  DOCKER_AUTH_CONFIG | See section "Define an image from a private Container Registry" on [this page](https://docs.gitlab.com/ee/ci/docker/using_docker_images.html)
  JANUS_BUILD_IMAGE | Name of the Janus build image (e.g. "janus_build")
  JANUS_TARGET_IMAGE | Name of the Janus Gateway target image (e.g. "janus")
+
+The following two parameters are defined in the _.gitlab-ci.yml_ file in the _create_target_image_content_ stage to ensure that they are version controlled.
+Parameter  | Description 
+ :---: | :--- 
  JANUS_REPO | The repository to fetch the Janus Gateway source code (e.g. https://github.com/meetecho/janus-gateway.git)
  JANUS_VERSION | The Janus Gateway source code version to checkout (e.g. "v0.10.0")
 
