@@ -66,7 +66,7 @@ build image (_/image_ directory) in the previous step. In this step, the require
 Binary and source dependencies are fetched. The whole package is compiled and the target image is created. In this step, instead of using the embedded Janus gateway configuration it is possible, 
 by defining the _BUILD_WITH_HOST_CONFIG_DIR_ variable, to mount the _\<clone directory\>/janus_config_, containing Janus gateway configuration. In that case configuration from the 
 mounted directory will be copied into the target image. Please note that this process does not checkout this (i.e. the _janus-container_) project, hence if you would like to update files that 
-are stored in this project and used by the target image (so far only the _start.sh_ script falls into this category) you must recreate the build image.
+are stored in this project and used by the target image (so far only the _start.sh_ and _Dockerfile.exec_ scripts fall into this category) you must recreate the build image.
 1. *Target image execution*: The created target image contains a *start.sh* script that is configured as the entry point. This scripts copies the Janus HTML samples, if the environment 
 variable _COPY_JANUS_SAMPLES_ is set to "true", and invokes the Janus gateway application. If _RUN_WITH_HOST_CONFIGURATION_DIR_ is set to "true" the *start.sh* script will use the Janus 
 configuration host folder mounted inside the container at _/janus/etc/janus_host_ instead of using the embedded configuration located in _/janus/etc/janus_ directory.
