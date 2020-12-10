@@ -208,7 +208,7 @@ issuing the _source_ command. All the available parameters are sumarized in the 
 	source scripts/config
 	```
 
-Parameter  | Mandatory (Y/N/C) | Default | Build step | Description 
+Parameter | Mandatory (Y/N/C) | Default | Build step | Description 
  :---: | :---: | :---: | :---: |:--- 
 _IMAGE_REGISTRY_ | N | not set | 2, 3 | Registry for storing both the build and target images, including the project/user folder if necessary (i.e. docker.io/some_project).
 _IMAGE_REGISTRY_USER_ | N | not set | 2, 3 | Registry user name
@@ -251,7 +251,7 @@ executor perhaps may also work.\
 The following parameters have to be defined in your environment. Please note that the current CI configuration pushes the images to two registries (ACR and NCR) if you would
 like to use a single registry instead simply remove the lines referring either to ACR or NCR from the _.gitlab-ci.yml_ file and ignore the related parameters below.
 
-Parameter  | Description 
+Parameter | Description 
  :---: | :--- 
  ACR_AUTH | Base64 encoded value of ACR image registry credentials "<username>:<password>" values, see section "Define an image from a private Container Registry" on [this page](https://docs.gitlab.com/ee/ci/docker/using_docker_images.html)
  NCR_AUTH | Base64 encoded value of NCR image registry credentials "<username>:<password>" values, see section "Define an image from a private Container Registry" on [this page](https://docs.gitlab.com/ee/ci/docker/using_docker_images.html)
@@ -264,7 +264,8 @@ Parameter  | Description
  JANUS_TARGET_IMAGE | Name of the Janus Gateway target image (e.g. "janus")
 
 The following two parameters are defined in the _.gitlab-ci.yml_ file in the _create_target_image_content_ stage to ensure that they are version controlled.
-Parameter  | Description 
+
+Parameter | Description 
  :---: | :--- 
  JANUS_REPO | The repository to fetch the Janus Gateway source code (e.g. https://github.com/meetecho/janus-gateway.git)
  JANUS_VERSION | The Janus Gateway source code version to checkout (e.g. "v0.10.0")
