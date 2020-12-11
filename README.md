@@ -325,7 +325,7 @@ the jobs with different tags so they get picked up by the appropriate runner, se
 
 ## Deploying the target image on Azure Kubernetes Service (AKS) using Helm charts
 This is an example of procedure for deploying and running the Janus target image on AKS. Plese note that we have only tried this deployment with the video
-room sample application.
+room sample application. The other application may require some adjustments.
  
 ### Prerequisites 
 The following prerequisites must be satisfied
