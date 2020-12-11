@@ -372,7 +372,7 @@ Create the _cluster IP address_, it has to belong to the resource group dedicate
 	```
 After creating the static IP address it is a good time to configure your DNS to point the \<host\>.\<domain\> to that address
 
-### Sorage account and file share
+### Storage account and file share
 A file share is required in a storage account for saving the conference room recordings.
 1. Create a azure storage account
 	```bash
