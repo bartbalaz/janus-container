@@ -323,6 +323,7 @@ the jobs with different tags so they get picked up by the appropriate runner, se
 	docker exec -it <first few chars of the container id as displayed by "ps" command> <command to execute (e.g. "/bin/bash")>
 	```
 
+
 ## Experimentation and observations
 The figure below shows the network configuraiton when running Janus gateway server in a Docker container configured with the default bridge network. The Docker host is a data center virtual machine 
 accessible through a 1-to-1 NAT firewall. The Janus client is located in a private network that offers a simple/typical firewall. The default Docker bridge configuration provides a private subnet 

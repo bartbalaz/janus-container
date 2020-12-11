@@ -1,0 +1,68 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: janus
+  name: janus
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+       app: janus
+  template:
+    metadata:
+      labels:
+        app: janus
+    spec:
+      volumes:
+        - name: config-files-nginx
+          secret:
+            secretName: config-files-nginx
+        - name: config-files-janus
+          secret:
+            secretName: config-files-janus
+        - name: certificates
+          secret:
+            secretName: {{ .Values.env.secrets.tlsCertificates }}
+        - name: janus-samples
+          emptyDir: {}
+        - name: recordings
+          azureFile:
+            secretName: {{ .Values.env.secrets.fileShare }}
+            shareName: {{ .Values.env.shareName }}
+            readOnly: false
+      imagePullSecrets:
+      - name: {{ .Values.env.secrets.registriesCredentials }}
+      containers:
+      
+      - name: nginx
+        image: nginx
+        ports:
+        - containerPort: {{ .Values.nginx.httpsPort }}
+        volumeMounts:
+        - name: config-files-nginx
+          mountPath: /etc/nginx/conf.d
+        - name: certificates
+          mountPath: /certs
+        - name: janus-samples
+          mountPath: /var/www/html/janus-samples
+              
+      - name: janus
+        image: "{{- .Values.janus.containerRegistry }}/janus:{{- .Values.janus.imageTag }}"
+        ports:
+          - containerPort: {{ .Values.janus.sessionPort }}
+          {{ if .Values.janus.adminPort }}
+          - containerPort: {{ .Values.janus.adminPort }}
+          {{ end }}
+        volumeMounts:
+        - name: config-files-janus
+          mountPath: /janus/etc/janus_host
+        - name: certificates
+          mountPath: /certs
+        - name: janus-samples
+          mountPath: /html
+        - name: recordings
+          mountPath: /janus/bin/{{- .Values.janus.recordFolder }}
+        envFrom:
+        - secretRef:
+            name: config-params-janus
