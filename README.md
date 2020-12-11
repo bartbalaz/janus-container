@@ -366,10 +366,12 @@ the following command will also create a resource group with the default name _M
 	```
 
 ### Create a static IP address
-Create the _cluster IP address_, it has to belong to the resource group dedicated to the cluster, namely _MC\_\<resource group\>\_\<cluster name\>\_eastus_\
+Create the _cluster IP address_, it has to belong to the resource group dedicated to the cluster, namely _MC\_\<resource group\>\_\<cluster name\>\_eastus_
+
 	```bash
 	az network public-ip create --resource-group MC_<resource group>_<cluster name>_eastus --name <IP address name> --sku Standard --allocation-method static
-	```\
+	```
+
 After creating the static IP address it is a good time to configure your DNS to point the \<host\>.\<domain\> to that address
 
 ### Storage account and file share
