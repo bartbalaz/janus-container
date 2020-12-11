@@ -47,8 +47,8 @@ create_target_image_content:
     expire_in: 1 hour
   variables: 
         # Set the Janus repo and Janus version in the revision controlled script (vs in the gitlab CI/CD variables) to track the variables content
-    JANUS_REPO: JANUS_REPO_GOES_HERE
-    JANUS_VERSION: JANUS_VERSION_GOES_HERE
+    JANUS_REPO: https://github.com/meetecho/janus-gateway.git
+    JANUS_VERSION: master
   script:
         # The IMAGE_TOOL is set to "external" to ensure that the "build.sh" script does not attempt to crate the image
     - export IMAGE_TOOL=external
