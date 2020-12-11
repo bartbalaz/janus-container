@@ -48,7 +48,7 @@ spec:
           mountPath: /var/www/html/janus-samples
               
       - name: janus
-        image: "{{- .Values.janus.containerRegistry }}/janus:{{- .Values.janus.imageTag }}"
+        image: "{{- .Values.janus.containerRegistry -}}/{{- .Values.janus.imageName -}}:{{- .Values.janus.imageTag -}}"
         ports:
           - containerPort: {{ .Values.janus.sessionPort }}
           {{ if .Values.janus.adminPort }}
