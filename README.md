@@ -13,7 +13,7 @@ host that purpose is to build, store and run the target images. This build proce
 [GitLab](https://about.gitlab.com/) Continous Integration (CI) scheme orchestrated by the _.gitlab-ci.yml_ script. This method requires a GitLab setup that includes Kubernetes 
 executors and has access to a registry (e.g. the GitLab internal container registry) for storing the created images. The second method also requires a Docker host for 
 executing the target image.\
-We also provide a very simple procedure for running the target Janus Gteway image on Azure Kubernetes Service (AKS).\
+We also provide a very simple procedure for deploying the target Janus Gteway image on Azure Kubernetes Service (AKS) using [Helm charts](https://helm.sh/docs/topics/charts/).\
 Finally, at the bottom of this page in the _Experimentation and observations section_, we have added a discussion about some limitations that need to be considered 
 when deploying the target image.
 
@@ -325,7 +325,7 @@ the jobs with different tags so they get picked up by the appropriate runner, se
 
 ## Deploying the target image on Azure Kubernetes Service (AKS) using Helm charts
 This is an example of procedure for deploying and running the Janus target image on AKS. Plese note that we have only tried this deployment with the video
-room sample application. The other application may require some adjustments.
+room sample application. The other applications will require some adjustments in the procedure.
  
 ### Prerequisites 
 The following prerequisites must be satisfied
@@ -336,11 +336,13 @@ of this resource group is to contain the resources that are solely dedicated to 
 1. TLS certificate and the associated key file for \<host\>.\<domain\>
 
 ### Add AKS/Kubernetes tools to the build/execution host
-The build/execution host will be used to interact with the Azure Kubernetes cluster. Follow [these instructions](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt)
-to setup the Azure CLI. After installing the Azure CLI issue ```sudo bash az aks install-cli``` to install _kubectl_ the Kubernetes CLI and then 
-```bash az login --use-device-code``` to login to Azure. For greater convenience we also suggest to install the _kubectl_ shell autocompletion as presented
-on [this](https://kubernetes.io/docs/tasks/tools/install-kubectl/#optional-kubectl-configurations) page. Finally, you need to install Helm
-following [these](https://helm.sh/docs/intro/install/) instructions.
+The build/execution host will be used to interact with the Azure Kubernetes cluster. 
+1. Follow [these instructions](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt) to setup the Azure CLI. 
+1. After installing the Azure CLI issue ```sudo bash az aks install-cli``` to install _kubectl_ the Kubernetes CLI and then 
+```bash az login --use-device-code``` to login to Azure. 
+1. For greater convenience we also suggest to install the _kubectl_ shell autocompletion as presented
+on [this](https://kubernetes.io/docs/tasks/tools/install-kubectl/#optional-kubectl-configurations) page. 
+1. Finally, you need to install Helm following [these](https://helm.sh/docs/intro/install/) instructions.
 
 ### Create the Kubernetes cluster
 For creating a Kubernetes cluster the user has to be able to create Azure resources groups because each cluster requires one additional resource group that 
@@ -470,7 +472,7 @@ _nginx.httpsPort_ | The HTTPS port to expose (e.g. 443)
 	```bash
 	helm uninstall janus
 	```
-_kubectl_ utility may be used to query and manipulate the deployment.
+[kubectl](https://kubernetes.io/docs/reference/kubectl/cheatsheet/) utility may be used to query and manipulate the deployment. 
 Once the deployment is running the Janus HTML samples may be accessed at _https://\<host\>.\<domain\>/_
 
 ## Experimentation and observations
