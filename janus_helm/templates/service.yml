@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: janus
+spec:
+  loadBalancerIP: {{ .Values.env.clusterIp }}
+  type: LoadBalancer
+  selector:
+    app: janus
+  ports:
+  - protocol: "TCP"
+    port: {{ .Values.nginx.httpsPort }} 
+    targetPort: {{ .Values.nginx.httpsPort }}
+    name: https
+  - protocol: "TCP"
+    port: {{ .Values.janus.sessionPort }}
+    targetPort: {{ .Values.janus.sessionPort }}
+    name: janus-session
+  {{ if and .Values.janus.adminPort .Values.janus.adminSecret }}
+  - protocol: "TCP"
+    port: {{ .Values.janus.adminPort }}
+    targetPort: {{ .Values.janus.adminPort }}
+    name: janus-admin
+  {{ end }}
+
