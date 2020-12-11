@@ -12,8 +12,8 @@ the build and execution was built (~300MB vs ~1.6GB). We provide two ways of bui
 host that purpose is to build, store and run the target images. This build process is orchestrated by the _container.sh_ script. The second build method is directly using 
 [GitLab](https://about.gitlab.com/) Continous Integration (CI) scheme orchestrated by the _.gitlab-ci.yml_ script. This method requires a GitLab setup that includes Kubernetes 
 executors and has access to a registry (e.g. the GitLab internal container registry) for storing the created images. The second method also requires a Docker host for 
-executing the target image.
-
+executing the target image.\
+We also provide a very simple procedure for running the target Janus Gteway image on Azure Kubernetes Service (AKS).\
 Finally, at the bottom of this page in the _Experimentation and observations section_, we have added a discussion about some limitations that need to be considered 
 when deploying the target image.
 
@@ -65,10 +65,11 @@ to install the necessary components of the build image. The Janus gateway config
 build image (_/image_ directory) in the previous step. In this step, the required version of the Janus software is cloned and checked out as specified by the _JANUS_REPO_ and _JANUS_VERSION_ environment variables.
 Binary and source dependencies are fetched. The whole package is compiled and the target image is created. In this step, instead of using the embedded Janus gateway configuration it is possible, 
 by defining the _BUILD_WITH_HOST_CONFIG_DIR_ variable, to mount the _\<clone directory\>/janus_config_, containing Janus gateway configuration. In that case configuration from the 
-mounted directory will be copied into the target image.
-1. *Target image execution*: The created target image contains a *start.sh* script that is configured as the entry point. This scripts copies the Janus HTML samples and invokes the Janus gateway application. If
-_RUN_WITH_HOST_CONFIGURATION_DIR_ is set to "true" the *start.sh* script will use the Janus configuration host folder mounted inside the container at _/janus/etc/janus_host_ instead
-of using the embedded configuration located in _/janus/etc/janus_ directory.
+mounted directory will be copied into the target image. Please note that this process does not checkout this (i.e. the _janus-container_) project, hence if you would like to update files that 
+are stored in this project and used by the target image (so far only the _start.sh_ and _Dockerfile.exec_ scripts fall into this category) you must recreate the build image.
+1. *Target image execution*: The created target image contains a *start.sh* script that is configured as the entry point. This scripts copies the Janus HTML samples, if the environment 
+variable _COPY_JANUS_SAMPLES_ is set to "true", and invokes the Janus gateway application. If _RUN_WITH_HOST_CONFIGURATION_DIR_ is set to "true" the *start.sh* script will use the Janus 
+configuration host folder mounted inside the container at _/janus/etc/janus_host_ instead of using the embedded configuration located in _/janus/etc/janus_ directory.
 
 ## Build/execution host installation
 This section provides the default installation procedure. The default configuration allows to access the Janus Gateway server only through HTTPs using the host's 
@@ -208,7 +209,7 @@ issuing the _source_ command. All the available parameters are sumarized in the 
 	source scripts/config
 	```
 
-Parameter  | Mandatory (Y/N/C) | Default | Build step | Description 
+Parameter | Mandatory (Y/N/C) | Default | Build step | Description 
  :---: | :---: | :---: | :---: |:--- 
 _IMAGE_REGISTRY_ | N | not set | 2, 3 | Registry for storing both the build and target images, including the project/user folder if necessary (i.e. docker.io/some_project).
 _IMAGE_REGISTRY_USER_ | N | not set | 2, 3 | Registry user name
@@ -225,6 +226,7 @@ _SKIP_BUILD_IMAGE_ | N | false | 3 | When set to "true" the build image will not
 _SKIP_TARGET_IMAGE_ | N | false | 3 | When set to "true" the target image will not be build
 _BUILD_WITH_HOST_CONFIG_DIR_ | N | false | 3 | When set to "true" the build image will mount the host Janus gateway configuration directory (i.e. <clone directory>/janus-config) instead of using the one that was copied during the build image creation
 _RUN_WITH_HOST_CONFIGURATION_DIR_ | N | false | 3 | When set to "true" the image execution command displayed at the end of the successful build will add an option to use host Janus server configuration directory (i.e. <clone directory>/janus-config) instead of the embedded configuration during the target image creation process
+_COPY_JANUS_SAMPLES_ | N | false | 3 | When set to "true" the image execution command displayed at the end of the successful build will add an option to trigger the image to copy the Janus HTML samples to a mounted folder
 
 2. Review the Janus gateway configuration files stored in *<clone directory>/janus_config* directory these files will be integrated into the build image and into the target image.
 1. Launch the build process, this process performs two steps: creates the build image (unless the *SKIP_BUILD_IMAGE* is set to *"true"*), 
@@ -250,7 +252,7 @@ executor perhaps may also work.\
 The following parameters have to be defined in your environment. Please note that the current CI configuration pushes the images to two registries (ACR and NCR) if you would
 like to use a single registry instead simply remove the lines referring either to ACR or NCR from the _.gitlab-ci.yml_ file and ignore the related parameters below.
 
-Parameter  | Description 
+Parameter | Description 
  :---: | :--- 
  ACR_AUTH | Base64 encoded value of ACR image registry credentials "<username>:<password>" values, see section "Define an image from a private Container Registry" on [this page](https://docs.gitlab.com/ee/ci/docker/using_docker_images.html)
  NCR_AUTH | Base64 encoded value of NCR image registry credentials "<username>:<password>" values, see section "Define an image from a private Container Registry" on [this page](https://docs.gitlab.com/ee/ci/docker/using_docker_images.html)
@@ -261,6 +263,11 @@ Parameter  | Description
  DOCKER_AUTH_CONFIG | See section "Define an image from a private Container Registry" on [this page](https://docs.gitlab.com/ee/ci/docker/using_docker_images.html)
  JANUS_BUILD_IMAGE | Name of the Janus build image (e.g. "janus_build")
  JANUS_TARGET_IMAGE | Name of the Janus Gateway target image (e.g. "janus")
+
+The following two parameters are defined in the _.gitlab-ci.yml_ file in the _create_target_image_content_ stage to ensure that they are version controlled.
+
+Parameter | Description 
+ :---: | :--- 
  JANUS_REPO | The repository to fetch the Janus Gateway source code (e.g. https://github.com/meetecho/janus-gateway.git)
  JANUS_VERSION | The Janus Gateway source code version to checkout (e.g. "v0.10.0")
 
@@ -271,14 +278,18 @@ the jobs with different tags so they get picked up by the appropriate runner, se
 1. Launch the target image by invoking either of the commands on the build/execution host that are displayed at the end of a **successful** manual
  target image build (if *SKIP_TARGET_IMAGE* was set to *"false"* or not exported). For example:
 	```bash 
-	docker run --rm -d -p 8089:8089 -p 7889:7889 -v /var/www/html/container:/html \
+	docker run --rm -d -p 8089:8089 -p 7889:7889 \
 		-v /etc/letsencrypt/live/<host>.<domain>:/etc/certs \
 		-v /etc/letsencrypt/archive:/archive \
 		-v /var/janus/recordings:/janus/bin/janus-recordings \
 		-v <clone folder>/janus_config:/janus/etc/janus_host -e "RUN_WITH_HOST_CONFIGURATION_DIR=true" \
+		-v /var/www/html/container:/html -e "COPY_JANUS_SAMPLES=true" \
 		some.container.registry.com/janus:some_tag
 	```
-1. Try the image by browsing to *https://\<host\>.\<domain\>/container* Please note that:
+	Notes: 
+	* If the _RUN_WITH_HOST_CONFIGURATION_DIR_ parameter is set to "false" or not specified (see above) it is not necessary to mount the _\<clone folder\>\/janus_config_ folder.
+	* If the _COPY_JANUS_SAMPLES_ parameter is set to "false" or not specified (see above)it is not necessary to mount the _\/var\/www\/html\/container_ folder.
+2. Try the image by browsing to *https://\<host\>.\<domain\>/container* Please note that:
 	* By default the video room plugin configuration (configuration file: _\<clone directory\>/janus_config/janus.plugin.videoroom.jcfg_) is set to require string video room names which is not the Janus gateway default configuraiton.
 	* The default configuration allows *only* HTTPS transport through secure ports 8089 - janus-api and 7889 - janus-admin.
 
@@ -311,6 +322,156 @@ the jobs with different tags so they get picked up by the appropriate runner, se
 	```bash
 	docker exec -it <first few chars of the container id as displayed by "ps" command> <command to execute (e.g. "/bin/bash")>
 	```
+
+## Deploying the target image on Azure Kubernetes Service (AKS) using Helm charts
+This is an example of procedure for deploying and running the Janus target image on AKS. Plese note that we have only tried this deployment with the video
+room sample application. The other application may require some adjustments.
+ 
+### Prerequisites 
+The following prerequisites must be satisfied
+1. MS Azure subscription and a user able to create Azure resources groups because each cluster requires one additional resource group that 
+gets created during cluster creation. As explained [here](https://docs.microsoft.com/en-us/azure/aks/faq#why-are-two-resource-groups-created-with-aks) the purpose 
+of this resource group is to contain the resources that are solely dedicated to a cluster. For example, the cluster networking resources are part of this dedicated resource group.
+1. A configurable domain that will allow to assign \<host\>.\<domain\> to the static IP address assigned to the AKS cluster
+1. TLS certificate and the associated key file for \<host\>.\<domain\>
+
+### Add AKS/Kubernetes tools to the build/execution host
+The build/execution host will be used to interact with the Azure Kubernetes cluster. Follow [these instructions](https://docs.microsoft.com/en-us/cli/azure/install-azure-cli-apt)
+to setup the Azure CLI. After installing the Azure CLI issue ```sudo bash az aks install-cli``` to install _kubectl_ the Kubernetes CLI and then 
+```bash az login --use-device-code``` to login to Azure. For greater convenience we also suggest to install the _kubectl_ shell autocompletion as presented
+on [this](https://kubernetes.io/docs/tasks/tools/install-kubectl/#optional-kubectl-configurations) page. Finally, you need to install Helm
+following [these](https://helm.sh/docs/intro/install/) instructions.
+
+### Create the Kubernetes cluster
+For creating a Kubernetes cluster the user has to be able to create Azure resources groups because each cluster requires one additional resource group that 
+gets created during cluster creation. As explained [here](https://docs.microsoft.com/en-us/azure/aks/faq#why-are-two-resource-groups-created-with-aks) the purpose 
+of this resource group is to contain the resources that are solely dedicated to a cluster. For example, the cluster networking resources are part of this dedicated resource group. 
+To create the Kubernetes cluster follow the following steps:
+1. Create a new resource group, note this step may be skipped if a suitable resource group already exists
+	```bash 
+	az group create --name <resource group> --location eastus
+	```
+1. Create the Kubernetes cluster. To run the Janus compact deployment for testing and demonstration purposes a single node cluster is sufficient. As explained above, 
+the following command will also create a resource group with the default name _MC\_\<resource group\>\_\<cluster name\>\_eastus_ 
+	```bash
+	az aks create --resource-group <resource group> --name <cluster name> --node-count <desired nuber of nodes> --generate-ssh-keys
+	```
+1. Login into the cluster
+	```bash
+	az aks get-credentials --resource-group <resource group> --name <cluster name>
+	```
+1. It should be possible now to see the cluster nodes by issuing
+	```bash 
+	kubectl get nodes
+	```
+
+### Create a static IP address
+Create the _cluster IP address_, it has to belong to the resource group dedicated to the cluster, namely _MC\_\<resource group\>\_\<cluster name\>\_eastus_
+
+	```bash
+	az network public-ip create --resource-group MC_<resource group>_<cluster name>_eastus --name <IP address name> --sku Standard --allocation-method static
+	```
+
+After creating the static IP address it is a good time to configure your DNS to point the \<host\>.\<domain\> to that address
+
+### Storage account and file share
+A file share is required in a storage account for saving the conference room recordings.
+1. Create a azure storage account
+	```bash
+	az storage account create --name <storage account> --resource-group <ressource group> --location eastus --sku Standard_RaGRS --kind StorageV2
+	```
+1. Get the connection string from the storage account. The account name/user name follows _AccountName=_ while the key follows _AccountKey=_ in the command output 
+	```bash
+	az storage account show-connection-string --name <storage account> -g <resource group> -o tsv
+	DefaultEndpointsProtocol=https;EndpointSuffix=core.windows.net;AccountName=<storage account>;AccountKey=<account key>
+	```
+1. Create the file share
+	```bash
+	az storage share create -n <file share> --account-name <storage account> --account-key <key obtained in the previous step>
+	```
+1. Get the storage account keys
+	```bash
+	az storage account keys list --resource-group <resource group> --account-name <storage account>
+	```
+1. Mount the file share on a Linux host. Please note that the host has to have CIFS installed. This directory will contain the raw recordings.
+	```bash
+	mkdir <mount point>
+	sudo mount -t cifs //<storage account>.file.core.windows.net/<file share> <mount point> -o vers=3.0,username=<storage account>,password=<account key>,dir_mode=0777,file_mode=0777,serverino
+	```
+
+### Secrets
+Once all the resources are created we need to create several Kubernetes secrets that will store the TLS certificates, the required information for accessing the 
+file share and the registry credentials (if necessary) for fetching the target image.
+1. Create the secret containing the TLS keys
+	```bash 
+	cd <home directory>
+	kubectl create secret tls certs  \
+	--cert=tls.crt\
+	--key=tls.key
+	```
+1. Create the secret allowing to mount the file share in the pod
+	```bash
+	kubectl create secret generic file-share --from-literal=azurestorageaccountname=<storage account> --from-literal=azurestorageaccountkey=<storage account key>
+	```
+1. Create the secret(s) allowing to fetch the images from the registries. 
+	```bash
+	docker login <container registry>
+	User: <container registry user name>
+	Password: <container registry password>
+	kubectl create secret generic regcred \
+	--from-file=.dockerconfigjson=<home directory>/.docker/config.json> \
+	--type=kubernetes.io/dockerconfigjson
+	```
+
+### Configure the deployment
+Edit the _\<clone directory\>\/janus_helm\/values.yaml_ file. The table below sumarizes the required values.
+
+| Parameter | Description |
+|:------------- | :----------------|
+_env.clusterIp_ | The IP address that was allocated to the AKS cluster
+_env.clusterName_ | \<host\>.\<domain\> of the AKS cluster
+_env.shareName_ | The name of the share for storing the recordings
+_env.secrets.tlsCertificates_ | The name of the secret that contains the TLS key and certificate (e.g. "certs")
+_env.secrets.fileShare_ | The name of the secret that contains the file share parameters (e.g. "file-share")
+_env.secrets.registriesCredentials_ | The name of the secret that contains the registry credentials (e.g. "regcred")
+_janus.containerRegistry_ | The registry to fetch the target image
+_janus.imageName_ | The name of the image to fetch
+_janus.imageTag_ | The tag of the image to fetch 
+_janus.sessionPort_ | The session management port number
+_janus.adminPort_ | The admin port numer, optional if not set the admin port will be desactivated
+_janus.tokenSecret_ | Token for authenticating the session management messages, optional if not set no token will be required
+_janus.adminSecret_ | Password for accessing the admin port, optional if not present the admin port will be desactivated
+_janus.recordFolder_ | Folder where the file share will be mounted in the target image and the recordings will be stored
+_janus.eventUser_ | User name for accessing the event collector
+_janus.eventPassword_ | Password for accessing the event collector
+_janus.eventBackendUrl_ | The URL of the event collector (e.g. https://some.host/some/path)
+_janus.nat.stunServer_ | Stun server name (e.g. "stun.l.google.com")
+_janus.nat.stunPort_ | Stun port 19302
+_janus.nat.niceDebug_ | Enable (true) or disable (false) nice debugging.
+_janus.nat.fullTrickle_ | Enable (true) or disable (false) the full tricke optimization
+_nginx.httpsPort_ | The HTTPS port to expose (e.g. 443)
+
+### Launch the deployment
+* After configuring and before starting the deployment it is a good practice to verify if the configuration by issuing:
+	```bash
+	cd <clone directory>
+	helm install --debug --dry-run janus ./janus_helm
+	```
+* If the command does not report any errors and a valid Kubernetes manifest is displayed the deployment may be launched by issuing:
+	```bash
+	cd <clone directory>
+	helm install janus ./janus_helm
+	```
+* To verify the status of the deployment issue:
+	```bash
+	helm status janus
+	```
+* To stop the deployment issue:
+	```bash
+	helm uninstall janus
+	```
+_kubectl_ utility may be used to query and manipulate the deployment.
+Once the deployment is running the Janus HTML samples may be accessed at _https://\<host\>.\<domain\>/_
 
 ## Experimentation and observations
 The figure below shows the network configuraiton when running Janus gateway server in a Docker container configured with the default bridge network. The Docker host is a data center virtual machine 

@@ -9,16 +9,22 @@ echo "***************************"
 echo
 
 # Empty the mounted http directory
-echo
-echo " Removing the content of /html directory "
-echo "-----------------------------------------"
-rm -rf /html/*
+if [ "$COPY_JANUS_SAMPLES" == "true" ]; then
+	echo
+	echo " Removing the content of /html directory "
+	echo "-----------------------------------------"
+	rm -rf /html/*
 
-# Copy the janus http content 
-echo
-echo " Copying janus samples into /html directory "
-echo "--------------------------------------------"
-cp -R /janus/html/* /html
+	# Copy the janus http content 
+	echo
+	echo " Copying janus samples into /html directory "
+	echo "--------------------------------------------"
+	cp -R /janus/html/* /html
+else
+	echo
+	echo " Janus samples are disabled "
+	echo "----------------------------"
+fi
 
 # Start the service 
 echo " Starting the service "

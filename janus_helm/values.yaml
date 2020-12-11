@@ -1,0 +1,29 @@
+env:
+    clusterIp: 
+    clusterName:
+    shareName: 
+    secrets:
+        tlsCertificates: certs
+        fileShare: file-share
+        registriesCredentials: regcred
+
+janus:
+    containerRegistry: 
+    imageTag: latest
+    sessionPort: 8089
+    adminPort: 7889
+    tokenSecret: 
+    adminSecret:
+    recordFolder: ./janus-recordings
+    eventUser: 
+    eventPassword:
+    eventBackendUrl:
+    
+    nat:
+        stunServer: "stun.l.google.com"
+        stunPort: 19302
+        niceDebug: false
+        fullTrickle: true
+
+nginx:
+    httpsPort: 443
