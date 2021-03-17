@@ -37,8 +37,8 @@ create_target_image_content:
     - /^([0-9]+\.[0-9]+\.[0-9]+)/
   stage: create_target_image_content
   image:
-        # Use the Janus build image ncr.nuance.com/ewebrtc-docker-dev/ acrwebrtc.azurecr.io/
-    name: ncr.nuance.com/ewebrtc-docker-dev/janus_build:build-0.0.4
+        # Use the Janus build image entrd-jfrog.ent.nuance.com/ewebrtc-docker-dev/ acrwebrtc.azurecr.io/
+    name: entrd-jfrog.ent.nuance.com/ewebrtc-docker-dev/janus_build:build-0.0.4
     entrypoint: ["/bin/bash"]
   artifacts:
     paths:
