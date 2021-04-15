@@ -554,10 +554,17 @@ sends an offer message to the Janus Gateway server along with the candidates bef
 previous issue. 
 
 ### Solutions
-To solve this issue we have to delay or prevent the Janus Gatway to issue connectiv
+To solve this issue we have to either delay/prevent the Janus Gatway to issue connectivity checks or mitigate the (STUN) server reflexive candidates failure. There are no easy ways to delay
+the connectivty checks but they may be disabled by changing the Janus Gateway server configuration from bridge to host network and activating the ICE Lite mode. According to RFC 8445, in 
+ICE Lite mode no connectivity checks should be made. Unfortunately after reconfiguring the Janus Gateway to ICE Lite mode the connectivity checks are still emitted, this may be a bug in
+the implementation of the *libnice* library or its integration within the Janus Gateway. Eventually, it was possible to supress the conectivity checks by temporarely modifying the Janus 
+Gatway code which has resolved the issue. We have also tried to enable the TURN server which, as expected, solves the issue by providing additional relayed candidates. The main drawback
+of this solution is the need for an addional server that relays all the traffic and which creates a bottleneck that needs to be managed. Hopefully only a minority of Janus clients will 
+be using ISPs having such firewall configuration. 
 
 ## Conclusion
-It is possible to use the default Docker bridged network driver but some conditions have to be met by the infrastructure specifically the firwall leading to the Janus gatway server. 
-The firewall has to be able to block the client requests without triggering a port change as it happens with the MASQUERADE netfilter target. 
+It is possible to use the default Docker bridged network driver but some conditions have to be met by the infrastructure specifically the firwall leading to the Janus Gateway server. 
+The firewall has to be able to block the client requests without triggering a port change as it happens with the MASQUERADE netfilter target. Additnally to avoid any potential firewall
+issues with some ISPs that provide private IP addresses to their customers a TURN server must be added to the deployment.
 
 
