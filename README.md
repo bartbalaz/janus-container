@@ -476,75 +476,95 @@ _nginx.httpsPort_ | The HTTPS port to expose (e.g. 443)
 Once the deployment is running the Janus HTML samples may be accessed at _https://\<host\>.\<domain\>/_
 
 ## Experimentation and observations
-The figure below shows the network configuraiton when running Janus gateway server in a Docker container configured with the default bridge network. The Docker host is a data center virtual machine 
-accessible through a 1-to-1 NAT firewall. The Janus client is located in a private network that offers a simple/typical firewall. The default Docker bridge configuration provides a private subnet 
-for the containers. The conainers may access the public network thanks to the netfilter MASQUERADE target NAT functionlity applied to any packets leaving the private subnet z. The container is 
-configured to expose the Janus gateway control (e.g. 8089 for Janus API and 7889 for Janus admin) and initially media ports (e.g. 10000-12000). As you will see below one of our conclusions consists 
-in not exposing the media ports. Janus gateway server is configured to run in tricke and full ICE mode.
+The figure below shows the network configuraiton when running Janus Gateway in a Docker container configured with the default bridge network. The Docker host is a data center 
+virtual or physical machine accessible through a 1-to-1 NAT firewall through subnet Y. The Janus client is located in a private "home" subnet X that offers a typical "home" router/firewall. 
+Optionally, the home network may belong to an ISP that provides private subnet W and a NAT enabled firewall. Such ISP configuraiton is frequent with mobile opertors.
+The default Docker bridge configuration provides a private subnet for the containers. The conainers may access the public network thanks to the netfilter MASQUERADE target NAT 
+functionlity applied to any packets leaving the private subnet Z. The container is configured to expose the Janus gateway control (e.g. 8089 for Janus API and 7889 for Janus admin) 
+and initially media ports (e.g. 10000-12000). As you will see below one of our conclusions consists in not exposing the media ports. Janus gateway server is configured to run in tricke and full ICE mode.
+The solution relies on a STUN server that allows to discover the public addresses of the client and the server. In normal circumstances the depicted TURN server should not be required 
+as the ICE protocol with the help of the STUN server allows to establish the end-to-end communication. 
 
 ![Network configuration](doc/network_setup.jpg)
 
+### Issue #1 - Issue caused by Janus Gateway server running in a Docker container using the default *bridge* configuration
 The figure below shows a simplified successfull sequence where the ICE suceeds to establish bidirectional media streams between the client and the gateway.
 1. The offer is issued by the client.
-1. Based on the offer and/or trickled candidates the gateway sends STUN probes that cannot reach the client.
+1. Based on the offer and/or trickled candidates the gateway sends connectivity checks that cannot reach the client.
 1. Eventually the gateway sends an aswer message that allows the client to start sending STUN probles.
-1. Thanks to the gateway earlier STUN probes the client STUN probles reach the server (the firewall port is open).
-1. Thanks to the client STUN probes (the firewall port is open) the gateway STUN probes are reaching the client.
+1. Thanks to the gateway earlier connectivity checks the client STUN probles reach the server (the firewall port is open).
+1. Thanks to the client connectivity checks (the firewall port is open) the gateway connectivity checks are reaching the client.
 
 ![Sucessful sequence](doc/sequence_successful.jpg)
 
 The next figure shows the unsucessful sequence. 
 1. This time the offer is sent by the gateway.
-1. Based on the offer and/or trickled candidates the client sends STUN probes that cannot reach the gateway. These probes are rejected by the MASQUERADE netfilter target because the 1-to-1 NAT
+1. Based on the offer and/or trickled candidates the client sends connectivity checks that cannot reach the gateway. These probes are rejected by the MASQUERADE netfilter target because the 1-to-1 NAT
 firewall is configured to forward any media traffic to the gatway. An ICMP error message is generated for each rejected probe.
 1. The client generates an answer.
-1. Based on the answer and/or trickled candidates the gateway generates STUN probes that for some reason never make it to the client. 
-1. The client STUN probes never make it to the gateway neither.
+1. Based on the answer and/or trickled candidates the gateway generates connectivity checks that for some reason never make it to the client. 
+1. The client connectivity checks never make it to the gateway neither.
 
 ![Failing sequence](doc/sequence_unsucessful.jpg)
 
 Therefore our initial analysis has lead us to the same concusion as presented in [this](https://www.slideshare.net/AlessandroAmirante/janus-docker-friends-or-foe) slide pack 
 by Alessandro Amirante from Meetecho. Now, going a bit more into details the next figure below shows an excerpt of the packet capture at the virtual machine network interface. 
-1. STUN probe sent by the client before the gateway had a chance to open the port. As presented in step 2 on the previous figure above.
+1. connectivity check sent by the client before the gateway had a chance to open the port. As presented in step 2 on the previous figure above.
 1. An ICMP "destination unreachable" error is generated.
 1. The gateway sends a STUN request to a STUN server to retrieve its server reflexive address and port.
 1. The STUN server replies indicating the reflexive port is 20422
-1. The gateway issues STUN probes from port 20422 to the client local addresses (local subnet 192.x.y.z and some VPN 10.x.y.z) which are unreachable because the client is on a private subnet.
-1. The STUN probe destined to the client server reflexive (i.e. "reachable") address and port gets its source port **reassigned** to **1599** (instead of **20422**). 
-This happens because the earlier STUN probe from the client destined to the gateway address and port 20422 has altered the state of the MASQUERADE netfilter target. Please note we were not
+1. The gateway issues connectivity checks from port 20422 to the client local addresses (local subnet 192.x.y.z and some VPN 10.x.y.z) which are unreachable because the client is on a private subnet.
+1. The connectivity check destined to the client server reflexive (i.e. "reachable") address and port gets its source port **reassigned** to **1599** (instead of **20422**). 
+This happens because the earlier connectivity check from the client destined to the gateway address and port 20422 has altered the state of the MASQUERADE netfilter target. Please note we were not
 able to identify the reason for this behavior (e.g. security vunerability protection, standard specification, DOS attack protection etc.).
 
 ![Annotated packet capture](/doc/packet_capture_annotated.jpg)
 
-Therefore the client STUN probes are lost because of the race condition between the gateway opening firewall ports and the client sending STUN probles and because the MASQUERADE netfilter 
+Therefore the client connectivity checks are lost because of the race condition between the gateway opening firewall ports and the client sending STUN probles and because the MASQUERADE netfilter 
 target does not allow a host from the private subnet to send packets to a remote host using the same quintuple (source address, destination address, source port, destination port, protocol) 
 as the one recently rejected from the remote host. On the other hand the server STUN probles are most probably rejected by the client side firewall because its NAT configuraiton is port restricted. 
 
-## Solutions
+### Solutions
 In an attempt to eliminate the root cause and to delay the STUN client probes we have configred the gateway to trickle the candidates, which was unsuficient. Therefore we have also
  added an addional 1s delay in the client (janus.js file) when processing the received trickle candidates from the gateway. While this is not an acceptable solution the problem appeares to be solved.
 1. The gateway sends the offer.
 1. The gateway starts trickling the candidates. But the processing of the received tricked candidates is delayed by 1s at the client.
 1. The client issues an answer.
-1. The gatway sends a STUN probe that does not reach the client because the firewall port is still closed because of the delay.
-1. After the delay has expired the client sends a STUN probe that opens the firewall port and reaches the gatway.
-1. Finally the server resends a STUN proble that this time reaches the client.
+1. The gatway sends a connectivity check that does not reach the client because the firewall port is still closed because of the delay.
+1. After the delay has expired the client sends a connectivity check that opens the firewall port and reaches the gatway.
+1. Finally the server resends a connectivity check that this time reaches the client.
 
 ![Tricked and delayed approach](doc/sequence_trickle_delay.jpg)
 
 The second solution consists in reconfiguring the 1-to-1 NAT firewall to disallow exposing any ports besides 80 (http), 443 (https), 8089 (janus-api) and 7889 (janus-admin). All the other ports
 require the gateway to send an initial "opening" request.
 1. The gateway sends the offer.
-1. Based on the offer and/or tricked candidates the client sends STUN probes to the gatway. All these probes get filtered out by the 1-to-1 NAT and hence don't cause the 
+1. Based on the offer and/or tricked candidates the client sends connectivity checks to the gatway. All these probes get filtered out by the 1-to-1 NAT and hence don't cause the 
 above mentioned issue any more.
 1. The client sends an answer to the gatway.
-1. Based on the answer and/or trickled candidates the gatweay sends STUN probes to the client.
-1. The client resends the STUN probes that this time reach the server.
+1. Based on the answer and/or trickled candidates the gatweay sends connectivity checks to the client.
+1. The client resends the connectivity checks that this time reach the server.
 
 ![1-to-1 NAT firewall configuration](doc/sequence_1_to1_nat.jpg)
 
+### Issue #2 - Issue caused by the presence of the ISP firewall
+In some rare cases, the ISP firewall behaves the same way as the Netfilter MASQUERADE target and in the situation a connectivity check is received from the Janus Gateway server before the 
+Janus client had a chance to issue a connectivity check towards the server the ISP firewall will replace the discovered port nuber with a new one. This issue occurs when the Janus client 
+sends an offer message to the Janus Gateway server along with the candidates before receiving the Janus Gatway server candidates. As a matter of fact this issue is a mirror of the 
+previous issue. 
+
+### Solutions
+To solve this issue we have to either delay/prevent the Janus Gatway to issue connectivity checks or mitigate the (STUN) server reflexive candidates failure. There are no easy ways to delay
+the connectivty checks but they may be disabled by changing the Janus Gateway server configuration from bridge to host network and activating the ICE Lite mode. According to RFC 8445, in 
+ICE Lite mode no connectivity checks should be made. Unfortunately after reconfiguring the Janus Gateway to ICE Lite mode the connectivity checks are still emitted, this may be a bug in
+the implementation of the *libnice* library or its integration within the Janus Gateway. Eventually, it was possible to supress the conectivity checks by temporarely modifying the Janus 
+Gatway code which has resolved the issue. We have also tried to enable the TURN server which, as expected, solves the issue by providing additional relayed candidates. The main drawback
+of this solution is the need for an addional server that relays all the traffic and which creates a bottleneck that needs to be managed. Hopefully only a minority of Janus clients will 
+be using ISPs having such firewall configuration. 
+
 ## Conclusion
-It is possible to use the default Docker bridged network driver but some conditions have to be met by the infrastructure specifically the firwall leading to the Janus gatway server. 
-The firewall has to be able to block the client requests without triggering a port change as it happens with the MASQUERADE netfilter target. 
+It is possible to use the default Docker bridged network driver but some conditions have to be met by the infrastructure specifically the firwall leading to the Janus Gateway server. 
+The firewall has to be able to block the client requests without triggering a port change as it happens with the MASQUERADE netfilter target. Additnally to avoid any potential firewall
+issues with some ISPs that provide private IP addresses to their customers a TURN server must be added to the deployment.
 
 
