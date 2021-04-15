@@ -1,7 +1,7 @@
 # Set the tag so all the jobs in this pipeline get assigned to the appropriate runner
 default:
   tags:
-   - rancher2
+   - some_job_tag
 
 stages:
   - create_build_image
@@ -37,8 +37,8 @@ create_target_image_content:
     - /^([0-9]+\.[0-9]+\.[0-9]+)/
   stage: create_target_image_content
   image:
-        # Use the Janus build image entrd-jfrog.ent.nuance.com/ewebrtc-docker-dev/ acrwebrtc.azurecr.io/
-    name: entrd-jfrog.ent.nuance.com/ewebrtc-docker-dev/janus_build:build-0.0.4
+        # Use the Janus build imgae
+    name: some.registry.com/some_project/janus_build:some_version
     entrypoint: ["/bin/bash"]
   artifacts:
     paths:
@@ -47,8 +47,8 @@ create_target_image_content:
     expire_in: 1 hour
   variables: 
         # Set the Janus repo and Janus version in the revision controlled script (vs in the gitlab CI/CD variables) to track the variables content
-    JANUS_REPO: https://github.com/bartbalaz/janus-gateway.git
-    JANUS_VERSION: Nuance.0.0.7
+    JANUS_REPO: https://github.com/meetecho/janus-gateway.git
+    JANUS_VERSION: master
   script:
         # The IMAGE_TOOL is set to "external" to ensure that the "build.sh" script does not attempt to crate the image
     - export IMAGE_TOOL=external
@@ -77,4 +77,8 @@ create_target_image:
         --destination $ACR_NAME:$CI_COMMIT_TAG 
         --destination $ACR_NAME:latest
         --destination $NCR_NAME:$CI_COMMIT_TAG
+<<<<<<< HEAD
         --destination $NCR_NAME:latest
+=======
+        --destination $NCR_NAME:latest
+>>>>>>> upstream/master
