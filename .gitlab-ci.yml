@@ -77,8 +77,4 @@ create_target_image:
         --destination $ACR_NAME:$CI_COMMIT_TAG 
         --destination $ACR_NAME:latest
         --destination $NCR_NAME:$CI_COMMIT_TAG
-<<<<<<< HEAD
         --destination $NCR_NAME:latest
-=======
-        --destination $NCR_NAME:latest
->>>>>>> upstream/master
