@@ -1,12 +1,12 @@
 # Contributing
 
 When contributing to this repository, please first discuss the change you wish to make via issue,
-email, or any other method with the owners of this repository before making a change.\
-Please note we have a code of conduct, please follow it in all your interactions with the project.\
+email, or any other method with the owners of this repository before making a change.
+Please note we have a code of conduct, please follow it in all your interactions with the project.
 Finally, all contributions must be signed-off at the end of commit message by including your first, last name and your email, as follows.\
 	```
 	DCO-1.1-Signed-off-by: Joe Smith <joe.smith@email.com>
-	```
+	```\
 Use your real name (sorry, no pseudonyms or anonymous contributions.). If you set your *user.name* and *user.email* git configs, you can sign 
 your commit automatically with *git commit -s*. Signing-off means that certifies that you wrote the contribution or otherwise have the 
 right to pass it on as an open-source contribution and that you agree with the Developer Certificate of Origin (DCO) 
