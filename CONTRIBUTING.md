@@ -11,7 +11,7 @@ Please use your real name (sorry, no pseudonyms or anonymous contributions). If 
 your commit automatically with *git commit -s*. Signing-off means that certifies that you wrote the contribution or otherwise have the 
 right to pass it on as an open-source contribution and that you agree with the Developer Certificate of Origin (DCO) 
 rules below from [developercertificate.org](developercertificate.org).\
-	```
+	```bash
 	Developer Certificate of Origin
 	Version 1.1
 
