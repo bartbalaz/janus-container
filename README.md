@@ -243,7 +243,7 @@ on the [Kaniko](https://github.com/GoogleContainerTools/kaniko) tool for creatin
 it is self contained and does not require proviledged access to any host resources. The automation pipeline defined in the _.gitlab-ci.yml_ is 
 divided into three steps that are triggered by committing two different types of tags:
 
-1. Create the build image, triggered by committing a tag the has the form _build-x.y.z_. The resulting build image will be tagged with _build-x.y.z_ and _latest_ tags.
+1. Create the build image, triggered by committing a tag that has the form _build-x.y.z_. The resulting build image will be tagged with _build-x.y.z_ and _latest_ tags.
 2. Create the target image content, triggered by committing a tag that has the form _x.y.z_.
 3. Create the target image, triggered by the same tag as the previous step. The resulting target image will be tagged with _x.y.z_ and _latest_ tags.
 
