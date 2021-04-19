@@ -7,10 +7,10 @@ Finally, all contributions must be signed-off at the end of commit message by in
 	```
 	DCO-1.1-Signed-off-by: Joe Smith <joe.smith@email.com>
 	```\
-Use your real name (sorry, no pseudonyms or anonymous contributions.). If you set your *user.name* and *user.email* git configs, you can sign 
+Please use your real name (sorry, no pseudonyms or anonymous contributions). If you set your *user.name* and *user.email* git configs, you can sign 
 your commit automatically with *git commit -s*. Signing-off means that certifies that you wrote the contribution or otherwise have the 
 right to pass it on as an open-source contribution and that you agree with the Developer Certificate of Origin (DCO) 
-rules below from [developercertificate.org](developercertificate.org).
+rules below from [developercertificate.org](developercertificate.org).\
 	```
 	Developer Certificate of Origin
 	Version 1.1
@@ -49,11 +49,6 @@ rules below from [developercertificate.org](developercertificate.org).
 		this project or the open source license(s) involved.
 
 	```
-
-
-## 
-
-
 ## Code of Conduct
 
 ### Our Pledge
