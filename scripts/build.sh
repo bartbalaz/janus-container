@@ -191,6 +191,8 @@ if [ -z "$JANUS_VERSION" ]; then
 fi
 
 echo "Using Janus repo: $JANUS_REPO, version: $JANUS_VERSION" >> $BUILD_INFO_FILE
+echo "-----------------------------------------------------" >> $BUILD_INFO_FILE
+
 
 echo "Cloning from $JANUS_REPO to $JANUS_CLONE_DIR"
 git clone $JANUS_REPO $JANUS_CLONE_DIR

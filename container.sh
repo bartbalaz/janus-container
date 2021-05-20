@@ -249,6 +249,7 @@ else
 		
 		# If required, add an extension to the command displayed below that allows the container to mount and use a host configuration folder
 		COMMAND_EXTENSION=""
+    NOTES=""
 		if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true" ]; then
 			COMMAND_EXTENSION=" -v $JANUS_SRC_CONFIG_DIR:/janus/etc/janus_host -e \"RUN_WITH_HOST_CONFIGURATION_DIR=true\""
 		fi
@@ -256,6 +257,12 @@ else
 		if [ "$COPY_JANUS_SAMPLES" == "true" ]; then
 			COMMAND_EXTENSION+=" -v /var/www/html/container:/html -e \"COPY_JANUS_SAMPLES=true\""
 		fi
+    
+    if [ ! -z "$CONFIG_GEN_SCRIPT" ]; then 
+      COMMAND_EXTENSION+=" -e \"CONFIG_GEN_SCRIPT=$CONFIG_GEN_SCRIPT\""
+      NOTES+="- The use of the configuration build script may require setting additional environment vaiables (e.g. -e \"<variable_name>=<variable_value>\")\n"
+    fi
+
 	else
 		echo 
 		echo " The creation of the image is deferred to the invoking script "
@@ -268,8 +275,11 @@ else
 	echo
 	echo "To execute the Janus gateway target image interactively issue the following command: "
 	echo "$IMAGE_TOOL run --rm -it -p 8089:8089 -p 7889:7889 -v /etc/letsencrypt/live/$HOST_NAME:/etc/certs -v /etc/letsencrypt/archive:/archive -v /var/janus/recordings:/janus/bin/janus-recordings $COMMAND_EXTENSION $FULL_TARGET_IMAGE_NAME"
-	echo
-	echo
+  if [ ! -z "$NOTES" ]; then
+    echo
+    echo Notes:
+    echo -e $NOTES
+  fi
 fi
 
 
