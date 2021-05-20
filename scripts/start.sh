@@ -68,7 +68,7 @@ if [ -f $CONFIG_DIR/$CONFIG_GEN_SCRIPT ]; then
 
   # If there is a config generation script in the config directory invoke it.
   echo
-  echo Content of the $CONFIG_DIR directory before generating the configuration files
+  echo Content of the $CONFIG_DIR directory before generating the configuration files:
   echo $(ls $CONFIG_DIR)
   
   echo
