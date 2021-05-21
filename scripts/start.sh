@@ -78,8 +78,13 @@ if [ -f $CONFIG_DIR/$CONFIG_GEN_SCRIPT ]; then
   # Go to the configuraiton directory
   cd $CONFIG_DIR
     
+
   # Test if we have the write permission into the configuration directory  
+  # Deactivate the exit on error for the touch command as we test if it fails 
+  set +e 
   touch ./test.txt
+  # Re-enable the exit on error
+  set -e
   
   if [ ! "$?" == "0" ]; then  
     # If we don't have the permissions to write to let's create a new configuration directory where we'll create the configuraiton
