@@ -83,10 +83,12 @@ if [ -f $CONFIG_DIR/$CONFIG_GEN_SCRIPT ]; then
   # Deactivate the exit on error for the touch command as we test if it fails 
   set +e 
   touch ./test.txt
-  # Re-enable the exit on error
+  RESULT=$?
+  
+  # Re-enable the exit on error, needs to be done after the if
   set -e
   
-  if [ ! "$?" == "0" ]; then  
+  if [ ! "$RESULT" == "0" ]; then  
     # If we don't have the permissions to write to let's create a new configuration directory where we'll create the configuraiton
     echo
     echo We don\'t have the permissions to write in $CONFIG_DIR, switching to alternate configuration directory /janus/etc/janus_fallback
