@@ -46,7 +46,7 @@ create_target_image_content:
   stage: create_target_image_content
   image:
         # Use the Janus build image entrd-jfrog.ent.nuance.com/ewebrtc-docker-dev/ acrwebrtc.azurecr.io/
-    name: entrd-jfrog.ent.nuance.com/ewebrtc-docker-dev/janus_build:build-0.0.7
+    name: entrd-jfrog.ent.nuance.com/ewebrtc-docker-dev/janus_build:build-0.0.8
     entrypoint: ["/bin/bash"]
   artifacts:
     paths:
