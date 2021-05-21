@@ -79,10 +79,12 @@ if [ -f $CONFIG_DIR/$CONFIG_GEN_SCRIPT ]; then
   cd $CONFIG_DIR
     
   # Test if we have the write permission into the configuration directory  
-  if [ $(touch ./test.txt) ]; then  
+  touch ./test.txt
+  
+  if [ ! "$?" == "0" ]; then  
     # If we don't have the permissions to write to let's create a new configuration directory where we'll create the configuraiton
     echo
-    echo We don\'t have the permissions to write in $CONFIG_DIR, switching configuration directory to /janus/etc/janus_fallback
+    echo We don\'t have the permissions to write in $CONFIG_DIR, switching to alternate configuration directory /janus/etc/janus_fallback
     
     CONFIG_DIR="/janus/etc/janus_fallback"
     
