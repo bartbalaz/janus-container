@@ -52,6 +52,7 @@ echo
 echo " Setting the configuration directory path information "
 echo "------------------------------------------------------"
 
+
 CONFIG_DIR="/janus/etc/janus"
 if [ "$RUN_WITH_HOST_CONFIGURATION_DIR" == "true" ]; then
   # If we are using the host configuration we have to use the "janus_host" direcotry
@@ -73,9 +74,27 @@ if [ -f $CONFIG_DIR/$CONFIG_GEN_SCRIPT ]; then
   
   echo
   echo Using $CONFIG_DIR/$CONFIG_GEN_SCRIPT to generate Janus Gateway configuration
-
+    
   # Go to the configuraiton directory
   cd $CONFIG_DIR
+    
+  # Test if we have the write permission into the configuration directory  
+  if [ $(touch ./test.txt) ]; then  
+    # If we don't have the permissions to write to let's create a new configuration directory where we'll create the configuraiton
+    echo
+    echo We don\'t have the permissions to write in $CONFIG_DIR, switching configuration directory to /janus/etc/janus_fallback
+    
+    CONFIG_DIR="/janus/etc/janus_fallback"
+    
+    mkdir $CONFIG_DIR
+    
+    cp ./$CONFIG_GEN_SCRIPT $CONFIG_DIR
+    
+    cd $CONFIG_DIR
+  else 
+    rm ./test.txt
+    echo We have the permissions to write in $CONFIG_DIR
+  fi
   
   # Make sure that the scritp is executable
   chmod u+x ./$CONFIG_GEN_SCRIPT
