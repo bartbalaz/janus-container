@@ -191,8 +191,6 @@ if [ -z "$JANUS_VERSION" ]; then
 fi
 
 echo "Using Janus repo: $JANUS_REPO, version: $JANUS_VERSION" >> $BUILD_INFO_FILE
-echo "-----------------------------------------------------" >> $BUILD_INFO_FILE
-
 
 echo "Cloning from $JANUS_REPO to $JANUS_CLONE_DIR"
 git clone $JANUS_REPO $JANUS_CLONE_DIR
@@ -255,6 +253,9 @@ echo "----------------------------------------------------"
 cp $START_SCRIPT_SRC $START_SCRIPT_DST
 chmod a+x $START_SCRIPT_DST
 
+echo "Build finished at $(date)" >> $BUILD_INFO_FILE
+echo "-----------------------------------------------------" >> $BUILD_INFO_FILE
+
 if [ "$IMAGE_TOOL" != "external" ]; then 
 	echo
 	echo " Building the Janus gateway target image using $IMAGE_TOOL"
@@ -283,5 +284,3 @@ else
 	echo "--------------------------------------------------------------"
 fi
 
-echo "Build finished at $(date)" >> $BUILD_INFO_FILE
-echo "-----------------------------------------------------" >> $BUILD_INFO_FILE
