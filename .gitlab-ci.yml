@@ -56,7 +56,7 @@ create_target_image_content:
   variables: 
         # Set the Janus repo and Janus version in the revision controlled script (vs in the gitlab CI/CD variables) to track the variables content
     JANUS_REPO: https://github.com/bartbalaz/janus-gateway.git
-    JANUS_VERSION: Nuance.0.0.7
+    JANUS_VERSION: Nuance.0.0.8
   script:
         # The IMAGE_TOOL is set to "external" to ensure that the "build.sh" script does not attempt to crate the image
     - export IMAGE_TOOL=external
