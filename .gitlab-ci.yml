@@ -43,6 +43,8 @@ create_target_image_content:
   only:
         # Trigger this stage when a "x.y.z" tag is commited to the repo
     - /^([0-9]+\.[0-9]+\.[0-9]+)/
+        # Or if this is a development branch to create a development image
+    - /^dev-.*$/
   stage: create_target_image_content
   image:
         # Use the Janus build image entrd-jfrog.ent.nuance.com/ewebrtc-docker-dev/ acrwebrtc.azurecr.io/
@@ -69,12 +71,16 @@ create_target_image:
   only:
         # Trigger this stage when a "x.y.z" tag is commited to the repo
     - /^([0-9]+\.[0-9]+\.[0-9]+)/
+       # Or if this is a development branch to create a development image
+    - /^dev-.*$/
   stage: create_target_image
   image:
         # Use the Kaniko image
     name: gcr.io/kaniko-project/executor:debug
     entrypoint: ["/busybox/sh"]
   script:
+        # If this is a development branch commit, this branch does not have a commit tag, we set the empty commit tag with the development branch name
+    - if [ -z "$CI_COMMIT_TAG" ]; then export CI_COMMIT_TAG=$CI_COMMIT_BRANCH; fi
         # Create the full target image names including the repository and the project (if defined)
     - if [ -z "$ACR_PROJECT" ]; then export ACR_NAME="$ACR_REGISTRY/$JANUS_TARGET_IMAGE"; else export ACR_NAME="$ACR_REGISTRY/$ACR_PROJECT/$JANUS_TARGET_IMAGE"; fi
     - if [ -z "$NCR_PROJECT" ]; then export NCR_NAME="$NCR_REGISTRY/$JANUS_TARGET_IMAGE"; else export NCR_NAME="$NCR_REGISTRY/$NCR_PROJECT/$JANUS_TARGET_IMAGE"; fi
