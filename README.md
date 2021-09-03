@@ -250,8 +250,8 @@ it is self contained and does not require proviledged access to any host resourc
 divided into three steps that are triggered by committing two different types of tags:
 
 1. Create the build image, triggered by committing a tag that has the form _build-x.y.z_. The resulting build image will be tagged with _build-x.y.z_ and _latest_ tags.
-2. Create the target image content, triggered by committing a tag that has the form _x.y.z_.
-3. Create the target image, triggered by the same tag as the previous step. The resulting target image will be tagged with _x.y.z_ and _latest_ tags.
+2. Create the target image content, triggered by committing a tag that has the form _x.y.z_ (i.e. release) or a branch that starts with _dev-_ (i.e. development branch).
+3. Create the target image, triggered by the same conditions as the previous step. The resulting target image will be tagged with _x.y.z_ and _latest_ tags.
 
 As stated earlier, the automation relies on GitLab [Kubernetes executor](https://docs.gitlab.com/runner/executors/kubernetes.html). Although, we did not try, the GitLab Docker 
 executor perhaps may also work.\

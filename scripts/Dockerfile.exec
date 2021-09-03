@@ -8,7 +8,7 @@
 
 # Docker file for creating a Janus gateway target image.
 
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 
 ARG CI_COMMIT_TAG=none
 
